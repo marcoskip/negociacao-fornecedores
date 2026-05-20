@@ -785,12 +785,8 @@
     </button>
   </div>
 
-  <!-- Menu de acoes (compartilhado por todas as linhas, fixo no viewport) -->
-  <div class="context-menu" id="rowActionsMenu" role="menu">
-    <button class="context-menu__item" type="button" data-action="reativar">Reativar vínculo</button>
-    <div class="context-menu__divider"></div>
-    <button class="context-menu__item context-menu__item--danger" type="button" data-action="remover">Remover</button>
-  </div>
+  <!-- Menu de acoes (compartilhado, populado dinamicamente conforme status da linha) -->
+  <div class="context-menu" id="rowActionsMenu" role="menu"></div>
 
   <script>
     // ─── Dados (do SPEC 0.1) ─────────────────────────────────
@@ -1011,12 +1007,34 @@
       }
     });
 
-    // ─── Menu de acoes da linha (hover) ──────────────────────
+    // ─── Menu de acoes da linha (hover, contextual por status) ───
     //  Menu unico no <body>, posicionado fixed via JS para escapar do
     //  overflow:auto do .grid e do overflow:hidden dos td.
     const rowMenu = document.getElementById('rowActionsMenu');
     let rowMenuTrigger = null;
     let rowMenuCloseTimer = null;
+
+    // Itens contextuais por status (a partir da nota do projeto)
+    const ROW_MENUS_POR_STATUS = {
+      ativo:    [{ label: 'Inativar vínculo', action: 'inativar' }],
+      pendente: [
+        { label: 'Reenviar convite', action: 'reenviar' },
+        { label: 'Cancelar convite', action: 'cancelar', danger: true },
+      ],
+      inativo:  [
+        { label: 'Reativar vínculo', action: 'reativar' },
+        { label: 'Remover', action: 'remover', danger: true },
+      ],
+    };
+
+    function renderRowMenu(status) {
+      const items = ROW_MENUS_POR_STATUS[status] || [];
+      rowMenu.innerHTML = items.map((it, i) => {
+        const divider = i > 0 ? '<div class="context-menu__divider"></div>' : '';
+        const danger  = it.danger ? ' context-menu__item--danger' : '';
+        return `${divider}<button class="context-menu__item${danger}" type="button" data-action="${it.action}">${it.label}</button>`;
+      }).join('');
+    }
 
     function positionRowMenu(trigger) {
       const rect = trigger.getBoundingClientRect();
@@ -1036,8 +1054,50 @@
     function openRowMenu(trigger) {
       clearTimeout(rowMenuCloseTimer);
       rowMenuTrigger = trigger;
+      // Identifica o fornecedor pela linha e popula o menu pelo status
+      const wrapper = trigger.closest('.row-actions');
+      const id = parseInt(wrapper.dataset.id, 10);
+      const fornecedor = FORNECEDORES.find(f => f.id === id);
+      if (!fornecedor) return;
+      renderRowMenu(fornecedor.status);
       positionRowMenu(trigger);
     }
+
+    // Acoes do menu contextual
+    rowMenu.addEventListener('click', (e) => {
+      const btn = e.target.closest('.context-menu__item');
+      if (!btn || !rowMenuTrigger) return;
+      const action = btn.dataset.action;
+      const wrapper = rowMenuTrigger.closest('.row-actions');
+      const id = parseInt(wrapper.dataset.id, 10);
+      const fornecedor = FORNECEDORES.find(f => f.id === id);
+      if (!fornecedor) return;
+
+      const empresa = fornecedor.empresa;
+
+      if (action === 'inativar') {
+        fornecedor.status = 'inativo';
+        showToast(`Vínculo com ${empresa} inativado.`, 'success');
+      } else if (action === 'reativar') {
+        fornecedor.status = 'ativo';
+        showToast(`Vínculo com ${empresa} reativado.`, 'success');
+      } else if (action === 'reenviar') {
+        showToast(`Convite reenviado para ${empresa}.`, 'success');
+      } else if (action === 'cancelar') {
+        const idx = FORNECEDORES.indexOf(fornecedor);
+        if (idx >= 0) FORNECEDORES.splice(idx, 1);
+        showToast(`Convite para ${empresa} cancelado.`, 'success');
+      } else if (action === 'remover') {
+        const idx = FORNECEDORES.indexOf(fornecedor);
+        if (idx >= 0) FORNECEDORES.splice(idx, 1);
+        showToast(`${empresa} removido da carteira.`, 'success');
+      }
+
+      // Fecha o menu e re-renderiza a tabela
+      rowMenu.classList.remove('is-open');
+      rowMenuTrigger = null;
+      renderRows();
+    });
 
     function scheduleCloseRowMenu() {
       clearTimeout(rowMenuCloseTimer);
