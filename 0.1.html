@@ -213,6 +213,122 @@
     .col-acoes { text-align: center; }
     .col-acoes .grid__th-content { justify-content: center; }
 
+    /* ─── Dev mode (controle de demo — nao faz parte do produto) ───
+       Cor escura intencional pra deixar claro que e ferramenta de apresentacao. */
+    .dev-menu { position: fixed; bottom: 16px; right: 16px; z-index: 9500; font-family: var(--font-family-base); }
+    .dev-menu.is-hidden { display: none; }
+    .dev-menu__trigger {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--color-gray-900);
+      color: var(--color-white);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-elevation);
+      transition: background 100ms ease, transform 200ms ease;
+    }
+    .dev-menu__trigger:hover { background: var(--color-gray-800); }
+    .dev-menu:hover .dev-menu__trigger { transform: rotate(20deg); }
+    .dev-menu__trigger .material-icons-outlined { font-size: 22px; }
+
+    .dev-menu__panel {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      min-width: 240px;
+      background: var(--color-gray-900);
+      color: var(--color-white);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-elevation);
+      padding: 6px;
+      display: none;
+    }
+    .dev-menu:hover .dev-menu__panel,
+    .dev-menu:focus-within .dev-menu__panel { display: block; }
+    /* Ponte invisivel pra preservar hover ao mover o cursor do trigger pro painel. */
+    .dev-menu__panel::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -8px;
+      height: 8px;
+    }
+
+    .dev-menu__header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--color-gray-400);
+    }
+    .dev-menu__header .material-icons-outlined { font-size: 14px; }
+
+    .dev-menu__divider { height: 1px; background: var(--color-gray-700); margin: 4px 0; }
+
+    .dev-menu__item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 10px;
+      border: none;
+      background: transparent;
+      color: var(--color-white);
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-sm);
+      text-align: left;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .dev-menu__item:hover { background: var(--color-gray-800); }
+    .dev-menu__item .material-icons-outlined { font-size: 16px; color: var(--color-gray-400); }
+    .dev-menu__item-shortcut {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--color-gray-500);
+    }
+
+    /* ─── Modal "Convidar fornecedor" — APENAS layout/posicionamento ───
+       Todo o visual (cor, tipografia, borda, sombra, radius) vem do DS. */
+
+    /* Header empilhado: titulo + X em cima, subtitulo abaixo.
+       Sem linha divisoria abaixo do header (override do .modal__header do DS). */
+    .invite-modal .modal__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      border-bottom: none;
+    }
+    .invite-modal__header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    /* Subtitulo reusa estilo helper do form-field (font-size-xs gray-600) — DS. */
+
+    /* Body com gap entre secoes */
+    .invite-form { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Secao do form: agrupa label de secao + campos */
+    .invite-form__section { display: flex; flex-direction: column; gap: 12px; }
+
+    /* Linha 2 colunas (CNPJ + Razao social) */
+    .invite-form__row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Lista de chips de comprador + botao adicionar (layout flex) */
+    .invite-buyers { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
     /* ─── "Ver mais" da linha + menu em hover ───
        O menu usa o componente .context-menu do DS, com 1 unica copia no <body>.
        Override pra position: fixed porque ele eh filho do body (escapa do overflow
@@ -489,6 +605,185 @@
       </div>
     </div>
   </section>
+
+  <!-- Modal: Convidar fornecedor (form da tela 0.2 em overlay).
+       Todo visual vem do DS. Page-specific so layout (gap, grid). -->
+  <div class="modal-backdrop invite-modal" id="inviteModal" aria-hidden="true">
+    <div class="modal modal--large" role="dialog" aria-modal="true" aria-labelledby="inviteModalTitle">
+      <div class="modal__header">
+        <div class="invite-modal__header-top">
+          <span class="modal__title" id="inviteModalTitle">Convidar fornecedor</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+        <span class="form-field__helper">
+          Um e-mail será enviado ao representante com um link para criar a conta.
+          O vínculo com Supermercado Estrela será criado automaticamente.
+        </span>
+      </div>
+
+      <div class="modal__body">
+        <form class="invite-form" id="inviteForm" novalidate>
+
+          <!-- Secao A: Dados da empresa -->
+          <div class="invite-form__section">
+            <div class="form-field">
+              <label class="form-field__label" for="invEmpresa">
+                Nome da empresa <span class="form-field__required">*</span>
+              </label>
+              <div class="form-field__input-wrapper">
+                <input type="text" class="form-field__input" id="invEmpresa" placeholder="Ex: Unilever Brasil Ltda." required />
+              </div>
+            </div>
+
+            <div class="invite-form__row-2">
+              <div class="form-field">
+                <label class="form-field__label" for="invCnpj">
+                  CNPJ <span class="form-field__required">*</span>
+                </label>
+                <div class="form-field__input-wrapper">
+                  <input type="text" class="form-field__input" id="invCnpj" placeholder="00.000.000/0000-00" inputmode="numeric" maxlength="18" required />
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-field__label" for="invRazao">Razão social</label>
+                <div class="form-field__input-wrapper">
+                  <input type="text" class="form-field__input" id="invRazao" placeholder="(opcional)" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Secao B: Representante comercial -->
+          <div class="invite-form__section">
+            <label class="form-field__label">REPRESENTANTE COMERCIAL</label>
+
+            <div class="form-field">
+              <label class="form-field__label" for="invRepNome">
+                Nome do representante <span class="form-field__required">*</span>
+              </label>
+              <div class="form-field__input-wrapper">
+                <input type="text" class="form-field__input" id="invRepNome" placeholder="Nome completo" required />
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="invRepEmail">
+                E-mail <span class="form-field__required">*</span>
+              </label>
+              <div class="form-field__input-wrapper">
+                <input type="email" class="form-field__input" id="invRepEmail" placeholder="nome@empresa.com.br" required />
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="form-field__label" for="invRepFone">Telefone</label>
+              <div class="form-field__input-wrapper">
+                <input type="text" class="form-field__input" id="invRepFone" placeholder="(11) 99999-9999" inputmode="tel" maxlength="15" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Secao C: Compradores responsaveis -->
+          <div class="invite-form__section">
+            <label class="form-field__label">
+              COMPRADORES RESPONSÁVEIS (DO SEU LADO) <span class="form-field__required">*</span>
+            </label>
+            <span class="form-field__helper">
+              Quem recebe notificação quando esse fornecedor enviar uma proposta. Pelo menos 1.
+            </span>
+
+            <div class="form-field">
+              <div class="form-field__input-wrapper">
+                <span class="form-field__prefix"><span class="material-icons-outlined" style="font-size:16px">search</span></span>
+                <input type="text" class="form-field__input" id="invBuyerSearch" placeholder="Buscar comprador já cadastrado por nome ou e-mail…" />
+              </div>
+            </div>
+
+            <div class="invite-buyers" id="invBuyerChips">
+              <!-- Chips (.filtro-chip do DS) renderizados pelo JS -->
+            </div>
+
+            <label class="checkbox">
+              <input type="checkbox" class="checkbox__input" id="invNotify" checked />
+              <span class="checkbox__box"></span>
+              <span class="checkbox__content">
+                <span class="checkbox__label">Notificar compradores responsáveis por e-mail</span>
+              </span>
+            </label>
+          </div>
+
+          <!-- Mensagem opcional do convite — form-field paragraph (textarea do DS) -->
+          <div class="form-field form-field--paragraph">
+            <label class="form-field__label" for="invMsg">Mensagem do convite</label>
+            <div class="form-field__input-wrapper">
+              <textarea class="form-field__input" id="invMsg" placeholder='Ex: "Olá Ricardo, estamos centralizando as negociações no IPA..."'></textarea>
+            </div>
+            <span class="form-field__helper">Opcional, aparece no e-mail.</span>
+          </div>
+
+        </form>
+      </div>
+
+      <div class="modal__footer">
+        <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Cancelar</button>
+        <button type="button" class="btn btn--primary btn--medium" id="inviteSubmit">Enviar convite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container de toasts (fixo no canto, .toast-container do DS) -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Dev menu (controle de demo) -->
+  <div class="dev-menu" id="devMenu">
+    <div class="dev-menu__panel" role="menu">
+      <div class="dev-menu__header">
+        <span class="material-icons-outlined">bolt</span>
+        <span>Dev controls</span>
+      </div>
+      <button class="dev-menu__item" data-dev="open-invite" type="button">
+        <span class="material-icons-outlined">mail_outline</span>
+        <span>Abrir modal de convite</span>
+      </button>
+      <button class="dev-menu__item" data-dev="fill-invite" type="button">
+        <span class="material-icons-outlined">auto_fix_high</span>
+        <span>Preencher (Unilever)</span>
+      </button>
+      <button class="dev-menu__item" data-dev="clear-invite" type="button">
+        <span class="material-icons-outlined">cleaning_services</span>
+        <span>Limpar campos</span>
+      </button>
+      <div class="dev-menu__divider"></div>
+      <button class="dev-menu__item" data-dev="toast-success" type="button">
+        <span class="material-icons-outlined">check_circle</span>
+        <span>Disparar toast (sucesso)</span>
+      </button>
+      <button class="dev-menu__item" data-dev="add-fornecedor" type="button">
+        <span class="material-icons-outlined">person_add</span>
+        <span>Adicionar fornecedor à lista</span>
+      </button>
+      <div class="dev-menu__divider"></div>
+      <button class="dev-menu__item" data-dev="toggle-sidebar" type="button">
+        <span class="material-icons-outlined">menu_open</span>
+        <span>Toggle sidebar</span>
+      </button>
+      <button class="dev-menu__item" data-dev="reset-all" type="button">
+        <span class="material-icons-outlined">restart_alt</span>
+        <span>Resetar tudo</span>
+      </button>
+      <div class="dev-menu__divider"></div>
+      <button class="dev-menu__item" data-dev="hide-menu" type="button">
+        <span class="material-icons-outlined">visibility_off</span>
+        <span>Esconder dev menu</span>
+        <span class="dev-menu__item-shortcut">D</span>
+      </button>
+    </div>
+    <button class="dev-menu__trigger" id="devMenuTrigger" aria-label="Dev controls">
+      <span class="material-icons-outlined">bolt</span>
+    </button>
+  </div>
 
   <!-- Menu de acoes (compartilhado por todas as linhas, fixo no viewport) -->
   <div class="context-menu" id="rowActionsMenu" role="menu">
@@ -820,9 +1115,251 @@
       });
     });
 
-    // ─── CTA Convidar fornecedor ─────────────────────────────
-    document.getElementById('inviteBtn').addEventListener('click', () => {
-      window.location.href = '0.2.html';
+    // ─── Modal "Convidar fornecedor" ─────────────────────────
+    const inviteModal = document.getElementById('inviteModal');
+    const inviteForm  = document.getElementById('inviteForm');
+    const buyerChipsEl = document.getElementById('invBuyerChips');
+
+    // Compradores pre-selecionados (estado default do SPEC 0.2)
+    let invBuyers = [
+      { id: 'ana',  nome: 'Ana Costa'   },
+      { id: 'joao', nome: 'João Mendes' },
+    ];
+
+    function renderBuyerChips() {
+      buyerChipsEl.innerHTML = '';
+      invBuyers.forEach(b => {
+        const chip = document.createElement('span');
+        chip.className = 'filtro-chip';
+        chip.dataset.buyerChip = '';
+        chip.dataset.id = b.id;
+        chip.innerHTML = `
+          <span>${b.nome}</span>
+          <span class="material-icons-outlined" data-remove style="font-size:14px;cursor:pointer">close</span>
+        `;
+        buyerChipsEl.appendChild(chip);
+      });
+    }
+
+    buyerChipsEl.addEventListener('click', (e) => {
+      const removeIcon = e.target.closest('[data-remove]');
+      if (!removeIcon) return;
+      const chip = removeIcon.closest('[data-buyer-chip]');
+      invBuyers = invBuyers.filter(b => b.id !== chip.dataset.id);
+      renderBuyerChips();
+    });
+
+    renderBuyerChips();
+
+    // Mascaras simples
+    function maskCnpj(v) {
+      const d = v.replace(/\D/g, '').slice(0, 14);
+      return d
+        .replace(/^(\d{2})(\d)/, '$1.$2')
+        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/\.(\d{3})(\d)/, '.$1/$2')
+        .replace(/(\d{4})(\d)/, '$1-$2');
+    }
+    function maskPhone(v) {
+      const d = v.replace(/\D/g, '').slice(0, 11);
+      if (d.length <= 10) return d.replace(/^(\d{0,2})(\d{0,4})(\d{0,4}).*/, (_, a, b, c) =>
+        [a && `(${a}`, a && a.length === 2 ? ')' : '', b && ` ${b}`, c && `-${c}`].filter(Boolean).join('').trim()
+      );
+      return d.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3');
+    }
+    document.getElementById('invCnpj').addEventListener('input', e => { e.target.value = maskCnpj(e.target.value); });
+    document.getElementById('invRepFone').addEventListener('input', e => { e.target.value = maskPhone(e.target.value); });
+
+    // Validacao inline em blur
+    const VALIDATORS = {
+      invEmpresa: v => v.trim().length >= 3 || 'Este campo é obrigatório.',
+      invCnpj:    v => v.replace(/\D/g, '').length === 14 || 'CNPJ inválido. Verifique o número e tente novamente.',
+      invRepNome: v => v.trim().length >= 3 || 'Este campo é obrigatório.',
+      invRepEmail:v => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.trim()) || 'E-mail inválido.',
+      invRepFone: v => v.trim() === '' || /^\(\d{2}\)\s?\d{4,5}-\d{4}$/.test(v.trim()) || 'Formato inválido. Exemplo: (11) 99999-9999.',
+    };
+
+    function setFieldError(input, message) {
+      const wrapper = input.closest('.form-field');
+      if (!wrapper) return;
+      let helper = wrapper.querySelector('.form-field__helper');
+      if (message) {
+        wrapper.classList.add('is-error');
+        if (!helper) {
+          helper = document.createElement('span');
+          helper.className = 'form-field__helper';
+          wrapper.appendChild(helper);
+        }
+        helper.textContent = message;
+      } else {
+        wrapper.classList.remove('is-error');
+        if (helper) helper.remove();
+      }
+    }
+
+    function validateField(input) {
+      const fn = VALIDATORS[input.id];
+      if (!fn) return true;
+      const res = fn(input.value);
+      if (res === true) { setFieldError(input, null); return true; }
+      setFieldError(input, res);
+      return false;
+    }
+
+    Object.keys(VALIDATORS).forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('blur', () => validateField(el));
+    });
+
+    // Abrir/fechar modal
+    const inviteBtn = document.getElementById('inviteBtn');
+    function openInviteModal() {
+      inviteModal.classList.add('is-open');
+      inviteModal.setAttribute('aria-hidden', 'false');
+      // foco no primeiro campo apos transition
+      setTimeout(() => document.getElementById('invEmpresa').focus(), 50);
+    }
+    function closeInviteModal() {
+      inviteModal.classList.remove('is-open');
+      inviteModal.setAttribute('aria-hidden', 'true');
+    }
+
+    inviteBtn.addEventListener('click', openInviteModal);
+    inviteModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', closeInviteModal));
+    inviteModal.addEventListener('click', (e) => {
+      if (e.target === inviteModal) closeInviteModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && inviteModal.classList.contains('is-open')) closeInviteModal();
+    });
+
+    // Toast helper (usa .toast do DS — padrao Figma: bg tonal + timestamp)
+    const toastContainer = document.getElementById('toastContainer');
+    function showToast(message, variant = 'success', durationMs = 5000) {
+      const iconMap = { success: 'check_circle', error: 'error', info: 'info', warning: 'warning' };
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}, ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
+
+      const toast = document.createElement('div');
+      toast.className = `toast toast--${variant}`;
+      toast.innerHTML = `
+        <div class="toast__content-wrap">
+          <span class="material-icons-outlined toast__icon">${iconMap[variant] || 'info'}</span>
+          <div class="toast__content">
+            <span class="toast__body">${message}</span>
+            <span class="toast__meta">${timestamp}</span>
+          </div>
+        </div>
+        <button class="toast__close" type="button" aria-label="Fechar">
+          <span class="material-icons-outlined" style="font-size:16px">close</span>
+        </button>
+      `;
+      toastContainer.appendChild(toast);
+      const close = () => toast.remove();
+      toast.querySelector('.toast__close').addEventListener('click', close);
+      if (durationMs) setTimeout(close, durationMs);
+    }
+
+    // Submit do convite
+    document.getElementById('inviteSubmit').addEventListener('click', () => {
+      // Valida todos os campos
+      let ok = true;
+      Object.keys(VALIDATORS).forEach(id => { if (!validateField(document.getElementById(id))) ok = false; });
+      if (invBuyers.length === 0) {
+        ok = false;
+        showToast('Selecione pelo menos um comprador responsável.', 'error');
+      }
+      if (!ok) return;
+      const empresa = document.getElementById('invEmpresa').value.trim();
+      closeInviteModal();
+      showToast(`Convite enviado para ${empresa}.`, 'success');
+      // Reset do form pra proxima abertura
+      inviteForm.reset();
+      invBuyers = [
+        { id: 'ana',  nome: 'Ana Costa'   },
+        { id: 'joao', nome: 'João Mendes' },
+      ];
+      renderBuyerChips();
+    });
+
+    // ─── Dev mode (controles de demo) ────────────────────────
+    const FORNECEDORES_SNAPSHOT = JSON.parse(JSON.stringify(FORNECEDORES));
+    const devMenu = document.getElementById('devMenu');
+
+    const DEV_ACTIONS = {
+      'open-invite': () => openInviteModal(),
+
+      'fill-invite': () => {
+        if (!inviteModal.classList.contains('is-open')) openInviteModal();
+        document.getElementById('invEmpresa').value  = 'Unilever Brasil Ltda.';
+        document.getElementById('invCnpj').value     = maskCnpj('61068276000102');
+        document.getElementById('invRazao').value    = 'Unilever Brasil Industrial Ltda.';
+        document.getElementById('invRepNome').value  = 'Ricardo Lima';
+        document.getElementById('invRepEmail').value = 'ricardo.lima@unilever.com.br';
+        document.getElementById('invRepFone').value  = maskPhone('11999998888');
+        document.getElementById('invMsg').value      = 'Olá Ricardo, estamos centralizando as negociações no IPA. Aceite o convite para começarmos.';
+      },
+
+      'clear-invite': () => {
+        inviteForm.reset();
+        document.querySelectorAll('#inviteForm .form-field.is-error').forEach(el => el.classList.remove('is-error'));
+        document.querySelectorAll('#inviteForm .form-field__helper').forEach(el => el.remove());
+        invBuyers = [
+          { id: 'ana',  nome: 'Ana Costa'   },
+          { id: 'joao', nome: 'João Mendes' },
+        ];
+        renderBuyerChips();
+      },
+
+      'toast-success': () => showToast('Convite enviado para Unilever Brasil Ltda.', 'success'),
+
+      'add-fornecedor': () => {
+        const nextId = Math.max(...FORNECEDORES.map(f => f.id)) + 1;
+        FORNECEDORES.unshift({
+          id: nextId,
+          empresa: 'Mondelez Brasil',
+          cnpj: '12.345.678/0001-99',
+          representante: 'Bianca Andrade',
+          status: 'pendente',
+          negociacoes: 0,
+          ultimaDias: 0,
+          ultimaLabel: 'enviado agora',
+        });
+        renderRows();
+        showToast('Convite enviado para Mondelez Brasil.', 'success');
+      },
+
+      'toggle-sidebar': () => seta.click(),
+
+      'reset-all': () => {
+        // Restaura lista original
+        FORNECEDORES.length = 0;
+        FORNECEDORES_SNAPSHOT.forEach(f => FORNECEDORES.push({ ...f }));
+        // Reseta filtros e form
+        clearAllFilters();
+        DEV_ACTIONS['clear-invite']();
+        if (inviteModal.classList.contains('is-open')) closeInviteModal();
+        // Toasts existentes
+        toastContainer.innerHTML = '';
+      },
+
+      'hide-menu': () => devMenu.classList.add('is-hidden'),
+    };
+
+    devMenu.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-dev]');
+      if (!btn) return;
+      const action = DEV_ACTIONS[btn.dataset.dev];
+      if (action) action();
+    });
+
+    // Atalho "D" pra mostrar/esconder o dev menu (ignora se estiver digitando em input/textarea)
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() !== 'd') return;
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+      devMenu.classList.toggle('is-hidden');
     });
 
     // ─── Inicializa ──────────────────────────────────────────
