@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPA — Negociações salvas</title>
+  <link rel="icon" type="image/x-icon" href="https://marcoskip.github.io/infoprice-prototipos/assets/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="https://marcoskip.github.io/infoprice-prototipos/tokens.css" />
+  <link rel="stylesheet" href="https://marcoskip.github.io/infoprice-prototipos/styles.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-gray-50);
+      min-height: 100vh;
+    }
+
+    /* ─── Sidebar overrides (mesmo padrao da 0.1) ─── */
+    .sidebar__icon-mi {
+      width: 20px; height: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--color-gray-700);
+      font-size: 20px !important;
+      flex-shrink: 0;
+    }
+    .sidebar.is-expanded .sidebar__item { gap: 6px; }
+    .sidebar.is-expanded .sidebar__label {
+      font-size: 12px; line-height: 18px;
+      font-weight: var(--font-weight-semibold);
+    }
+    .sidebar__item-chevron { transition: transform 200ms ease; }
+    .sidebar.is-expanded .sidebar__item-chevron { font-size: 16px !important; }
+
+    .sidebar__subitems { display: none; }
+    .sidebar.is-expanded .sidebar__group.is-open .sidebar__subitems { display: block; }
+    .sidebar.is-expanded .sidebar__group.is-open .sidebar__item-chevron { transform: rotate(180deg); }
+    .sidebar__subitem {
+      display: block;
+      padding: 10px 14px 10px 36px;
+      font-size: 12px; line-height: 16px;
+      font-weight: var(--font-weight-regular);
+      color: var(--color-gray-800);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 100ms ease;
+      white-space: nowrap;
+    }
+    .sidebar__subitem:hover { background: var(--color-gray-100); }
+
+    /* ─── Title bar com 2 linhas (heading+badge / subtitulo+link+badge contador) ─── */
+    .title-bar {
+      height: auto;
+      min-height: 50px;
+      padding: 6px var(--space-4);
+    }
+    .title-bar__left {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+    .title-bar__top-row { display: flex; align-items: center; gap: var(--space-2); }
+    .title-bar__bottom-row { display: flex; align-items: center; gap: 4px; }
+    .title-bar__subtitle {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-regular);
+      color: var(--color-gray-600);
+    }
+    .title-bar__link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-blue-400);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .title-bar__link:hover { text-decoration: underline; }
+
+    /* ─── Positioning das bandas (sem big-numbers, sem cabecalho) ─── */
+    .filtros { top: 118px; }
+    .grid    { top: 214px; }
+
+    /* ─── Filtros: searchbar (mesma estilizacao da 0.1) ─── */
+    .searchbar.searchbar--filtros {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-300);
+      border-radius: 6px;
+      padding: 6px 12px;
+      transition: border-color 120ms ease;
+    }
+    .searchbar.searchbar--filtros:focus-within { border-color: var(--color-gray-600); }
+    .searchbar.searchbar--filtros .searchbar__icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px;
+      background: var(--color-white);
+      border: none; border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .searchbar.searchbar--filtros .searchbar__icon-btn .material-icons-outlined {
+      font-size: 18px; color: var(--color-blue-400);
+    }
+    .searchbar.searchbar--filtros .searchbar__input {
+      flex: 1; min-width: 0;
+      border: none; outline: none; background: transparent;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-md);
+      line-height: var(--line-height-lg);
+      font-weight: var(--font-weight-regular);
+      color: var(--color-gray-900);
+    }
+    .searchbar.searchbar--filtros .searchbar__input::placeholder { color: var(--color-gray-700); }
+    .searchbar.searchbar--filtros .searchbar__clear {
+      display: none;
+      align-items: center; justify-content: center;
+      width: 30px; height: 30px;
+      background: var(--color-white);
+      border: none; border-radius: 4px;
+      cursor: pointer;
+      color: var(--color-gray-600);
+      flex-shrink: 0;
+    }
+    .searchbar.searchbar--filtros .searchbar__clear:hover { background: var(--color-gray-100); color: var(--color-gray-800); }
+    .searchbar.searchbar--filtros .searchbar__clear .material-icons-outlined { font-size: 18px; }
+    .searchbar.searchbar--filtros.has-value .searchbar__clear { display: inline-flex; }
+
+    /* Dropdown dos filtros */
+    .filtro-dropdown { width: 220px; }
+
+    /* Texto "mostrando X de Y" à direita dos filtros */
+    .filtros__meta {
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-600);
+      white-space: nowrap;
+    }
+
+    /* Sort indicators (mesmo override usado na 0.1) */
+    .grid__sort-btn .material-icons-outlined {
+      font-size: 14px;
+      color: var(--color-blue-400);
+    }
+    .grid__sort-btn.is-active .material-icons-outlined { color: var(--color-blue-400); }
+
+    /* ─── Grid: estilos page-specific da tela A.9 ─── */
+    .grid__table tbody td {
+      color: var(--text-color, var(--color-gray-900));
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-md);
+      line-height: var(--line-height-lg);
+      font-weight: var(--font-weight-regular);
+    }
+    .neg-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .neg-title__name {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+    }
+    .neg-title__count {
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-600);
+    }
+    .neg-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* Chip "fornec." (origem da negociacao) — gray mais escuro pra destacar */
+    .neg-title-row .grid__chip--gray {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 4px 10px;
+      background: var(--color-gray-300);
+      color: var(--color-gray-800);
+      border-radius: 999px;
+    }
+    .neg-title-row .grid__chip--gray .material-icons-outlined { font-size: 8px; }
+    .cell-empty { color: var(--color-gray-500); }
+
+    /* Destaque: linhas que aguardam acao do usuario (override da zebra do DS). */
+    .grid__table tbody tr.row-aguarda-voce td { background: var(--color-orange-light-10); }
+
+    /* Chip da coluna Round — fundo mais escuro que o default do .grid__chip--gray */
+    .grid__chip.neg-round {
+      background: var(--color-gray-400);
+      color: var(--color-gray-900);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* Badge "Em negociacao" mais saturada que o .badge--ghost--green default */
+    .badge.badge--ghost.badge--green {
+      background: var(--color-green-light-20);
+      color: var(--color-green-700);
+    }
+
+    /* Indicador "Aguarda" */
+    .neg-aguarda {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-800);
+    }
+    .neg-aguarda .material-icons-outlined { font-size: 14px; }
+    .neg-aguarda--voce { color: var(--color-gray-900); font-weight: var(--font-weight-semibold); }
+    .neg-aguarda--fornec { color: var(--color-gray-700); }
+
+    /* Coluna Acoes (lapis) */
+    .col-acoes { text-align: center; }
+    .col-acoes .grid__th-content { justify-content: center; }
+    .row-actions { display: inline-flex; }
+    #rowActionsMenu { position: fixed; }
+
+    /* Botao da coluna Acoes (icone lapis em wrapper gray-300 36x36) — Figma node 3167:86007 */
+    .row-actions__trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--color-gray-300);
+      color: var(--color-gray-600);
+      cursor: pointer;
+      transition: background 100ms ease, color 100ms ease;
+    }
+    .row-actions__trigger:hover {
+      background: var(--color-gray-400);
+      color: var(--color-gray-700);
+    }
+    .row-actions__trigger .material-icons-outlined { font-size: 18px; }
+
+    /* ─── Dev mode (mesmo padrao da 0.1, com acoes da tela A.9) ─── */
+    .dev-menu { position: fixed; bottom: 16px; right: 16px; z-index: 9500; font-family: var(--font-family-base); }
+    .dev-menu.is-hidden { display: none; }
+    .dev-menu__trigger {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--color-gray-900);
+      color: var(--color-white);
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-elevation);
+      transition: background 100ms ease, transform 200ms ease;
+    }
+    .dev-menu__trigger:hover { background: var(--color-gray-800); }
+    .dev-menu:hover .dev-menu__trigger { transform: rotate(20deg); }
+    .dev-menu__trigger .material-icons-outlined { font-size: 22px; }
+    .dev-menu__panel {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      min-width: 240px;
+      background: var(--color-gray-900);
+      color: var(--color-white);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-elevation);
+      padding: 6px;
+      display: none;
+    }
+    .dev-menu:hover .dev-menu__panel,
+    .dev-menu:focus-within .dev-menu__panel { display: block; }
+    .dev-menu__panel::after {
+      content: ""; position: absolute;
+      left: 0; right: 0; bottom: -8px;
+      height: 8px;
+    }
+    .dev-menu__header {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 10px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--color-gray-400);
+    }
+    .dev-menu__header .material-icons-outlined { font-size: 14px; }
+    .dev-menu__divider { height: 1px; background: var(--color-gray-700); margin: 4px 0; }
+    .dev-menu__item {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%;
+      padding: 8px 10px;
+      border: none; background: transparent;
+      color: var(--color-white);
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-sm);
+      text-align: left;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .dev-menu__item:hover { background: var(--color-gray-800); }
+    .dev-menu__item .material-icons-outlined { font-size: 16px; color: var(--color-gray-400); }
+    .dev-menu__item-shortcut {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--color-gray-500);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header IPA (mesmo da 0.1, imutavel) ──────────────── -->
+  <header class="header">
+    <div class="header__left">
+      <button class="header__menu-btn" aria-label="Menu de produtos"><span class="material-icons-outlined">apps</span></button>
+      <div class="header__brand">
+        <img class="header__logo" src="https://marcoskip.github.io/infoprice-prototipos/assets/logo-principal.svg" alt="InfoPrice" />
+        <div class="header__divider" aria-hidden="true"></div>
+        <span class="header__product-name">IPA | Software de Precificação</span>
+      </div>
+    </div>
+    <div class="header__right">
+      <button class="header__help-btn" aria-label="Ajuda"><span class="material-icons-outlined">help_outline</span></button>
+      <div class="header__user">
+        <span class="header__user-name">Olá, Supermercado Estrela</span>
+        <span class="material-icons-outlined">keyboard_arrow_down</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Sidebar (mesma da 0.1, com grupo expandido) ──────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__top">
+
+      <div class="sidebar__item">
+        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/gerenciador-symbol.svg" alt="" class="sidebar__icon" />
+        <span class="sidebar__label">Gerenciador de preços</span>
+      </div>
+
+      <div class="sidebar__item">
+        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/estrategia-symbol.svg" alt="" class="sidebar__icon" />
+        <span class="sidebar__label">Estratégia</span>
+        <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
+      </div>
+
+      <div class="sidebar__item">
+        <span class="material-icons sidebar__icon-mi">local_offer</span>
+        <span class="sidebar__label">Campanhas</span>
+      </div>
+
+      <div class="sidebar__group is-open" id="negGroup">
+        <div class="sidebar__item" data-toggle-group="negGroup">
+          <img src="https://marcoskip.github.io/infoprice-prototipos/assets/negociacoes-symbol.svg" alt="" class="sidebar__icon" />
+          <span class="sidebar__label">Negociações fornecedor</span>
+          <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
+        </div>
+        <div class="sidebar__subitems">
+          <a class="sidebar__subitem" href="#">Negociação fornecedor</a>
+          <a class="sidebar__subitem" href="#">Negociações salvas</a>
+          <a class="sidebar__subitem" href="0.1.html">Fornecedores</a>
+        </div>
+      </div>
+
+      <div class="sidebar__item">
+        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/extracao-symbol.svg" alt="" class="sidebar__icon" />
+        <span class="sidebar__label">Extração de preços</span>
+      </div>
+
+      <div class="sidebar__item">
+        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/IA-symbol.svg" alt="" class="sidebar__icon" />
+        <span class="sidebar__label">Precifique com IA</span>
+        <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
+      </div>
+
+    </div>
+    <div class="sidebar__bottom">
+      <button class="sidebar__seta" id="sidebarSeta" aria-label="Expandir menu"><span class="material-icons-outlined">keyboard_arrow_right</span></button>
+    </div>
+  </aside>
+
+  <!-- ── Title bar ──────────────────────────────────────── -->
+  <section class="title-bar">
+    <div class="title-bar__left">
+      <div class="title-bar__top-row">
+        <span class="title-bar__heading">Negociações salvas</span>
+      </div>
+      <div class="title-bar__bottom-row">
+        <span class="title-bar__subtitle">
+          Só negociações oficiais. Propostas pendentes ficam em
+        </span>
+        <a class="title-bar__link" href="#" role="link">Triagem</a>
+      </div>
+    </div>
+    <div class="title-bar__right">
+      <button class="btn btn--primary btn--medium" id="novaNegBtn">
+        <span>Nova negociação</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ── Filtros ────────────────────────────────────────── -->
+  <section class="filtros">
+    <div class="filtros__inner">
+      <div class="filtros__box">
+        <div class="filtros__left">
+          <div class="filtros__row">
+
+            <div class="searchbar searchbar--filtros" id="searchbar">
+              <div class="searchbar__icon-btn" aria-hidden="true">
+                <span class="material-icons-outlined">search</span>
+              </div>
+              <input type="text" class="searchbar__input" id="searchInput" placeholder="Buscar negociação, fornecedor..." />
+              <button class="searchbar__clear" id="searchClear" aria-label="Limpar busca">
+                <span class="material-icons-outlined">close</span>
+              </button>
+            </div>
+
+            <div class="filtro-chip-wrapper" data-filter="origem">
+              <button class="filtro-chip" data-trigger>
+                <span data-label>Origem: todas</span>
+                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
+              </button>
+              <div class="filtro-dropdown" data-dropdown>
+                <div class="filtro-dropdown__list">
+                  <label class="filtro-dropdown__item"><input type="radio" name="origem" value="todas" checked /><span>Todas</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="origem" value="fornecedor" /><span>Fornecedor iniciou</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="origem" value="varejista" /><span>Varejista iniciou</span></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="filtro-chip-wrapper" data-filter="status">
+              <button class="filtro-chip" data-trigger>
+                <span data-label>Status: todos</span>
+                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
+              </button>
+              <div class="filtro-dropdown" data-dropdown>
+                <div class="filtro-dropdown__list">
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="todos" checked /><span>Todos</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="em-negociacao" /><span>Em negociação</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="aguard-fornecedor" /><span>Aguard. fornecedor</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="rascunho" /><span>Rascunho</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="fechado" /><span>Fechado</span></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="filtro-chip-wrapper" data-filter="aguarda">
+              <button class="filtro-chip" data-trigger>
+                <span data-label>Aguarda: todos</span>
+                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
+              </button>
+              <div class="filtro-dropdown" data-dropdown>
+                <div class="filtro-dropdown__list">
+                  <label class="filtro-dropdown__item"><input type="radio" name="aguarda" value="todos" checked /><span>Todos</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="aguarda" value="voce" /><span>Você</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="aguarda" value="fornec" /><span>Fornecedor</span></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="filtro-chip-wrapper" data-filter="responsavel">
+              <button class="filtro-chip" data-trigger>
+                <span data-label>Responsável: todos</span>
+                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
+              </button>
+              <div class="filtro-dropdown" data-dropdown>
+                <div class="filtro-dropdown__list">
+                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="todos" checked /><span>Todos</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="ana.costa@estrela" /><span>ana.costa@estrela</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="joao.mendes@estrela" /><span>joao.mendes@estrela</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="felipe.kanarek@infoprice" /><span>felipe.kanarek@infoprice</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="warlleyn.bob@infoprice" /><span>warlleyn.bob@infoprice</span></label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="filtros__right"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Grid ───────────────────────────────────────────── -->
+  <section class="grid">
+    <div class="grid__wrapper">
+      <table class="grid__table" id="negTable">
+        <colgroup>
+          <col style="width:22%">
+          <col style="width:9%">
+          <col style="width:14%">
+          <col style="width:8%">
+          <col style="width:8%">
+          <col style="width:8%">
+          <col style="width:13%">
+          <col style="width:5%">
+          <col style="width:9%">
+          <col style="width:8%">
+          <col style="width:48px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>
+              <div class="grid__th-content">
+                <span>Negociação</span>
+                <button class="grid__sort-btn" data-sort="titulo" data-state="inactive" aria-label="Ordenar por Negociação">
+                  <span class="material-icons-outlined">unfold_more</span>
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="grid__th-content">
+                <span>Loja</span>
+                <button class="grid__sort-btn" data-sort="loja" data-state="inactive" aria-label="Ordenar por Loja">
+                  <span class="material-icons-outlined">unfold_more</span>
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="grid__th-content">
+                <span>Fornecedor</span>
+                <button class="grid__sort-btn" data-sort="fornecedor" data-state="inactive" aria-label="Ordenar por Fornecedor">
+                  <span class="material-icons-outlined">unfold_more</span>
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="grid__th-content">
+                <span>Início</span>
+                <button class="grid__sort-btn" data-sort="inicio" data-state="inactive" aria-label="Ordenar por Início">
+                  <span class="material-icons-outlined">unfold_more</span>
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="grid__th-content">
+                <span>Final</span>
+                <button class="grid__sort-btn" data-sort="final" data-state="inactive" aria-label="Ordenar por Final">
+                  <span class="material-icons-outlined">unfold_more</span>
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="grid__th-content">
+                <span>Últ. edição</span>
+                <button class="grid__sort-btn is-active" data-sort="ultEd" data-state="desc" aria-label="Ordenar por Última edição">
+                  <span class="material-icons-outlined">arrow_downward</span>
+                </button>
+              </div>
+            </th>
+            <th>
+              <div class="grid__th-content">
+                <span>Responsável</span>
+                <button class="grid__sort-btn" data-sort="responsavel" data-state="inactive" aria-label="Ordenar por Responsável">
+                  <span class="material-icons-outlined">unfold_more</span>
+                </button>
+              </div>
+            </th>
+            <th><div class="grid__th-content"><span>Round</span></div></th>
+            <th>
+              <div class="grid__th-content">
+                <span>Status</span>
+                <button class="grid__sort-btn" data-sort="status" data-state="inactive" aria-label="Ordenar por Status">
+                  <span class="material-icons-outlined">unfold_more</span>
+                </button>
+              </div>
+            </th>
+            <th><div class="grid__th-content"><span>Aguarda</span></div></th>
+            <th class="col-acoes"><div class="grid__th-content"><span>Ações</span></div></th>
+          </tr>
+        </thead>
+        <tbody id="negTbody"></tbody>
+      </table>
+
+      <div class="empty-state" id="emptyState" hidden style="padding:64px 16px;text-align:center">
+        <div style="font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);color:var(--color-gray-800);margin-bottom:4px">
+          Nenhuma negociação para os filtros aplicados
+        </div>
+        <div style="font-size:var(--font-size-md);color:var(--color-gray-600)">
+          Tente ajustar ou <a id="clearFiltersLink" style="color:var(--color-blue-600);cursor:pointer;font-weight:var(--font-weight-semibold)">limpar filtros</a>.
+        </div>
+      </div>
+
+      <div class="grid__pagination" id="pagination">
+        <div class="grid__pagination-left">
+          <span class="grid__pagination-val">20</span>
+          <span class="material-icons-outlined" style="font-size:16px;color:var(--color-blue-400)">expand_less</span>
+          <span class="grid__pagination-label">/ página</span>
+          <span class="grid__pagination-sep"></span>
+          <span class="grid__pagination-label">total: <span id="paginationTotal">47</span></span>
+        </div>
+        <div class="grid__pagination-right">
+          <div class="grid__pagination-nav">
+            <span class="material-icons-outlined">first_page</span>
+            <span class="material-icons-outlined">chevron_left</span>
+          </div>
+          <button class="grid__pagination-btn is-active">1</button>
+          <button class="grid__pagination-btn">2</button>
+          <button class="grid__pagination-btn">3</button>
+          <div class="grid__pagination-nav">
+            <span class="material-icons-outlined">chevron_right</span>
+            <span class="material-icons-outlined">last_page</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Container de toasts (.toast-container do DS) -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Menu de acoes (compartilhado, populado dinamicamente conforme status) -->
+  <div class="context-menu" id="rowActionsMenu" role="menu"></div>
+
+  <!-- Dev menu (controles de demo) -->
+  <div class="dev-menu" id="devMenu">
+    <div class="dev-menu__panel" role="menu">
+      <div class="dev-menu__header">
+        <span class="material-icons-outlined">bolt</span>
+        <span>Dev controls</span>
+      </div>
+      <button class="dev-menu__item" data-dev="toast-success" type="button">
+        <span class="material-icons-outlined">check_circle</span>
+        <span>Disparar toast (sucesso)</span>
+      </button>
+      <button class="dev-menu__item" data-dev="add-neg" type="button">
+        <span class="material-icons-outlined">add_circle_outline</span>
+        <span>Adicionar negociação à lista</span>
+      </button>
+      <div class="dev-menu__divider"></div>
+      <button class="dev-menu__item" data-dev="toggle-sidebar" type="button">
+        <span class="material-icons-outlined">menu_open</span>
+        <span>Toggle sidebar</span>
+      </button>
+      <button class="dev-menu__item" data-dev="reset-all" type="button">
+        <span class="material-icons-outlined">restart_alt</span>
+        <span>Resetar tudo</span>
+      </button>
+      <div class="dev-menu__divider"></div>
+      <button class="dev-menu__item" data-dev="hide-menu" type="button">
+        <span class="material-icons-outlined">visibility_off</span>
+        <span>Esconder dev menu</span>
+        <span class="dev-menu__item-shortcut">D</span>
+      </button>
+    </div>
+    <button class="dev-menu__trigger" id="devMenuTrigger" aria-label="Dev controls">
+      <span class="material-icons-outlined">bolt</span>
+    </button>
+  </div>
+
+  <script>
+    // ─── Dados de exemplo (do wireframe A.9) ─────────────────
+    const NEGOCIACOES = [
+      { id: 1, fornec: true,  titulo: 'Unilever · Tabela Q2 - Higiene & Beleza', produtos: 5,  loja: 'Cluster 01',     fornecedor: 'UNILEVER BRASIL',         inicio: '20/04/2026', final: null,         ultEd: '20/04/2026', responsavel: 'ana.costa@estrela',       round: 'R1', status: 'em-negociacao',     aguarda: 'voce' },
+      { id: 2, fornec: true,  titulo: 'Nestlé · Linha Nescafé - reajuste',       produtos: 12, loja: null,             fornecedor: 'NESTLÉ BRASIL',           inicio: '19/04/2026', final: null,         ultEd: '19/04/2026', responsavel: 'joao.mendes@estrela',     round: 'R2', status: 'aguard-fornecedor', aguarda: 'fornec' },
+      { id: 3, fornec: false, titulo: '0000 Tste PMZ Felipe 08/04',              produtos: 3,  loja: 'Cluster 01',     fornecedor: 'BIOLAB SANUS FARMACEL',   inicio: '08/04/2026', final: null,         ultEd: '08/04/2026', responsavel: 'felipe.kanarek@infoprice', round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
+      { id: 4, fornec: false, titulo: '000 Teste Cluster 02 Felipe 07/04',       produtos: 6,  loja: 'Cluster 01, 02', fornecedor: 'CODIL ALIMENTOS LTDA',    inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice', round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
+      { id: 5, fornec: false, titulo: '000 Teste Cluster I Felipe 07/04',        produtos: 3,  loja: 'Cluster 01',     fornecedor: 'BROTO LEGAL',             inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice', round: 'R3', status: 'em-negociacao',     aguarda: 'voce' },
+      { id: 6, fornec: false, titulo: '000 Teste Felipe 07/04',                  produtos: 0,  loja: null,             fornecedor: 'BROTO LEGAL',             inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice', round: null, status: 'rascunho',          aguarda: null },
+      { id: 7, fornec: false, titulo: 'A PMZ',                                   produtos: 4,  loja: '1, 2, 3, 4',     fornecedor: 'CAMIL ALIMENTOS',         inicio: '08/04/2026', final: '08/04/2026', ultEd: '08/04/2026', responsavel: 'warlleyn.bob@infoprice',   round: 'R2', status: 'fechado',           aguarda: null },
+      { id: 8, fornec: false, titulo: 'bob',                                     produtos: 4,  loja: null,             fornecedor: 'CAFE TRES CORAÇOES SA',   inicio: '02/04/2026', final: null,         ultEd: '02/04/2026', responsavel: 'warlleyn.bob@infoprice',   round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
+      { id: 9, fornec: false, titulo: 'Bob clean',                               produtos: 4,  loja: 'Cluster 01, 02', fornecedor: 'BELLUZ IND COM IMP E EXI',inicio: '01/04/2026', final: null,         ultEd: '01/04/2026', responsavel: 'warlleyn.bob@infoprice',   round: 'R1', status: 'em-negociacao',     aguarda: 'voce' },
+    ];
+
+    const STATUS_LABEL = {
+      'em-negociacao':     'Em negociação',
+      'aguard-fornecedor': 'Aguard. fornecedor',
+      'rascunho':          'Rascunho',
+      'fechado':           'Fechado',
+    };
+    const STATUS_BADGE_CLASS = {
+      'em-negociacao':     'badge--ghost badge--green',
+      'aguard-fornecedor': 'badge--filled badge--orange',
+      'rascunho':          'badge--ghost badge--gray',
+      'fechado':           'badge--filled badge--green',
+    };
+
+    // Acoes contextuais por status (menu hover na coluna Acoes)
+    const ROW_MENUS_POR_STATUS = {
+      'em-negociacao':     [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Cancelar', action: 'cancelar', danger: true }],
+      'aguard-fornecedor': [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Lembrar fornecedor', action: 'lembrar' }, { label: 'Cancelar', action: 'cancelar', danger: true }],
+      'rascunho':          [{ label: 'Continuar edição', action: 'continuar' }, { label: 'Excluir', action: 'excluir', danger: true }],
+      'fechado':           [{ label: 'Ver detalhes', action: 'abrir' }, { label: 'Duplicar', action: 'duplicar' }],
+    };
+
+    const state = {
+      filterOrigem: 'todas',
+      filterStatus: 'todos',
+      filterAguarda: 'todos',
+      filterResponsavel: 'todos',
+      search: '',
+      sort: { key: 'ultEd', dir: 'desc' },
+    };
+
+    const tbody       = document.getElementById('negTbody');
+    const table       = document.getElementById('negTable');
+    const emptyState  = document.getElementById('emptyState');
+    const pagination  = document.getElementById('pagination');
+
+    // ─── Render ──────────────────────────────────────────────
+    function applyFilters() {
+      let rows = NEGOCIACOES.slice();
+      if (state.filterOrigem === 'fornecedor') rows = rows.filter(r => r.fornec);
+      if (state.filterOrigem === 'varejista')  rows = rows.filter(r => !r.fornec);
+      if (state.filterStatus !== 'todos')      rows = rows.filter(r => r.status === state.filterStatus);
+      if (state.filterAguarda !== 'todos')     rows = rows.filter(r => r.aguarda === state.filterAguarda);
+      if (state.filterResponsavel !== 'todos') rows = rows.filter(r => r.responsavel === state.filterResponsavel);
+      if (state.search.trim()) {
+        const q = state.search.trim().toLowerCase();
+        rows = rows.filter(r =>
+          r.titulo.toLowerCase().includes(q) ||
+          r.fornecedor.toLowerCase().includes(q)
+        );
+      }
+      if (state.sort.key && state.sort.dir) {
+        const { key, dir } = state.sort;
+        rows.sort((a, b) => {
+          const av = a[key] ?? '';
+          const bv = b[key] ?? '';
+          if (av === bv) return 0;
+          return (av < bv ? -1 : 1) * (dir === 'asc' ? 1 : -1);
+        });
+      }
+      return rows;
+    }
+
+    function renderRows() {
+      const rows = applyFilters();
+      tbody.innerHTML = rows.map(r => {
+        const statusLabel = STATUS_LABEL[r.status];
+        const statusClass = STATUS_BADGE_CLASS[r.status];
+        const fornecChip  = r.fornec
+          ? '<span class="grid__chip grid__chip--gray"><span class="material-icons-outlined">arrow_upward</span>fornec.</span>'
+          : '';
+        const loja        = r.loja ?? '<span class="cell-empty">—</span>';
+        const final       = r.final ?? '<span class="cell-empty">—</span>';
+        const round       = r.round
+          ? `<span class="grid__chip grid__chip--gray neg-round">${r.round}</span>`
+          : '<span class="cell-empty">—</span>';
+        let aguarda = '<span class="cell-empty">—</span>';
+        if (r.aguarda === 'voce') {
+          aguarda = '<span class="neg-aguarda neg-aguarda--voce"><span class="material-icons-outlined">arrow_back</span>você</span>';
+        } else if (r.aguarda === 'fornec') {
+          aguarda = '<span class="neg-aguarda neg-aguarda--fornec">fornec.<span class="material-icons-outlined">arrow_forward</span></span>';
+        }
+
+        const rowClass = r.aguarda === 'voce' ? ' class="row-aguarda-voce"' : '';
+        return `
+          <tr${rowClass}>
+            <td>
+              <div class="neg-title-row">
+                ${fornecChip}
+                <div class="neg-title">
+                  <span class="neg-title__name">${r.titulo}</span>
+                  <span class="neg-title__count">${r.produtos} produtos</span>
+                </div>
+              </div>
+            </td>
+            <td>${loja}</td>
+            <td>${r.fornecedor}</td>
+            <td>${r.inicio}</td>
+            <td>${final}</td>
+            <td>${r.ultEd}</td>
+            <td>${r.responsavel}</td>
+            <td>${round}</td>
+            <td><span class="badge ${statusClass}">${statusLabel}</span></td>
+            <td>${aguarda}</td>
+            <td class="col-acoes">
+              <div class="row-actions" data-id="${r.id}">
+                <button class="row-actions__trigger" aria-haspopup="menu">
+                  <span class="material-icons-outlined">edit</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      const isEmpty = rows.length === 0;
+      emptyState.hidden = !isEmpty;
+      table.style.display = isEmpty ? 'none' : '';
+      pagination.hidden = isEmpty;
+    }
+
+    // ─── Searchbar ──────────────────────────────────────────
+    const searchbarEl = document.getElementById('searchbar');
+    const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
+    let searchTimer = null;
+    searchInput.addEventListener('input', (e) => {
+      const v = e.target.value;
+      searchbarEl.classList.toggle('has-value', !!v);
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => { state.search = v; renderRows(); }, 200);
+    });
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchbarEl.classList.remove('has-value');
+      state.search = '';
+      renderRows();
+      searchInput.focus();
+    });
+
+    // ─── Filtros chips ──────────────────────────────────────
+    const FILTRO_LABELS = {
+      origem:      { todas: 'Origem: todas',  fornecedor: 'Origem: fornecedor',  varejista: 'Origem: varejista' },
+      status:      { todos: 'Status: todos',  'em-negociacao': 'Em negociação',  'aguard-fornecedor': 'Aguard. fornecedor', rascunho: 'Rascunho', fechado: 'Fechado' },
+      aguarda:     { todos: 'Aguarda: todos', voce: 'Aguarda: você',             fornec: 'Aguarda: fornecedor' },
+      responsavel: { todos: 'Responsável: todos' },
+    };
+    function closeAllFiltros() {
+      document.querySelectorAll('.filtro-chip-wrapper').forEach(w => {
+        w.querySelector('[data-trigger]').classList.remove('is-open');
+        w.querySelector('[data-dropdown]').classList.remove('is-open');
+      });
+    }
+    document.querySelectorAll('.filtro-chip-wrapper').forEach(wrapper => {
+      const trigger  = wrapper.querySelector('[data-trigger]');
+      const dropdown = wrapper.querySelector('[data-dropdown]');
+      const labelEl  = trigger.querySelector('[data-label]');
+      const filterKey = wrapper.dataset.filter;
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const willOpen = !dropdown.classList.contains('is-open');
+        closeAllFiltros();
+        if (willOpen) {
+          trigger.classList.add('is-open');
+          dropdown.classList.add('is-open');
+        }
+      });
+
+      dropdown.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          const val = radio.value;
+          const labelMap = FILTRO_LABELS[filterKey];
+          // pra responsavel, o label fica "Responsavel: {email}"
+          if (filterKey === 'responsavel') {
+            labelEl.textContent = val === 'todos' ? 'Responsável: todos' : `Resp.: ${val.split('@')[0]}`;
+          } else {
+            labelEl.textContent = labelMap[val] || val;
+          }
+          state[`filter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}`] = val;
+          renderRows();
+          trigger.classList.remove('is-open');
+          dropdown.classList.remove('is-open');
+        });
+      });
+    });
+
+    // ─── Sort cycle ─────────────────────────────────────────
+    document.querySelectorAll('.grid__sort-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.sort;
+        const currentSameKey = state.sort.key === key;
+        let nextDir;
+        if (!currentSameKey)                nextDir = 'desc';
+        else if (state.sort.dir === 'desc') nextDir = 'asc';
+        else if (state.sort.dir === 'asc')  nextDir = null;
+        else                                nextDir = 'desc';
+
+        document.querySelectorAll('.grid__sort-btn').forEach(b => {
+          b.classList.remove('is-active');
+          b.dataset.state = 'inactive';
+          b.querySelector('.material-icons-outlined').textContent = 'unfold_more';
+        });
+        if (nextDir) {
+          btn.classList.add('is-active');
+          btn.dataset.state = nextDir;
+          btn.querySelector('.material-icons-outlined').textContent = nextDir === 'desc' ? 'arrow_downward' : 'arrow_upward';
+          state.sort = { key, dir: nextDir };
+        } else {
+          state.sort = { key: null, dir: null };
+        }
+        renderRows();
+      });
+    });
+
+    // ─── Click-outside dos dropdowns de filtros ──────────────
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.filtro-chip-wrapper')) closeAllFiltros();
+    });
+
+    // ─── Limpar filtros ─────────────────────────────────────
+    function clearAllFilters() {
+      state.filterOrigem = 'todas';
+      state.filterStatus = 'todos';
+      state.filterAguarda = 'todos';
+      state.filterResponsavel = 'todos';
+      state.search = '';
+      searchInput.value = '';
+      searchbarEl.classList.remove('has-value');
+      // resetar UI dos chips
+      document.querySelectorAll('.filtro-chip-wrapper').forEach(w => {
+        const labelEl = w.querySelector('[data-label]');
+        const key = w.dataset.filter;
+        const defaults = { origem: 'Origem: todas', status: 'Status: todos', aguarda: 'Aguarda: todos', responsavel: 'Responsável: todos' };
+        labelEl.textContent = defaults[key];
+        w.querySelectorAll('input[type="radio"]').forEach(r => r.checked = (r.value === 'todos' || r.value === 'todas'));
+      });
+      renderRows();
+    }
+    document.getElementById('clearFiltersLink').addEventListener('click', clearAllFilters);
+
+    // ─── Sidebar toggle ─────────────────────────────────────
+    const sidebar = document.getElementById('sidebar');
+    const seta = document.getElementById('sidebarSeta');
+    let expanded = false;
+    seta.addEventListener('click', () => {
+      expanded = !expanded;
+      sidebar.classList.toggle('is-expanded', expanded);
+      seta.classList.toggle('is-flipped', expanded);
+      const newLeft = expanded ? '220px' : '52px';
+      document.querySelectorAll('.title-bar, .filtros, .grid').forEach(el => el.style.left = newLeft);
+    });
+    document.querySelectorAll('[data-toggle-group]').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        if (!sidebar.classList.contains('is-expanded')) return;
+        const group = document.getElementById(trigger.dataset.toggleGroup);
+        if (group) group.classList.toggle('is-open');
+      });
+    });
+
+    // ─── CTA Nova negociação ────────────────────────────────
+    document.getElementById('novaNegBtn').addEventListener('click', () => {
+      showToast('Fluxo de nova negociação ainda nao implementado.', 'info');
+    });
+
+    // ─── Toast helper (igual ao da 0.1) ─────────────────────
+    const toastContainer = document.getElementById('toastContainer');
+    function showToast(message, variant = 'success', durationMs = 5000) {
+      const iconMap = { success: 'check_circle', error: 'error', info: 'info', warning: 'warning' };
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}, ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
+      const toast = document.createElement('div');
+      toast.className = `toast toast--${variant}`;
+      toast.innerHTML = `
+        <div class="toast__content-wrap">
+          <span class="material-icons-outlined toast__icon">${iconMap[variant] || 'info'}</span>
+          <div class="toast__content">
+            <span class="toast__body">${message}</span>
+            <span class="toast__meta">${timestamp}</span>
+          </div>
+        </div>
+        <button class="toast__close" type="button" aria-label="Fechar">
+          <span class="material-icons-outlined" style="font-size:16px">close</span>
+        </button>
+      `;
+      toastContainer.appendChild(toast);
+      const close = () => toast.remove();
+      toast.querySelector('.toast__close').addEventListener('click', close);
+      if (durationMs) setTimeout(close, durationMs);
+    }
+
+    // ─── Menu de acoes da linha (hover, contextual) ─────────
+    const rowMenu = document.getElementById('rowActionsMenu');
+    let rowMenuTrigger = null;
+    let rowMenuCloseTimer = null;
+
+    function renderRowMenu(status) {
+      const items = ROW_MENUS_POR_STATUS[status] || [];
+      rowMenu.innerHTML = items.map((it, i) => {
+        const divider = i > 0 ? '<div class="context-menu__divider"></div>' : '';
+        const danger  = it.danger ? ' context-menu__item--danger' : '';
+        return `${divider}<button class="context-menu__item${danger}" type="button" data-action="${it.action}">${it.label}</button>`;
+      }).join('');
+    }
+    function positionRowMenu(trigger) {
+      const rect = trigger.getBoundingClientRect();
+      rowMenu.classList.add('is-open');
+      const menuW = rowMenu.offsetWidth;
+      const menuH = rowMenu.offsetHeight;
+      let top  = rect.bottom + 4;
+      let left = rect.right - menuW;
+      if (left < 8) left = 8;
+      if (top + menuH > window.innerHeight - 8) top = rect.top - menuH - 4;
+      rowMenu.style.top  = top + 'px';
+      rowMenu.style.left = left + 'px';
+    }
+    function openRowMenu(trigger) {
+      clearTimeout(rowMenuCloseTimer);
+      rowMenuTrigger = trigger;
+      const wrapper = trigger.closest('.row-actions');
+      const id = parseInt(wrapper.dataset.id, 10);
+      const neg = NEGOCIACOES.find(n => n.id === id);
+      if (!neg) return;
+      renderRowMenu(neg.status);
+      positionRowMenu(trigger);
+    }
+    function scheduleCloseRowMenu() {
+      clearTimeout(rowMenuCloseTimer);
+      rowMenuCloseTimer = setTimeout(() => {
+        rowMenu.classList.remove('is-open');
+        rowMenuTrigger = null;
+      }, 120);
+    }
+
+    document.addEventListener('mouseover', (e) => {
+      const trigger = e.target.closest('.row-actions__trigger');
+      if (trigger) openRowMenu(trigger);
+    });
+    document.addEventListener('mouseout', (e) => {
+      const trigger = e.target.closest('.row-actions__trigger');
+      if (!trigger) return;
+      const toMenu = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.context-menu');
+      if (!toMenu) scheduleCloseRowMenu();
+    });
+    rowMenu.addEventListener('mouseenter', () => clearTimeout(rowMenuCloseTimer));
+    rowMenu.addEventListener('mouseleave', () => scheduleCloseRowMenu());
+
+    document.querySelector('.grid').addEventListener('scroll', () => {
+      rowMenu.classList.remove('is-open');
+      rowMenuTrigger = null;
+    }, true);
+
+    // Acoes do menu contextual
+    rowMenu.addEventListener('click', (e) => {
+      const btn = e.target.closest('.context-menu__item');
+      if (!btn || !rowMenuTrigger) return;
+      const action = btn.dataset.action;
+      const wrapper = rowMenuTrigger.closest('.row-actions');
+      const id = parseInt(wrapper.dataset.id, 10);
+      const neg = NEGOCIACOES.find(n => n.id === id);
+      if (!neg) return;
+      const titulo = neg.titulo;
+
+      if (action === 'abrir') {
+        showToast(`Abrindo "${titulo}".`, 'info');
+      } else if (action === 'continuar') {
+        showToast(`Continuando edição de "${titulo}".`, 'info');
+      } else if (action === 'cancelar') {
+        const idx = NEGOCIACOES.indexOf(neg);
+        if (idx >= 0) NEGOCIACOES.splice(idx, 1);
+        showToast(`Negociação "${titulo}" cancelada.`, 'success');
+      } else if (action === 'excluir') {
+        const idx = NEGOCIACOES.indexOf(neg);
+        if (idx >= 0) NEGOCIACOES.splice(idx, 1);
+        showToast(`Rascunho "${titulo}" excluído.`, 'success');
+      } else if (action === 'lembrar') {
+        showToast(`Lembrete enviado ao fornecedor de "${titulo}".`, 'success');
+      } else if (action === 'duplicar') {
+        const nextId = Math.max(...NEGOCIACOES.map(n => n.id)) + 1;
+        NEGOCIACOES.unshift({ ...neg, id: nextId, titulo: `${titulo} (cópia)`, status: 'rascunho', round: null, aguarda: null, ultEd: new Date().toLocaleDateString('pt-BR') });
+        showToast(`"${titulo}" duplicado como rascunho.`, 'success');
+      }
+      rowMenu.classList.remove('is-open');
+      rowMenuTrigger = null;
+      renderRows();
+    });
+
+    // ─── Dev mode ──────────────────────────────────────────
+    const NEG_SNAPSHOT = JSON.parse(JSON.stringify(NEGOCIACOES));
+    const devMenu = document.getElementById('devMenu');
+    const DEV_ACTIONS = {
+      'toast-success': () => showToast('Convite enviado para Unilever Brasil Ltda.', 'success'),
+      'add-neg': () => {
+        const nextId = Math.max(...NEGOCIACOES.map(n => n.id)) + 1;
+        NEGOCIACOES.unshift({
+          id: nextId, fornec: false, titulo: 'Nova negociação demo', produtos: 8,
+          loja: 'Cluster 03', fornecedor: 'MONDELEZ BRASIL', inicio: '20/05/2026',
+          final: null, ultEd: '20/05/2026', responsavel: 'marcos.keller@infoprice',
+          round: null, status: 'rascunho', aguarda: null,
+        });
+        renderRows();
+        showToast('Negociação criada como rascunho.', 'success');
+      },
+      'toggle-sidebar': () => seta.click(),
+      'reset-all': () => {
+        NEGOCIACOES.length = 0;
+        NEG_SNAPSHOT.forEach(n => NEGOCIACOES.push({ ...n }));
+        clearAllFilters();
+        toastContainer.innerHTML = '';
+      },
+      'hide-menu': () => devMenu.classList.add('is-hidden'),
+    };
+    devMenu.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-dev]');
+      if (!btn) return;
+      const action = DEV_ACTIONS[btn.dataset.dev];
+      if (action) action();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() !== 'd') return;
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+      devMenu.classList.toggle('is-hidden');
+    });
+
+    // ─── Inicializa ────────────────────────────────────────
+    renderRows();
+  </script>
+</body>
+</html>
