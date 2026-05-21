@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPA — Vincular papel de fornecedor</title>
+  <link rel="icon" type="image/x-icon" href="https://marcoskip.github.io/infoprice-prototipos/assets/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link rel="stylesheet" href="https://marcoskip.github.io/infoprice-prototipos/tokens.css" />
+  <link rel="stylesheet" href="https://marcoskip.github.io/infoprice-prototipos/styles.css" />
+  <!--
+    0.4.6 Vincular Papel de Fornecedor — variante da 0.4 para fornecedor cujo e-mail
+    ja tem conta ativa no IPA (por outro varejista, outro modulo, ou outro papel).
+
+    Pre-condicao: e-mail do convite (patricia@unilever.com) ja existe no banco IPA.
+    URL: ipa.app/convite/{token} (o backend redireciona pra esta tela ao inves da 0.4)
+
+    Tokens-fonte (DS unico): mesma paleta da 0.4 + orange para o badge de aviso.
+      --color-orange-light-20  #fcead3  (bg do badge "CONTA JA EXISTE")
+      --color-orange-700       #cb6f10  (texto do badge)
+      --color-gray-100/200/300 (caixa info + chip numerado)
+      --color-brand-primary    #0e9ce3  (CTA primario)
+
+    Componentes do DS: .btn--primary, .btn--secondary (CTA secundario), .form-field nao se aplica.
+
+    Inferencias (nao no print, alinhadas com 0.4 e CLAUDE.md):
+      - Wireframe usa amarelo + bordas pontilhadas (estetica low-fi). O DS nao tem
+        pontilhado nem amarelo: substitui por badge orange-light + caixa cinza
+        com border solido + CTA secondary do DS (no lugar do "pontilhado").
+      - Wireframe usa CTA primario preto pra destaque. Mantido azul brand-primary
+        pra consistencia com 0.4 / 0.3 / 0.1 / 0.2.
+
+    Acoes:
+      - "Vincular e acessar como fornecedor" → fluxo 2FA (0.4.7) → A.6.1
+      - "Prefiro criar uma conta separada" → 0.4 (criar conta nova)
+  -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-gray-100);
+      color: var(--color-gray-900);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    /* ─── Page layout (sem header/sidebar — pre-login) ─── */
+    .auth-page {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6) var(--space-4);
+      gap: var(--space-4);
+    }
+
+    /* ─── Card de auth ─── */
+    .auth-card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      padding: var(--space-6) var(--space-6) 28px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .auth-card__logo {
+      align-self: center;
+      height: 22px;
+      width: auto;
+      display: block;
+    }
+
+    /* ─── Badge "CONTA JA EXISTE NO INFOPRICE" ─── */
+    .auth-badge {
+      align-self: center;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      background: var(--color-orange-light-20);
+      color: var(--color-orange-700);
+      border-radius: 999px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      line-height: 16px;
+      margin: 4px 0 -4px;
+    }
+    .auth-card__heading {
+      text-align: center;
+      font-size: var(--font-size-3xl);
+      line-height: 32px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+      margin: 0;
+    }
+
+    /* ─── Caixa info (Detectamos que…) ─── */
+    .auth-info {
+      background: var(--color-gray-100);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      font-size: var(--font-size-md);
+      line-height: 22px;
+      color: var(--color-gray-800);
+    }
+    .auth-info strong { font-weight: var(--font-weight-semibold); color: var(--color-gray-900); }
+
+    /* ─── "O QUE VAI ACONTECER" + lista numerada ─── */
+    .auth-sequence { display: flex; flex-direction: column; gap: var(--space-3); margin-top: 4px; }
+    .auth-sequence__label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-700);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .auth-step {
+      display: flex;
+      gap: var(--space-3);
+      align-items: flex-start;
+    }
+    .auth-step__num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: var(--radius-sm);
+      background: var(--color-gray-200);
+      color: var(--color-gray-900);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .auth-step__body { display: flex; flex-direction: column; gap: 2px; }
+    .auth-step__title {
+      font-size: var(--font-size-md);
+      line-height: 20px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+    }
+    .auth-step__desc {
+      font-size: var(--font-size-md);
+      line-height: 20px;
+      color: var(--color-gray-700);
+    }
+
+    /* ─── CTAs ─── */
+    .auth-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-top: 4px;
+    }
+    .auth-cta {
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      justify-content: center;
+    }
+
+    /* ─── Disclaimer 2FA ─── */
+    .auth-disclaimer {
+      text-align: center;
+      font-size: var(--font-size-sm);
+      line-height: 18px;
+      color: var(--color-gray-600);
+      margin: 4px 0 0;
+    }
+    .auth-disclaimer strong { font-weight: var(--font-weight-semibold); color: var(--color-gray-800); }
+
+    /* ─── Rodape fino ─── */
+    .auth-footer {
+      text-align: center;
+      font-size: var(--font-size-xs);
+      line-height: 16px;
+      color: var(--color-gray-600);
+      padding: 0 var(--space-4) var(--space-4);
+    }
+    .auth-footer a { color: var(--color-gray-600); text-decoration: underline; }
+    .auth-footer a:hover { color: var(--color-gray-800); }
+  </style>
+</head>
+<body>
+
+  <main class="auth-page">
+
+    <section class="auth-card" aria-labelledby="authTitle">
+
+      <!-- Logo IPA -->
+      <img class="auth-card__logo" src="https://marcoskip.github.io/infoprice-prototipos/assets/logo-principal.svg" alt="IPA" />
+
+      <!-- Badge de aviso -->
+      <span class="auth-badge">Conta já existe no InfoPrice</span>
+
+      <!-- Titulo -->
+      <h1 class="auth-card__heading" id="authTitle">Vincular papel de fornecedor?</h1>
+
+      <!-- Caixa info -->
+      <div class="auth-info">
+        Detectamos que <strong>patricia@unilever.com</strong> já tem uma conta InfoPrice ativa
+        (<strong>Unilever Brasil</strong> é cliente IPA desde 2022 — módulo Monitoramento de Preço).
+      </div>
+
+      <!-- O que vai acontecer -->
+      <div class="auth-sequence" aria-label="O que vai acontecer ao vincular o papel de fornecedor">
+        <span class="auth-sequence__label">O que vai acontecer</span>
+
+        <div class="auth-step">
+          <span class="auth-step__num">1</span>
+          <div class="auth-step__body">
+            <span class="auth-step__title">Sua conta atual continua igual</span>
+            <span class="auth-step__desc">Todos os produtos IPA que você já usa permanecem ativos.</span>
+          </div>
+        </div>
+
+        <div class="auth-step">
+          <span class="auth-step__num">2</span>
+          <div class="auth-step__body">
+            <span class="auth-step__title">Adicionamos o papel "Fornecedor @ Unilever"</span>
+            <span class="auth-step__desc">Você passa a ver as negociações iniciadas por Supermercado Estrela.</span>
+          </div>
+        </div>
+
+        <div class="auth-step">
+          <span class="auth-step__num">3</span>
+          <div class="auth-step__body">
+            <span class="auth-step__title">Alterna entre contextos pelo menu</span>
+            <span class="auth-step__desc">Varejista (se aplicável), Fornecedor, Admin — no seletor superior.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="auth-actions">
+        <button type="button" class="btn btn--primary btn--medium auth-cta" id="linkBtn">
+          Vincular e acessar como fornecedor
+        </button>
+        <button type="button" class="btn btn--primary btn--ghost btn--medium auth-cta" id="separateBtn">
+          Prefiro criar uma conta separada
+        </button>
+      </div>
+
+      <!-- Disclaimer 2FA -->
+      <p class="auth-disclaimer">
+        Por segurança, vamos pedir um <strong>código 2FA de 6 dígitos</strong> antes de concluir.
+      </p>
+
+    </section>
+
+    <footer class="auth-footer">
+      InfoPrice&nbsp;·&nbsp;2026&nbsp;·&nbsp;
+      <a href="https://ipa.app/termos" target="_blank">Termos</a>&nbsp;·&nbsp;
+      <a href="https://infoprice.co/privacidade" target="_blank">Privacidade</a>&nbsp;·&nbsp;
+      <a href="https://infoprice.co/suporte" target="_blank">Suporte</a>
+    </footer>
+  </main>
+
+  <script>
+    // Mock dos CTAs (sem navegacao real)
+    document.getElementById('linkBtn').addEventListener('click', () => {
+      // Em prod: → 0.4.7 (2FA) → A.6.1
+      window.location.href = '0.4.7.html';
+    });
+    document.getElementById('separateBtn').addEventListener('click', () => {
+      // Em prod: → 0.4 (criar conta separada)
+      window.location.href = '0.4.html';
+    });
+  </script>
+
+</body>
+</html>

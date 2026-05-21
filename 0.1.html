@@ -59,6 +59,42 @@
     }
     .sidebar__subitem:hover { background: var(--color-gray-100); }
 
+    /* ─── Popup flutuante (sidebar recolhida) ─── */
+    .sidebar-popup {
+      position: fixed;
+      z-index: 1100;
+      min-width: 224px;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.04);
+      padding: 8px;
+      font-family: 'Open Sans', sans-serif;
+    }
+    .sidebar-popup[hidden] { display: none; }
+    .sidebar-popup__title {
+      display: inline-block;
+      padding: 4px 10px;
+      background: var(--color-gray-900);
+      color: var(--color-white);
+      border-radius: 4px;
+      margin: 0 0 6px 0;
+      font-size: 12px;
+      font-weight: var(--font-weight-semibold);
+      line-height: 16px;
+    }
+    .sidebar-popup__item {
+      display: block;
+      padding: 8px 12px;
+      color: var(--color-gray-900);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .sidebar-popup__item:hover { background: var(--color-gray-100); }
+
     /* ─── Title bar com duas linhas (heading+badge / subtitle+link) ───
        Mesmo padrao da tela "Negociacao fornecedor". */
     .title-bar {
@@ -409,7 +445,7 @@
         </div>
         <div class="sidebar__subitems">
           <a class="sidebar__subitem" href="#">Negociação fornecedor</a>
-          <a class="sidebar__subitem" href="#">Negociações salvas</a>
+          <a class="sidebar__subitem" href="A.9.html">Negociações salvas</a>
           <a class="sidebar__subitem" href="#">Fornecedores</a>
         </div>
       </div>
@@ -430,6 +466,13 @@
       <button class="sidebar__seta" id="sidebarSeta" aria-label="Expandir menu"><span class="material-icons-outlined">keyboard_arrow_right</span></button>
     </div>
   </aside>
+
+  <!-- Popup flutuante exibido ao clicar em [data-toggle-group] com a sidebar recolhida -->
+  <div class="sidebar-popup" id="sidebarPopup" hidden role="menu" aria-label="Negociações fornecedor">
+    <a class="sidebar-popup__item" href="#" role="menuitem">Negociação fornecedor</a>
+    <a class="sidebar-popup__item" href="A.9.html" role="menuitem">Negociações salvas</a>
+    <a class="sidebar-popup__item" href="0.1.html" role="menuitem">Fornecedores</a>
+  </div>
 
   <!-- ── Title bar ──────────────────────────────────────── -->
   <section class="title-bar">
@@ -473,7 +516,7 @@
             <!-- Filtro Status: chip + dropdown SIBLINGS dentro do wrapper -->
             <div class="filtro-chip-wrapper" data-filter="status">
               <button class="filtro-chip" data-trigger>
-                <span data-label>Status: Todos</span>
+                <span data-label>Status</span>
                 <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
               </button>
               <div class="filtro-dropdown filtro-dropdown--narrow" data-dropdown>
@@ -808,7 +851,7 @@
 
 
     const STATUS_FILTER_LABEL = {
-      todos:    'Status: Todos',
+      todos:    'Status',
       ativo:    'Status: Ativo',
       pendente: 'Status: Convite pendente',
       inativo:  'Status: Inativo',
@@ -1166,14 +1209,32 @@
         .forEach(el => el.style.left = newLeft);
     });
 
-    // ─── Sidebar: toggle do grupo "Negociacoes fornecedor" ───
+    // ─── Sidebar: toggle do grupo "Negociacoes fornecedor" + popup flutuante (recolhida)
+    const sidebarPopup = document.getElementById('sidebarPopup');
+    function openSidebarPopup(triggerEl) {
+      const rect = triggerEl.getBoundingClientRect();
+      sidebarPopup.hidden = false;
+      sidebarPopup.style.left = (rect.right + 8) + 'px';
+      sidebarPopup.style.top = rect.top + 'px';
+    }
+    function closeSidebarPopup() { sidebarPopup.hidden = true; }
     document.querySelectorAll('[data-toggle-group]').forEach(trigger => {
-      trigger.addEventListener('click', () => {
-        if (!sidebar.classList.contains('is-expanded')) return;
-        const group = document.getElementById(trigger.dataset.toggleGroup);
-        if (group) group.classList.toggle('is-open');
+      trigger.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('is-expanded')) {
+          const group = document.getElementById(trigger.dataset.toggleGroup);
+          if (group) group.classList.toggle('is-open');
+        } else {
+          e.stopPropagation();
+          if (!sidebarPopup.hidden) closeSidebarPopup();
+          else openSidebarPopup(trigger);
+        }
       });
     });
+    document.addEventListener('click', (e) => {
+      if (sidebarPopup.hidden) return;
+      if (!sidebarPopup.contains(e.target) && !e.target.closest('[data-toggle-group]')) closeSidebarPopup();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarPopup(); });
 
     // ─── Modal "Convidar fornecedor" ─────────────────────────
     const inviteModal = document.getElementById('inviteModal');

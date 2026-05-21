@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPA — Aceitar vínculo com novo varejista</title>
+  <link rel="icon" type="image/x-icon" href="https://marcoskip.github.io/infoprice-prototipos/assets/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link rel="stylesheet" href="https://marcoskip.github.io/infoprice-prototipos/tokens.css" />
+  <link rel="stylesheet" href="https://marcoskip.github.io/infoprice-prototipos/styles.css" />
+  <!--
+    0.4.7 Aceite de Novo Vinculo + 2FA — modal sobre o app ja logado.
+
+    Quando aparece: fornecedor ja autenticado no IPA (Patricia Moura @ Unilever Brasil)
+    recebeu convite de um novo varejista (Supermercado Estrela) — clicou no link
+    do email ou em notificacao do app. O aceite muda o escopo da conta, por isso
+    exige 2FA obrigatorio mesmo logado.
+
+    Tokens-fonte (DS unico — sem inventar):
+      --color-blue-light-10/20  + blue-700  (badge "NOVO VAREJISTA")
+      --color-gray-100/200/300/400/600/700/800/900
+      --color-brand-primary     (CTA primario, input 2FA focado)
+      --color-red-600/700 + red-light-10/20  (CTA recusar, erro inline, boxes invalido)
+      --radius-sm  4px  (inputs 2FA, CTA)
+      --radius-md  8px  (modal, blocos)
+      --shadow-elevation, --shadow-focus
+      --font-size-xs/sm/md/2xl, --space-1..6, --font-weight-semibold/bold
+
+    Componentes DS reaproveitados: header (chrome de fundo), .btn--primary, .btn--primary.btn--ghost
+
+    Comportamentos:
+      - Input 2FA: 6 boxes individuais, auto-advance ao digitar, backspace volta um box,
+        paste de 6 digitos preenche tudo, so aceita numeros (digit-only filter).
+      - Countdown 60s no link "reenviar". Ao zerar vira link clicavel.
+      - ESC fecha o overlay (volta pro app); NAO equivale a "recusar" — o convite
+        fica pendente.
+      - Body scroll: nao bloqueado. Se modal > viewport, scroll interno no modal.
+      - CTA "Confirmar" disabled enquanto os 6 digitos nao estiverem completos.
+
+    Estados implementados (alternaveis pelo painel "Demo states"):
+      1. default      — input vazio, CTA disabled
+      2. typing       — 4 de 6 digitos preenchidos (espelha o wireframe)
+      3. complete     — 6 digitos OK, CTA habilitado
+      4. invalid      — 6 digitos rejeitados (boxes red, msg inline)
+      5. loading      — CTA spinner + "Confirmando…"
+      6. resend-ready — countdown zerou, link "reenviar codigo" ativo
+
+    Pendencias (NAO resolver aqui, comentario apenas):
+      - Apos aceitar: redireciona pra /varejistas/estrela ou abre seletor de contexto (0.4.5)?
+        Por ora assumindo redirect direto.
+      - Disparo do modal: pode vir tanto do link do email quanto de notificacao no app.
+        Os dois caminhos caem nesta mesma tela.
+  -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-gray-50);
+      color: var(--color-gray-900);
+      min-height: 100vh;
+    }
+
+    /* ─── Chrome de fundo (header IPA + esqueleto fraco) ─── */
+    /* (Reusa .header do DS para garantir consistencia com as outras telas.) */
+    .app-stub {
+      position: fixed;
+      inset: 0;
+      filter: blur(0.5px);
+      opacity: 0.96;
+      pointer-events: none;
+    }
+    .app-stub__bg {
+      position: absolute;
+      inset: 60px 0 0 52px;
+      background: var(--color-gray-50);
+    }
+    /* Skeleton fraco de "tem uma pagina atras" */
+    .app-stub__row {
+      position: absolute;
+      height: 16px;
+      background: var(--color-gray-200);
+      border-radius: var(--radius-sm);
+    }
+    .app-stub__row--r1 { top: 90px;  left: 84px;  width: 220px; }
+    .app-stub__row--r2 { top: 134px; left: 84px;  width: 65vw; max-width: 920px; height: 70px; }
+    .app-stub__row--r3 { top: 224px; left: 84px;  width: 65vw; max-width: 920px; height: 60px; }
+    .app-stub__row--r4 { top: 304px; left: 84px;  width: 65vw; max-width: 920px; height: 360px; }
+
+    /* Sidebar minima atras (so a barra esquerda) */
+    .app-stub__sidebar {
+      position: absolute;
+      top: 60px; bottom: 0; left: 0;
+      width: 52px;
+      background: var(--color-white);
+      border-right: 1px solid var(--color-gray-200);
+    }
+
+    /* ─── Overlay ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    /* ─── Modal ─── */
+    .vincular-modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--color-white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-elevation);
+      padding: 32px 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+    }
+
+    /* ─── Badge azul superior ─── */
+    .vincular-badge {
+      align-self: center;
+      padding: 4px 14px;
+      background: var(--color-blue-light-10);
+      border: 1px solid var(--color-blue-light-20);
+      color: var(--color-blue-700);
+      border-radius: 999px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      line-height: 16px;
+    }
+
+    .vincular-heading {
+      text-align: center;
+      font-size: var(--font-size-2xl);
+      line-height: 28px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+      margin: 0;
+    }
+
+    /* ─── Bloco de contexto (Unilever ja fornece para X varejistas) ─── */
+    .vincular-context {
+      background: var(--color-gray-100);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .vincular-context__text {
+      font-size: var(--font-size-md);
+      line-height: 20px;
+      color: var(--color-gray-800);
+    }
+    .vincular-context__text strong { font-weight: var(--font-weight-semibold); color: var(--color-gray-900); }
+    .vincular-context__chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .vincular-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-300);
+      border-radius: 999px;
+      font-size: var(--font-size-sm);
+      line-height: 16px;
+      color: var(--color-gray-800);
+    }
+    .vincular-context__footnote {
+      font-size: var(--font-size-sm);
+      line-height: 18px;
+      color: var(--color-gray-700);
+    }
+    .vincular-context__footnote strong { font-weight: var(--font-weight-semibold); color: var(--color-gray-800); }
+
+    /* ─── Divisor leve ─── */
+    .vincular-divider {
+      height: 1px;
+      background: var(--color-gray-200);
+      margin: 4px 0;
+      border: 0;
+    }
+
+    /* ─── Sub-seção 2FA ─── */
+    .vincular-2fa { display: flex; flex-direction: column; gap: var(--space-2); }
+    .vincular-2fa__label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-700);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .vincular-2fa__desc {
+      font-size: var(--font-size-sm);
+      line-height: 18px;
+      color: var(--color-gray-700);
+    }
+    .vincular-2fa__desc strong { font-weight: var(--font-weight-semibold); color: var(--color-gray-900); }
+
+    /* ─── OTP (6 boxes) ─── */
+    .otp {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: var(--space-2) 0 4px;
+    }
+    .otp__box {
+      width: 44px;
+      height: 52px;
+      border: 1.5px solid var(--color-gray-400);
+      background: var(--color-white);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-family-base);
+      font-size: 24px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+      text-align: center;
+      outline: none;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .otp__box:focus { border-color: var(--color-brand-primary); box-shadow: var(--shadow-focus); }
+    .otp__box.is-filled { border-color: var(--color-gray-800); }
+    .otp.is-invalid .otp__box { border-color: var(--color-red-600); }
+    .otp.is-invalid .otp__box:focus { box-shadow: 0 0 0 3px var(--color-red-light-20); }
+
+    .otp-error {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: var(--font-size-sm);
+      line-height: 18px;
+      color: var(--color-red-600);
+    }
+    .otp-error.is-visible { display: flex; }
+    .otp-error .material-icons-outlined { font-size: 14px; }
+
+    /* ─── Reenvio ─── */
+    .otp-resend {
+      text-align: center;
+      font-size: var(--font-size-sm);
+      line-height: 18px;
+      color: var(--color-gray-600);
+      margin: 0;
+    }
+    .otp-resend strong { font-weight: var(--font-weight-semibold); color: var(--color-gray-800); }
+    .otp-resend__link {
+      display: none;
+      background: none;
+      border: 0;
+      padding: 0;
+      color: var(--color-brand-primary);
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .otp-resend.is-ready .otp-resend__countdown { display: none; }
+    .otp-resend.is-ready .otp-resend__link { display: inline; }
+
+    /* ─── CTAs ─── */
+    .vincular-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+    }
+    .vincular-cta {
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      justify-content: center;
+      gap: 8px;
+    }
+    /* Variante "danger ghost" do CTA recusar */
+    .vincular-cta--danger-ghost {
+      background: transparent !important;
+      color: var(--color-red-600) !important;
+      border: 1px solid var(--color-gray-200) !important;
+    }
+    .vincular-cta--danger-ghost:hover {
+      background: var(--color-red-light-10) !important;
+      border-color: var(--color-red-light-20) !important;
+      color: var(--color-red-700) !important;
+    }
+    /* Spinner do loading */
+    .vincular-cta__spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: var(--color-white);
+      border-radius: 50%;
+      animation: vincular-spin 700ms linear infinite;
+    }
+    .vincular-cta.is-loading .vincular-cta__spinner { display: inline-block; }
+    .vincular-cta.is-loading .vincular-cta__label-default { display: none; }
+    .vincular-cta__label-loading { display: none; }
+    .vincular-cta.is-loading .vincular-cta__label-loading { display: inline; }
+    @keyframes vincular-spin { to { transform: rotate(360deg); } }
+
+    /* ─── Disclaimer ─── */
+    .vincular-disclaimer {
+      text-align: center;
+      font-size: var(--font-size-xs);
+      line-height: 16px;
+      color: var(--color-gray-600);
+      margin: 0;
+    }
+    .vincular-disclaimer strong { font-weight: var(--font-weight-semibold); color: var(--color-gray-800); }
+
+    /* ─── Demo controls (data-demo-only) ─── */
+    [data-demo-only] {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 9999;
+      background: var(--color-gray-900);
+      color: var(--color-white);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-xs);
+      box-shadow: var(--shadow-elevation);
+      max-width: 220px;
+    }
+    [data-demo-only] strong {
+      font-size: var(--font-size-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--color-gray-400);
+      padding: 4px 8px 2px;
+      font-weight: var(--font-weight-bold);
+    }
+    [data-demo-only] button {
+      text-align: left;
+      background: transparent;
+      border: none;
+      color: var(--color-white);
+      font-family: inherit;
+      font-size: var(--font-size-sm);
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    [data-demo-only] button:hover { background: var(--color-gray-700); }
+    [data-demo-only] button.is-active { background: var(--color-brand-primary); }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════ Chrome do app (ja logado) ════════════════ -->
+  <header class="header">
+    <div class="header__left">
+      <img class="header__logo" src="https://marcoskip.github.io/infoprice-prototipos/assets/logo-principal.svg" alt="InfoPrice" />
+      <span class="header__divider"></span>
+      <span class="header__product-name">IPA | Software de Precificação</span>
+    </div>
+    <div class="header__right">
+      <button class="header__user" type="button">
+        <span class="header__user-avatar" aria-hidden="true">PM</span>
+        <span class="header__user-name">Patrícia Moura</span>
+        <span class="material-icons-outlined">keyboard_arrow_down</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Esqueleto fraco da pagina atras do overlay (sugere "tem app aqui") -->
+  <div class="app-stub" aria-hidden="true">
+    <div class="app-stub__sidebar"></div>
+    <div class="app-stub__bg"></div>
+    <div class="app-stub__row app-stub__row--r1"></div>
+    <div class="app-stub__row app-stub__row--r2"></div>
+    <div class="app-stub__row app-stub__row--r3"></div>
+    <div class="app-stub__row app-stub__row--r4"></div>
+  </div>
+
+  <!-- ════════════════ Modal overlay ════════════════ -->
+  <div class="modal-overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="vincularTitle">
+    <section class="vincular-modal" role="document">
+
+      <!-- Badge azul superior -->
+      <span class="vincular-badge">Novo varejista quer negociar com você</span>
+
+      <!-- Titulo -->
+      <h1 class="vincular-heading" id="vincularTitle">
+        Aceitar vínculo com<br />Supermercado Estrela?
+      </h1>
+
+      <!-- Bloco de contexto -->
+      <div class="vincular-context">
+        <span class="vincular-context__text">
+          <strong>Unilever Brasil</strong> já fornece no IPA para:
+        </span>
+        <div class="vincular-context__chips">
+          <span class="vincular-chip">Carrefour</span>
+          <span class="vincular-chip">Pão de Açúcar</span>
+          <span class="vincular-chip">Assaí</span>
+        </div>
+        <span class="vincular-context__footnote">
+          Aceitar adiciona <strong>Estrela</strong> à sua lista. Os dados cadastrais da Unilever já foram reutilizados — não precisamos pedir nada.
+        </span>
+      </div>
+
+      <hr class="vincular-divider" />
+
+      <!-- Sub-seção 2FA -->
+      <div class="vincular-2fa">
+        <span class="vincular-2fa__label">Confirme com 2FA</span>
+        <span class="vincular-2fa__desc">
+          Enviamos um código de 6 dígitos para <strong>patricia@unilever.com</strong> e SMS <strong>(11) •••• 4892</strong>.
+        </span>
+
+        <div class="otp" id="otp" role="group" aria-label="Código de 6 dígitos">
+          <input class="otp__box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" aria-label="Dígito 1" />
+          <input class="otp__box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Dígito 2" />
+          <input class="otp__box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Dígito 3" />
+          <input class="otp__box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Dígito 4" />
+          <input class="otp__box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Dígito 5" />
+          <input class="otp__box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Dígito 6" />
+        </div>
+
+        <span class="otp-error" id="otpError" role="alert">
+          <span class="material-icons-outlined">error_outline</span>
+          Código inválido. Tente novamente.
+        </span>
+
+        <p class="otp-resend" id="otpResend">
+          <span class="otp-resend__countdown">não recebeu? reenviar em <strong id="otpTimer">00:42</strong></span>
+          <button type="button" class="otp-resend__link" id="otpResendLink">reenviar código</button>
+        </p>
+      </div>
+
+      <!-- CTAs -->
+      <div class="vincular-actions">
+        <button type="button" class="btn btn--primary btn--medium vincular-cta" id="confirmBtn" disabled>
+          <span class="vincular-cta__spinner" aria-hidden="true"></span>
+          <span class="vincular-cta__label-default">Confirmar e aceitar vínculo</span>
+          <span class="vincular-cta__label-loading">Confirmando…</span>
+        </button>
+        <button type="button" class="btn btn--primary btn--ghost btn--medium vincular-cta vincular-cta--danger-ghost" id="refuseBtn">
+          Recusar convite
+        </button>
+      </div>
+
+      <!-- Disclaimer -->
+      <p class="vincular-disclaimer">
+        Ao aceitar, <strong>Supermercado Estrela</strong> passa a enxergar a Unilever Brasil como fornecedor parceiro no IPA.
+      </p>
+
+    </section>
+  </div>
+
+  <!-- ──────── Demo controls (data-demo-only — remover antes de prod) ──────── -->
+  <div data-demo-only role="group" aria-label="Demo states">
+    <strong>Demo states</strong>
+    <button type="button" data-demo="default">1. Default</button>
+    <button type="button" data-demo="typing" class="is-active">2. 4 dígitos</button>
+    <button type="button" data-demo="complete">3. Código completo</button>
+    <button type="button" data-demo="invalid">4. Inválido</button>
+    <button type="button" data-demo="loading">5. Loading</button>
+    <button type="button" data-demo="resend-ready">6. Reenvio pronto</button>
+  </div>
+
+  <script>
+    // ═══════════ Refs ═══════════
+    const otpEl       = document.getElementById('otp');
+    const otpBoxes    = otpEl.querySelectorAll('.otp__box');
+    const otpError    = document.getElementById('otpError');
+    const otpResend   = document.getElementById('otpResend');
+    const otpTimer    = document.getElementById('otpTimer');
+    const otpLink     = document.getElementById('otpResendLink');
+    const confirmBtn  = document.getElementById('confirmBtn');
+
+    // ═══════════ OTP: auto-advance / backspace / paste / digit-only ═══════════
+    function currentValue() {
+      return Array.from(otpBoxes).map(b => b.value).join('');
+    }
+    function updateConfirmEnabled() {
+      const filled = currentValue().length === 6;
+      confirmBtn.disabled = !filled || confirmBtn.classList.contains('is-loading');
+    }
+    function updateFilledClasses() {
+      otpBoxes.forEach(b => b.classList.toggle('is-filled', b.value.length === 1));
+    }
+    function clearInvalidIfTyping() {
+      if (otpEl.classList.contains('is-invalid')) {
+        otpEl.classList.remove('is-invalid');
+        otpError.classList.remove('is-visible');
+      }
+    }
+    otpBoxes.forEach((box, i) => {
+      box.addEventListener('input', (e) => {
+        const v = e.target.value.replace(/[^0-9]/g, '');
+        e.target.value = v.slice(-1); // mantem so 1 digito
+        updateFilledClasses();
+        clearInvalidIfTyping();
+        if (e.target.value && i < otpBoxes.length - 1) otpBoxes[i + 1].focus();
+        updateConfirmEnabled();
+      });
+      box.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && i > 0) {
+          otpBoxes[i - 1].focus();
+          otpBoxes[i - 1].value = '';
+          updateFilledClasses();
+          updateConfirmEnabled();
+          e.preventDefault();
+        }
+        if (e.key === 'ArrowLeft' && i > 0) { otpBoxes[i - 1].focus(); e.preventDefault(); }
+        if (e.key === 'ArrowRight' && i < otpBoxes.length - 1) { otpBoxes[i + 1].focus(); e.preventDefault(); }
+      });
+      box.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const txt = (e.clipboardData || window.clipboardData).getData('text') || '';
+        const digits = txt.replace(/[^0-9]/g, '').slice(0, 6);
+        digits.split('').forEach((d, idx) => { if (otpBoxes[idx]) otpBoxes[idx].value = d; });
+        const next = digits.length < 6 ? digits.length : 5;
+        otpBoxes[next].focus();
+        updateFilledClasses();
+        clearInvalidIfTyping();
+        updateConfirmEnabled();
+      });
+    });
+
+    // ═══════════ Countdown reenvio ═══════════
+    let countdownSec = 60;
+    let countdownInterval = null;
+    function tick() {
+      countdownSec--;
+      if (countdownSec <= 0) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+        otpResend.classList.add('is-ready');
+        return;
+      }
+      const mm = String(Math.floor(countdownSec / 60)).padStart(2, '0');
+      const ss = String(countdownSec % 60).padStart(2, '0');
+      otpTimer.textContent = `${mm}:${ss}`;
+    }
+    function startCountdown(initialSec = 60) {
+      clearInterval(countdownInterval);
+      countdownSec = initialSec;
+      const mm = String(Math.floor(countdownSec / 60)).padStart(2, '0');
+      const ss = String(countdownSec % 60).padStart(2, '0');
+      otpTimer.textContent = `${mm}:${ss}`;
+      otpResend.classList.remove('is-ready');
+      countdownInterval = setInterval(tick, 1000);
+    }
+    otpLink.addEventListener('click', () => {
+      startCountdown(60);
+      otpBoxes.forEach(b => b.value = '');
+      updateFilledClasses();
+      updateConfirmEnabled();
+      otpBoxes[0].focus();
+    });
+
+    // ═══════════ Confirmar / Recusar ═══════════
+    confirmBtn.addEventListener('click', () => {
+      if (confirmBtn.disabled) return;
+      setLoading(true);
+      // Apos confirmar 2FA: vai pro painel do fornecedor (A.6.1).
+      // Em prod, idealmente abrir direto a aba do varejista recem-vinculado (/varejistas/estrela).
+      setTimeout(() => { window.location.href = 'A.6.1.html'; }, 1500);
+    });
+    document.getElementById('refuseBtn').addEventListener('click', () => {
+      // Recusar: convite descartado, volta para a ultima tela do app (painel do fornecedor).
+      window.location.href = 'A.6.1.html';
+    });
+    function setLoading(isLoading) {
+      confirmBtn.classList.toggle('is-loading', isLoading);
+      confirmBtn.disabled = isLoading || currentValue().length !== 6;
+    }
+
+    // ═══════════ ESC fecha overlay (nao recusa) ═══════════
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const overlay = document.getElementById('overlay');
+        overlay.style.display = 'none';
+        // Em prod: navega de volta pra ultima pagina do app, convite continua pendente.
+        console.log('[0.4.7] ESC pressionado — modal fechado, convite continua pendente.');
+      }
+    });
+
+    // ═══════════ Demo states ═══════════
+    function setState(state) {
+      otpEl.classList.remove('is-invalid');
+      otpError.classList.remove('is-visible');
+      confirmBtn.classList.remove('is-loading');
+
+      function fillBoxes(str) {
+        const digits = str.padEnd(6).split('').slice(0, 6);
+        otpBoxes.forEach((b, i) => b.value = /[0-9]/.test(digits[i]) ? digits[i] : '');
+        updateFilledClasses();
+      }
+
+      switch (state) {
+        case 'default':
+          fillBoxes('');
+          startCountdown(42);
+          break;
+        case 'typing':
+          fillBoxes('4729');
+          startCountdown(42);
+          break;
+        case 'complete':
+          fillBoxes('472913');
+          startCountdown(42);
+          break;
+        case 'invalid':
+          fillBoxes('472913');
+          otpEl.classList.add('is-invalid');
+          otpError.classList.add('is-visible');
+          startCountdown(42);
+          break;
+        case 'loading':
+          fillBoxes('472913');
+          confirmBtn.classList.add('is-loading');
+          startCountdown(42);
+          break;
+        case 'resend-ready':
+          fillBoxes('');
+          startCountdown(1);
+          break;
+      }
+      updateConfirmEnabled();
+      document.querySelectorAll('[data-demo]').forEach(b => b.classList.toggle('is-active', b.dataset.demo === state));
+    }
+    document.querySelectorAll('[data-demo]').forEach(btn => {
+      btn.addEventListener('click', () => setState(btn.dataset.demo));
+    });
+
+    // Estado inicial: replica o wireframe (4 digitos digitados)
+    setState('typing');
+  </script>
+
+</body>
+</html>

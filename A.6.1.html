@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPA — Painel do fornecedor</title>
+  <link rel="icon" type="image/x-icon" href="https://marcoskip.github.io/infoprice-prototipos/assets/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link rel="stylesheet" href="https://marcoskip.github.io/infoprice-prototipos/tokens.css" />
+  <link rel="stylesheet" href="https://marcoskip.github.io/infoprice-prototipos/styles.css" />
+  <!--
+    A.6.1 Painel do fornecedor — STUB temporario.
+
+    Esta tela e' o destino do fluxo 0.3 → 0.4 / 0.4.6 / 0.4.7 → A.6.1.
+    Vai ser refeita por completo na proxima etapa do prototipo (briefing
+    completo em A.6.1.md). Por enquanto serve como placeholder navegavel
+    pra o fluxo do fornecedor nao terminar em 404.
+  -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-gray-50);
+      color: var(--color-gray-900);
+      min-height: 100vh;
+    }
+    .stub-page {
+      position: fixed;
+      top: 60px;
+      left: 52px;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+    }
+    .stub-card {
+      max-width: 520px;
+      width: 100%;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      padding: 40px 32px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      align-items: center;
+    }
+    .stub-card__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      background: var(--color-blue-light-10);
+      color: var(--color-brand-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stub-card__icon .material-icons-outlined { font-size: 24px; }
+    .stub-card__heading {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+      line-height: 28px;
+      margin: 0;
+    }
+    .stub-card__subtitle {
+      font-size: var(--font-size-md);
+      line-height: 22px;
+      color: var(--color-gray-700);
+      margin: 0;
+    }
+    .stub-card__nav {
+      display: flex;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .stub-card__nav a {
+      font-size: var(--font-size-sm);
+      color: var(--color-brand-primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    /* Sidebar minima (so a barra esquerda visual) */
+    .stub-sidebar {
+      position: fixed;
+      top: 60px; bottom: 0; left: 0;
+      width: 52px;
+      background: var(--color-white);
+      border-right: 1px solid var(--color-gray-200);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header IPA (mesmo das outras telas) -->
+  <header class="header">
+    <div class="header__left">
+      <img class="header__logo" src="https://marcoskip.github.io/infoprice-prototipos/assets/logo-principal.svg" alt="InfoPrice" />
+      <span class="header__divider"></span>
+      <span class="header__product-name">IPA | Software de Precificação</span>
+    </div>
+    <div class="header__right">
+      <button class="header__user" type="button">
+        <span class="header__user-avatar" aria-hidden="true">PM</span>
+        <span class="header__user-name">Patrícia Moura</span>
+        <span class="material-icons-outlined">keyboard_arrow_down</span>
+      </button>
+    </div>
+  </header>
+
+  <aside class="stub-sidebar" aria-hidden="true"></aside>
+
+  <main class="stub-page">
+    <section class="stub-card">
+      <span class="stub-card__icon" aria-hidden="true">
+        <span class="material-icons-outlined">construction</span>
+      </span>
+      <h1 class="stub-card__heading">Painel do fornecedor</h1>
+      <p class="stub-card__subtitle">
+        Esta tela é o destino do fluxo de onboarding do fornecedor.<br />
+        Implementação completa virá na próxima etapa do protótipo.
+      </p>
+      <div class="stub-card__nav">
+        <a href="0.3.html">← Voltar para o convite (0.3)</a>
+        <span style="color:var(--color-gray-400);">·</span>
+        <a href="0.4.html">0.4</a>
+        <span style="color:var(--color-gray-400);">·</span>
+        <a href="0.4.6.html">0.4.6</a>
+        <span style="color:var(--color-gray-400);">·</span>
+        <a href="0.4.7.html">0.4.7</a>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>

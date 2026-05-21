@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPA — Negociação Fornecedor · Protótipos</title>
+  <link rel="icon" type="image/x-icon" href="https://marcoskip.github.io/infoprice-prototipos/assets/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link rel="stylesheet" href="https://marcoskip.github.io/infoprice-prototipos/tokens.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-gray-100);
+      color: var(--color-gray-900);
+      min-height: 100vh;
+      padding: var(--space-6) var(--space-4);
+    }
+    .container { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-4); }
+
+    .page-header { display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-2); }
+    .page-header__logo { height: 24px; width: auto; }
+    .page-header__title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+    }
+    .page-header__sub {
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-600);
+      margin-left: auto;
+    }
+
+    .flow-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-300);
+      border-radius: 8px;
+      padding: var(--space-4) var(--space-6) var(--space-6);
+    }
+    .flow-card__header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-gray-200);
+      margin-bottom: var(--space-4);
+    }
+    .flow-card__icon {
+      width: 32px; height: 32px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center; justify-content: center;
+    }
+    .flow-card__icon--varejista { background: var(--color-gray-200); color: var(--color-gray-800); }
+    .flow-card__icon--fornecedor { background: var(--color-blue-light-10); color: var(--color-brand-primary); }
+    .flow-card__title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+    }
+    .flow-card__lead {
+      font-size: var(--font-size-md);
+      line-height: 20px;
+      color: var(--color-gray-700);
+      margin-left: auto;
+    }
+
+    .flow-list { display: flex; flex-direction: column; gap: var(--space-2); }
+    .flow-link {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--color-gray-200);
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 120ms ease, background 120ms ease;
+    }
+    .flow-link:hover {
+      border-color: var(--color-brand-primary);
+      background: var(--color-blue-light-10);
+    }
+    .flow-link__id {
+      flex-shrink: 0;
+      width: 56px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-brand-primary);
+      letter-spacing: 0.4px;
+      padding-top: 1px;
+    }
+    .flow-link__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+    .flow-link__title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+      line-height: 20px;
+    }
+    .flow-link__desc {
+      font-size: var(--font-size-sm);
+      line-height: 18px;
+      color: var(--color-gray-700);
+    }
+    .flow-link__entry {
+      flex-shrink: 0;
+      align-self: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--color-brand-primary);
+      padding: 3px 10px;
+      background: var(--color-blue-light-10);
+      border-radius: 999px;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: var(--font-size-xs);
+      line-height: 16px;
+      color: var(--color-gray-600);
+      margin-top: var(--space-3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <header class="page-header">
+      <img class="page-header__logo" src="https://marcoskip.github.io/infoprice-prototipos/assets/logo-principal.svg" alt="InfoPrice" />
+      <span class="page-header__title">Negociação Fornecedor — Protótipos</span>
+      <span class="page-header__sub">Demo de fluxo · maio/2026</span>
+    </header>
+
+    <!-- ───────── Perspectiva Varejista ───────── -->
+    <section class="flow-card">
+      <div class="flow-card__header">
+        <span class="flow-card__icon flow-card__icon--varejista" aria-hidden="true">
+          <span class="material-icons-outlined">store</span>
+        </span>
+        <h2 class="flow-card__title">Varejista</h2>
+        <p class="flow-card__lead">Cliente IPA convida fornecedor, negocia tabela e responde rounds.</p>
+      </div>
+      <div class="flow-list">
+        <a class="flow-link" href="0.1.html">
+          <span class="flow-link__id">0.1</span>
+          <span class="flow-link__body">
+            <span class="flow-link__title">Gestão de Fornecedores</span>
+            <span class="flow-link__desc">Lista de fornecedores vinculados + CTA "Convidar fornecedor" (abre modal 0.2).</span>
+          </span>
+          <span class="flow-link__entry">Início varejista</span>
+        </a>
+        <a class="flow-link" href="A.9.html">
+          <span class="flow-link__id">A.9</span>
+          <span class="flow-link__body">
+            <span class="flow-link__title">Negociações salvas</span>
+            <span class="flow-link__desc">Lista de negociações com fornecedores, com filtros, status, Round e indicador "Aguarda".</span>
+          </span>
+        </a>
+        <a class="flow-link" href="A.8.7.html">
+          <span class="flow-link__id">A.8.7</span>
+          <span class="flow-link__body">
+            <span class="flow-link__title">Negociação vigente — Round 2</span>
+            <span class="flow-link__desc">Tela da negociação aberta. Varejista envia contraproposta para o Round 3.</span>
+          </span>
+        </a>
+        <a class="flow-link" href="A.18.html">
+          <span class="flow-link__id">A.18</span>
+          <span class="flow-link__body">
+            <span class="flow-link__title">Negociação — Round 3 (fornecedor respondeu)</span>
+            <span class="flow-link__desc">Fornecedor cedeu em vários itens. Aprovar/Rejeitar por linha + fechar negócio.</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ───────── Perspectiva Fornecedor ───────── -->
+    <section class="flow-card">
+      <div class="flow-card__header">
+        <span class="flow-card__icon flow-card__icon--fornecedor" aria-hidden="true">
+          <span class="material-icons-outlined">handshake</span>
+        </span>
+        <h2 class="flow-card__title">Fornecedor</h2>
+        <p class="flow-card__lead">Patrícia Moura (Unilever) recebe convite, cria conta e gerencia tabelas.</p>
+      </div>
+      <div class="flow-list">
+        <a class="flow-link" href="0.3.html">
+          <span class="flow-link__id">0.3</span>
+          <span class="flow-link__body">
+            <span class="flow-link__title">E-mail de convite</span>
+            <span class="flow-link__desc">E-mail transacional enviado ao fornecedor. CTA "Aceitar e criar conta" leva à 0.4.</span>
+          </span>
+          <span class="flow-link__entry">Início fornecedor</span>
+        </a>
+        <a class="flow-link" href="0.4.html">
+          <span class="flow-link__id">0.4</span>
+          <span class="flow-link__body">
+            <span class="flow-link__title">Criação de Conta (e-mail novo)</span>
+            <span class="flow-link__desc">Caminho default: e-mail do convite ainda não existe no IPA. Cria senha e aceita termos.</span>
+          </span>
+        </a>
+        <a class="flow-link" href="0.4.6.html">
+          <span class="flow-link__id">0.4.6</span>
+          <span class="flow-link__body">
+            <span class="flow-link__title">Vincular papel de fornecedor</span>
+            <span class="flow-link__desc">Caminho alternativo: o e-mail já tem conta no IPA (outro módulo). Permite vincular ou criar conta separada.</span>
+          </span>
+        </a>
+        <a class="flow-link" href="0.4.7.html">
+          <span class="flow-link__id">0.4.7</span>
+          <span class="flow-link__body">
+            <span class="flow-link__title">Aceite de novo vínculo + 2FA</span>
+            <span class="flow-link__desc">Caminho alternativo: fornecedor já é cliente IPA e está logado. Modal sobre o app com confirmação 2FA.</span>
+          </span>
+        </a>
+        <a class="flow-link" href="A.6.empty.html">
+          <span class="flow-link__id">A.6.empty</span>
+          <span class="flow-link__body">
+            <span class="flow-link__title">Painel do fornecedor — primeiro acesso</span>
+            <span class="flow-link__desc">Estado vazio (sem tabelas enviadas) + dev menu "Povoar" para alternar com grid populado.</span>
+          </span>
+          <span class="flow-link__entry">Pós-onboarding</span>
+        </a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      InfoPrice · IPA · Negociação Fornecedor · Protótipos navegáveis
+    </footer>
+
+  </div>
+
+</body>
+</html>

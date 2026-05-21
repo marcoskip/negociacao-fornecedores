@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IPA — Negociações salvas</title>
+  <title>IPA — Início (fornecedor)</title>
   <link rel="icon" type="image/x-icon" href="https://marcoskip.github.io/infoprice-prototipos/assets/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -51,6 +51,59 @@
       white-space: nowrap;
     }
     .sidebar__subitem:hover { background: var(--color-gray-100); }
+
+    /* ─── Item ativo da sidebar (Inicio) ─── */
+    .sidebar__item.is-active { background: var(--color-blue-light-10); }
+    .sidebar__item.is-active .sidebar__icon-mi,
+    .sidebar__item.is-active .sidebar__label { color: var(--color-brand-primary); }
+
+    /* ─── Empty state primeiro acesso (no lugar do grid) ─── */
+    .empty-body {
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+    }
+    .empty-state-fornec {
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .empty-state-fornec__icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 999px;
+      background: var(--color-blue-light-10);
+      color: var(--color-brand-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+    .empty-state-fornec__icon .material-icons-outlined { font-size: 36px; }
+    .empty-state-fornec__title {
+      font-size: var(--font-size-2xl);
+      line-height: 28px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+      margin: 0;
+    }
+    .empty-state-fornec__subtitle {
+      font-size: var(--font-size-md);
+      line-height: 22px;
+      color: var(--color-gray-700);
+      margin: 0;
+    }
+    .empty-state-fornec__cta {
+      margin-top: var(--space-3);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
 
     /* ─── Popup flutuante (sidebar recolhida) ─── */
     .sidebar-popup {
@@ -335,7 +388,8 @@
       display: none;
     }
     .dev-menu:hover .dev-menu__panel,
-    .dev-menu:focus-within .dev-menu__panel { display: block; }
+    .dev-menu:focus-within .dev-menu__panel,
+    .dev-menu.is-open .dev-menu__panel { display: block; }
     .dev-menu__panel::after {
       content: ""; position: absolute;
       left: 0; right: 0; bottom: -8px;
@@ -389,54 +443,26 @@
     <div class="header__right">
       <button class="header__help-btn" aria-label="Ajuda"><span class="material-icons-outlined">help_outline</span></button>
       <div class="header__user">
-        <span class="header__user-name">Olá, Supermercado Estrela</span>
+        <span class="header__user-name">Olá, Unilever</span>
         <span class="material-icons-outlined">keyboard_arrow_down</span>
       </div>
     </div>
   </header>
 
-  <!-- ── Sidebar (mesma da 0.1, com grupo expandido) ──────── -->
+  <!-- ── Sidebar do fornecedor: 1 grupo "Negociações" com 2 sub-items ────── -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar__top">
-
-      <div class="sidebar__item">
-        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/gerenciador-symbol.svg" alt="" class="sidebar__icon" />
-        <span class="sidebar__label">Gerenciador de preços</span>
-      </div>
-
-      <div class="sidebar__item">
-        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/estrategia-symbol.svg" alt="" class="sidebar__icon" />
-        <span class="sidebar__label">Estratégia</span>
-        <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
-      </div>
-
-      <div class="sidebar__item">
-        <span class="material-icons sidebar__icon-mi">local_offer</span>
-        <span class="sidebar__label">Campanhas</span>
-      </div>
 
       <div class="sidebar__group is-open" id="negGroup">
         <div class="sidebar__item" data-toggle-group="negGroup">
           <img src="https://marcoskip.github.io/infoprice-prototipos/assets/negociacoes-symbol.svg" alt="" class="sidebar__icon" />
-          <span class="sidebar__label">Negociações fornecedor</span>
+          <span class="sidebar__label">Negociações</span>
           <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
         </div>
         <div class="sidebar__subitems">
-          <a class="sidebar__subitem" href="#">Negociação fornecedor</a>
-          <a class="sidebar__subitem" href="#">Negociações salvas</a>
-          <a class="sidebar__subitem" href="0.1.html">Fornecedores</a>
+          <a class="sidebar__subitem" href="A.6.empty.html">Negociações salvas</a>
+          <a class="sidebar__subitem" href="#" id="navTabelas">Tabelas</a>
         </div>
-      </div>
-
-      <div class="sidebar__item">
-        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/extracao-symbol.svg" alt="" class="sidebar__icon" />
-        <span class="sidebar__label">Extração de preços</span>
-      </div>
-
-      <div class="sidebar__item">
-        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/IA-symbol.svg" alt="" class="sidebar__icon" />
-        <span class="sidebar__label">Precifique com IA</span>
-        <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
       </div>
 
     </div>
@@ -446,25 +472,25 @@
   </aside>
 
   <!-- Popup flutuante exibido ao clicar em [data-toggle-group] com a sidebar recolhida -->
-  <div class="sidebar-popup" id="sidebarPopup" hidden role="menu" aria-label="Negociações fornecedor">
-    <a class="sidebar-popup__item" href="#" role="menuitem">Negociação fornecedor</a>
-    <a class="sidebar-popup__item" href="A.9.html" role="menuitem">Negociações salvas</a>
-    <a class="sidebar-popup__item" href="0.1.html" role="menuitem">Fornecedores</a>
+  <div class="sidebar-popup" id="sidebarPopup" hidden role="menu" aria-label="Negociações">
+    <a class="sidebar-popup__item" href="A.6.empty.html" role="menuitem">Negociações salvas</a>
+    <a class="sidebar-popup__item" href="#" role="menuitem">Tabelas</a>
   </div>
 
   <!-- ── Title bar ──────────────────────────────────────── -->
   <section class="title-bar">
     <div class="title-bar__left">
-      <span class="title-bar__heading">Negociações salvas</span>
+      <span class="title-bar__heading">Negociações Salvas</span>
     </div>
     <div class="title-bar__right">
       <div class="searchbar searchbar--header" id="searchbar">
         <span class="material-icons-outlined" aria-hidden="true">search</span>
-        <input type="text" class="searchbar__input" id="searchInput" placeholder="Pesquise por uma negociação" />
+        <input type="text" class="searchbar__input" id="searchInput" placeholder="Buscar por título ou SKU…" />
       </div>
       <button class="btn btn--primary btn--medium" id="novaNegBtn">
-        <span>Nova negociação</span>
+        <span>Nova tabela</span>
       </button>
+      <!-- Texto uppercase aplicado via #novaNegBtn no CSS (mesmo padrao da A.9 NOVA NEGOCIACAO) -->
     </div>
   </section>
 
@@ -475,68 +501,18 @@
         <div class="filtros__left">
           <div class="filtros__row">
 
-            <div class="filtro-chip-wrapper" data-filter="produto">
+            <div class="filtro-chip-wrapper" data-filter="varejista">
               <button class="filtro-chip" data-trigger>
-                <span data-label>Produto</span>
+                <span data-label>Varejista</span>
                 <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
               </button>
               <div class="filtro-dropdown" data-dropdown>
                 <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="produto" value="todos" checked /><span>Todos</span></label>
-                </div>
-              </div>
-            </div>
-
-            <div class="filtro-chip-wrapper" data-filter="loja">
-              <button class="filtro-chip" data-trigger>
-                <span data-label>Loja</span>
-                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
-              </button>
-              <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="loja" value="todas" checked /><span>Todas</span></label>
-                </div>
-              </div>
-            </div>
-
-            <div class="filtro-chip-wrapper" data-filter="cluster">
-              <button class="filtro-chip" data-trigger>
-                <span data-label>Cluster</span>
-                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
-              </button>
-              <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="cluster" value="todos" checked /><span>Todos</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="cluster" value="01" /><span>Cluster 01</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="cluster" value="02" /><span>Cluster 02</span></label>
-                </div>
-              </div>
-            </div>
-
-            <div class="filtro-chip-wrapper" data-filter="fornecedor">
-              <button class="filtro-chip" data-trigger>
-                <span data-label>Fornecedor</span>
-                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
-              </button>
-              <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="fornecedor" value="todos" checked /><span>Todos</span></label>
-                </div>
-              </div>
-            </div>
-
-            <div class="filtro-chip-wrapper" data-filter="responsavel">
-              <button class="filtro-chip" data-trigger>
-                <span data-label>Responsável</span>
-                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
-              </button>
-              <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="todos" checked /><span>Todos</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="ana.costa@estrela" /><span>ana.costa@estrela</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="joao.mendes@estrela" /><span>joao.mendes@estrela</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="felipe.kanarek@infoprice" /><span>felipe.kanarek@infoprice</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="warlleyn.bob@infoprice" /><span>warlleyn.bob@infoprice</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="varejista" value="todos" checked /><span>Todos</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="varejista" value="estrela" /><span>Supermercado Estrela</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="varejista" value="carrefour" /><span>Carrefour</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="varejista" value="pao-de-acucar" /><span>Pão de Açúcar</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="varejista" value="assai" /><span>Assaí</span></label>
                 </div>
               </div>
             </div>
@@ -549,10 +525,41 @@
               <div class="filtro-dropdown" data-dropdown>
                 <div class="filtro-dropdown__list">
                   <label class="filtro-dropdown__item"><input type="radio" name="status" value="todos" checked /><span>Todos</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="em-negociacao" /><span>Em negociação</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="aguard-fornecedor" /><span>Aguard. fornecedor</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="rascunho" /><span>Rascunho</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="em-analise" /><span>Em análise</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="proposta-enviada" /><span>Proposta enviada</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="em-tratativa" /><span>Em tratativa</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="acordo" /><span>Acordo</span></label>
                   <label class="filtro-dropdown__item"><input type="radio" name="status" value="fechado" /><span>Fechado</span></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="filtro-chip-wrapper" data-filter="aguarda">
+              <button class="filtro-chip" data-trigger>
+                <span data-label>Aguarda</span>
+                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
+              </button>
+              <div class="filtro-dropdown" data-dropdown>
+                <div class="filtro-dropdown__list">
+                  <label class="filtro-dropdown__item"><input type="radio" name="aguarda" value="todos" checked /><span>Todos</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="aguarda" value="voce" /><span>Você</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="aguarda" value="varejista" /><span>Varejista</span></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="filtro-chip-wrapper" data-filter="ultacao">
+              <button class="filtro-chip" data-trigger>
+                <span data-label>Última ação</span>
+                <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
+              </button>
+              <div class="filtro-dropdown" data-dropdown>
+                <div class="filtro-dropdown__list">
+                  <label class="filtro-dropdown__item"><input type="radio" name="ultacao" value="qualquer" checked /><span>Qualquer</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="ultacao" value="hoje" /><span>Hoje</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="ultacao" value="7d" /><span>Últimos 7 dias</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="ultacao" value="30d" /><span>Últimos 30 dias</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="ultacao" value="90d" /><span>Últimos 90 dias</span></label>
                 </div>
               </div>
             </div>
@@ -568,9 +575,28 @@
     </div>
   </section>
 
-  <!-- ── Grid ───────────────────────────────────────────── -->
+  <!-- ── Body: empty state (primeiro acesso) OU grid populado (dev menu povoar) ── -->
   <section class="grid">
-    <div class="grid__wrapper">
+    <!-- Variante 1: empty state (primeiro acesso) -->
+    <div class="grid__wrapper empty-body" id="emptyBodyWrap">
+      <div class="empty-state-fornec">
+        <span class="empty-state-fornec__icon" aria-hidden="true">
+          <span class="material-icons-outlined">inbox</span>
+        </span>
+        <h1 class="empty-state-fornec__title">
+          Você ainda não enviou nenhuma tabela para Supermercado Estrela
+        </h1>
+        <p class="empty-state-fornec__subtitle">
+          Envie uma tabela de preços para começar a negociar.
+        </p>
+        <button class="btn btn--primary btn--medium empty-state-fornec__cta" id="emptyCtaBtn">
+          <span>Nova tabela</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Variante 2: grid populado (mesma estrutura da A.9) -->
+    <div class="grid__wrapper" id="gridWrap" hidden>
       <table class="grid__table" id="negTable">
         <colgroup>
           <col style="width:22%">
@@ -605,8 +631,8 @@
             </th>
             <th>
               <div class="grid__th-content">
-                <span>Fornecedor</span>
-                <button class="grid__sort-btn" data-sort="fornecedor" data-state="inactive" aria-label="Ordenar por Fornecedor">
+                <span>Varejista</span>
+                <button class="grid__sort-btn" data-sort="varejista" data-state="inactive" aria-label="Ordenar por Varejista">
                   <span class="material-icons-outlined">unfold_more</span>
                 </button>
               </div>
@@ -659,7 +685,7 @@
         <tbody id="negTbody"></tbody>
       </table>
 
-      <div class="empty-state" id="emptyState" hidden style="padding:64px 16px;text-align:center">
+      <div class="empty-state" id="filterEmpty" hidden style="padding:64px 16px;text-align:center">
         <div style="font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);color:var(--color-gray-800);margin-bottom:4px">
           Nenhuma negociação para os filtros aplicados
         </div>
@@ -674,7 +700,7 @@
           <span class="material-icons-outlined" style="font-size:16px;color:var(--color-blue-400)">expand_less</span>
           <span class="grid__pagination-label">/ página</span>
           <span class="grid__pagination-sep"></span>
-          <span class="grid__pagination-label">total: <span id="paginationTotal">47</span></span>
+          <span class="grid__pagination-label">total: <span id="paginationTotal">9</span></span>
         </div>
         <div class="grid__pagination-right">
           <div class="grid__pagination-nav">
@@ -682,8 +708,6 @@
             <span class="material-icons-outlined">chevron_left</span>
           </div>
           <button class="grid__pagination-btn is-active">1</button>
-          <button class="grid__pagination-btn">2</button>
-          <button class="grid__pagination-btn">3</button>
           <div class="grid__pagination-nav">
             <span class="material-icons-outlined">chevron_right</span>
             <span class="material-icons-outlined">last_page</span>
@@ -706,22 +730,13 @@
         <span class="material-icons-outlined">bolt</span>
         <span>Dev controls</span>
       </div>
-      <button class="dev-menu__item" data-dev="toast-success" type="button">
-        <span class="material-icons-outlined">check_circle</span>
-        <span>Disparar toast (sucesso)</span>
+      <button class="dev-menu__item" data-dev="populate" type="button">
+        <span class="material-icons-outlined">table_rows</span>
+        <span>Povoar com 9 negociações</span>
       </button>
-      <button class="dev-menu__item" data-dev="add-neg" type="button">
-        <span class="material-icons-outlined">add_circle_outline</span>
-        <span>Adicionar negociação à lista</span>
-      </button>
-      <div class="dev-menu__divider"></div>
-      <button class="dev-menu__item" data-dev="toggle-sidebar" type="button">
-        <span class="material-icons-outlined">menu_open</span>
-        <span>Toggle sidebar</span>
-      </button>
-      <button class="dev-menu__item" data-dev="reset-all" type="button">
-        <span class="material-icons-outlined">restart_alt</span>
-        <span>Resetar tudo</span>
+      <button class="dev-menu__item" data-dev="empty" type="button">
+        <span class="material-icons-outlined">inbox</span>
+        <span>Voltar pro empty state</span>
       </button>
       <div class="dev-menu__divider"></div>
       <button class="dev-menu__item" data-dev="hide-menu" type="button">
@@ -736,68 +751,154 @@
   </div>
 
   <script>
-    // ─── Dados de exemplo (do wireframe A.9) ─────────────────
+    // --- Sidebar collapse (mesmo padrao das telas do varejista) ---
+    const sidebar = document.getElementById('sidebar');
+    const seta    = document.getElementById('sidebarSeta');
+    let expanded = false;
+    seta.addEventListener('click', () => {
+      expanded = !expanded;
+      sidebar.classList.toggle('is-expanded', expanded);
+      seta.classList.toggle('is-flipped', expanded);
+      const sidebarW = expanded ? 220 : 52;
+      // Title-bar e' section card (offset +12 lateral); filtros/grid mantem alinhamento ao sidebar.
+      document.querySelector('.title-bar').style.left = (sidebarW + 12) + 'px';
+      document.querySelectorAll('.filtros, .grid').forEach(el => el.style.left = sidebarW + 'px');
+    });
+    document.querySelector('.title-bar').style.left = '64px';
+
+    // ─── Toggle do grupo "Negociações" + popup flutuante (sidebar recolhida) ───
+    const sidebarPopup = document.getElementById('sidebarPopup');
+    function openSidebarPopup(triggerEl) {
+      const rect = triggerEl.getBoundingClientRect();
+      sidebarPopup.hidden = false;
+      sidebarPopup.style.left = (rect.right + 8) + 'px';
+      sidebarPopup.style.top = rect.top + 'px';
+    }
+    function closeSidebarPopup() { sidebarPopup.hidden = true; }
+    document.querySelectorAll('[data-toggle-group]').forEach(trigger => {
+      trigger.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('is-expanded')) {
+          const group = document.getElementById(trigger.dataset.toggleGroup);
+          if (group) group.classList.toggle('is-open');
+        } else {
+          e.stopPropagation();
+          if (!sidebarPopup.hidden) closeSidebarPopup();
+          else openSidebarPopup(trigger);
+        }
+      });
+    });
+    document.addEventListener('click', (e) => {
+      if (sidebarPopup.hidden) return;
+      if (!sidebarPopup.contains(e.target) && !e.target.closest('[data-toggle-group]')) closeSidebarPopup();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarPopup(); });
+
+    // ─── Filtros chips: abrir/fechar dropdown (sem filtragem real — empty state) ───
+    const FILTRO_DEFAULTS = { varejista: 'Varejista', status: 'Status', aguarda: 'Aguarda', ultacao: 'Última ação' };
+    const FILTRO_LABELS = {
+      varejista: { estrela: 'Supermercado Estrela', carrefour: 'Carrefour', 'pao-de-acucar': 'Pão de Açúcar', assai: 'Assaí' },
+      status:    { 'em-analise': 'Status: em análise', 'proposta-enviada': 'Status: proposta enviada', 'em-tratativa': 'Status: em tratativa', acordo: 'Status: acordo', fechado: 'Status: fechado' },
+      aguarda:   { voce: 'Aguarda: você', varejista: 'Aguarda: varejista' },
+      ultacao:   { hoje: 'Hoje', '7d': 'Últimos 7 dias', '30d': 'Últimos 30 dias', '90d': 'Últimos 90 dias' },
+    };
+    function closeAllFiltros() {
+      document.querySelectorAll('.filtro-chip-wrapper').forEach(w => {
+        w.querySelector('[data-trigger]').classList.remove('is-open');
+        w.querySelector('[data-dropdown]').classList.remove('is-open');
+      });
+    }
+    document.querySelectorAll('.filtro-chip-wrapper').forEach(wrapper => {
+      const trigger  = wrapper.querySelector('[data-trigger]');
+      const dropdown = wrapper.querySelector('[data-dropdown]');
+      const labelEl  = trigger.querySelector('[data-label]');
+      const filterKey = wrapper.dataset.filter;
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const willOpen = !dropdown.classList.contains('is-open');
+        closeAllFiltros();
+        if (willOpen) { trigger.classList.add('is-open'); dropdown.classList.add('is-open'); }
+      });
+      dropdown.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          const val = radio.value;
+          const isDefault = val === 'todos' || val === 'qualquer';
+          labelEl.textContent = isDefault ? FILTRO_DEFAULTS[filterKey] : ((FILTRO_LABELS[filterKey] || {})[val] || val);
+          trigger.classList.remove('is-open');
+          dropdown.classList.remove('is-open');
+        });
+      });
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.filtro-chip-wrapper')) closeAllFiltros();
+    });
+
+    // --- Limpar filtros ---
+    document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+      document.querySelectorAll('.filtro-chip-wrapper').forEach(w => {
+        const labelEl = w.querySelector('[data-label]');
+        const key = w.dataset.filter;
+        labelEl.textContent = FILTRO_DEFAULTS[key];
+        w.querySelectorAll('input[type="radio"]').forEach(r => r.checked = (r.value === 'todos' || r.value === 'qualquer'));
+      });
+    });
+
+    // ─── Sub-item "Tabelas" (sem destino real ainda — T.1 nao prototipada) ───
+    document.getElementById('navTabelas').addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('[A.6.empty] Sidebar -> Tabelas (T.1 nao implementada)');
+    });
+
+    // ═══════════ Grid populado: mock data Unilever × varejistas ═══════════
     const NEGOCIACOES = [
-      { id: 1, fornec: true,  titulo: 'Unilever · Tabela Q2 - Higiene & Beleza', produtos: 9,  loja: 'Cluster 01',     fornecedor: 'UNILEVER BRASIL',         inicio: '20/04/2026', final: null,         ultEd: '21/05/2026', responsavel: 'ana.costa@estrela',       round: 'R3', status: 'em-negociacao',     aguarda: 'voce' },
-      { id: 2, fornec: true,  titulo: 'Nestlé · Linha Nescafé - reajuste',       produtos: 12, loja: null,             fornecedor: 'NESTLÉ BRASIL',           inicio: '19/04/2026', final: null,         ultEd: '19/04/2026', responsavel: 'joao.mendes@estrela',     round: 'R2', status: 'aguard-fornecedor', aguarda: 'fornec' },
-      { id: 3, fornec: false, titulo: '0000 Tste PMZ Felipe 08/04',              produtos: 3,  loja: 'Cluster 01',     fornecedor: 'BIOLAB SANUS FARMACEL',   inicio: '08/04/2026', final: null,         ultEd: '08/04/2026', responsavel: 'felipe.kanarek@infoprice', round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
-      { id: 4, fornec: false, titulo: '000 Teste Cluster 02 Felipe 07/04',       produtos: 6,  loja: 'Cluster 01, 02', fornecedor: 'CODIL ALIMENTOS LTDA',    inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice', round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
-      { id: 5, fornec: false, titulo: '000 Teste Cluster I Felipe 07/04',        produtos: 3,  loja: 'Cluster 01',     fornecedor: 'BROTO LEGAL',             inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice', round: 'R3', status: 'em-negociacao',     aguarda: 'voce' },
-      { id: 6, fornec: false, titulo: '000 Teste Felipe 07/04',                  produtos: 0,  loja: null,             fornecedor: 'BROTO LEGAL',             inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice', round: null, status: 'rascunho',          aguarda: null },
-      { id: 7, fornec: false, titulo: 'A PMZ',                                   produtos: 4,  loja: '1, 2, 3, 4',     fornecedor: 'CAMIL ALIMENTOS',         inicio: '08/04/2026', final: '08/04/2026', ultEd: '08/04/2026', responsavel: 'warlleyn.bob@infoprice',   round: 'R2', status: 'fechado',           aguarda: null },
-      { id: 8, fornec: false, titulo: 'bob',                                     produtos: 4,  loja: null,             fornecedor: 'CAFE TRES CORAÇOES SA',   inicio: '02/04/2026', final: null,         ultEd: '02/04/2026', responsavel: 'warlleyn.bob@infoprice',   round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
-      { id: 9, fornec: false, titulo: 'Bob clean',                               produtos: 4,  loja: 'Cluster 01, 02', fornecedor: 'BELLUZ IND COM IMP E EXI',inicio: '01/04/2026', final: null,         ultEd: '01/04/2026', responsavel: 'warlleyn.bob@infoprice',   round: 'R1', status: 'em-negociacao',     aguarda: 'voce' },
+      { id: 1, titulo: 'Tabela Q2 - Higiene & Beleza',    produtos: 9,  loja: 'Cluster 01',     varejista: 'Supermercado Estrela', inicio: '20/04/2026', final: null,         ultEd: '21/05/2026', responsavel: 'patricia@unilever',  round: 'R3', status: 'em-tratativa',    aguarda: 'voce' },
+      { id: 2, titulo: 'Linha OMO - reajuste Q2',         produtos: 12, loja: 'Cluster 01, 02', varejista: 'Carrefour',            inicio: '19/04/2026', final: null,         ultEd: '19/05/2026', responsavel: 'roberto@unilever',   round: 'R2', status: 'proposta-enviada', aguarda: 'varejista' },
+      { id: 3, titulo: 'Linha Knorr - sopas e caldos',    produtos: 6,  loja: 'Cluster 01',     varejista: 'Pão de Açúcar',        inicio: '08/04/2026', final: null,         ultEd: '12/05/2026', responsavel: 'patricia@unilever',  round: 'R2', status: 'em-tratativa',    aguarda: 'varejista' },
+      { id: 4, titulo: 'Linha Dove - cuidados pessoais',  produtos: 8,  loja: null,             varejista: 'Assaí',                inicio: '07/04/2026', final: null,         ultEd: '08/05/2026', responsavel: 'roberto@unilever',   round: 'R1', status: 'em-analise',      aguarda: 'varejista' },
+      { id: 5, titulo: 'Linha Kibon - sorvetes',          produtos: 5,  loja: 'Cluster 02',     varejista: 'Supermercado Estrela', inicio: '07/04/2026', final: null,         ultEd: '07/05/2026', responsavel: 'patricia@unilever',  round: 'R3', status: 'em-tratativa',    aguarda: 'voce' },
+      { id: 6, titulo: "Linha Hellmann's - molhos",        produtos: 4,  loja: null,             varejista: 'Carrefour',            inicio: '04/04/2026', final: null,         ultEd: '04/05/2026', responsavel: 'patricia@unilever',  round: null, status: 'em-analise',      aguarda: 'varejista' },
+      { id: 7, titulo: 'Linha Lipton - chás',             produtos: 4,  loja: 'Cluster 01',     varejista: 'Pão de Açúcar',        inicio: '08/04/2026', final: '08/04/2026', ultEd: '08/04/2026', responsavel: 'roberto@unilever',   round: 'R2', status: 'fechado',         aguarda: null },
+      { id: 8, titulo: 'Linha Rexona - desodorantes',     produtos: 4,  loja: 'Cluster 02',     varejista: 'Assaí',                inicio: '02/04/2026', final: null,         ultEd: '02/04/2026', responsavel: 'patricia@unilever',  round: 'R1', status: 'em-tratativa',    aguarda: 'varejista' },
+      { id: 9, titulo: 'Linha Comfort - amaciantes',      produtos: 4,  loja: 'Cluster 01, 02', varejista: 'Supermercado Estrela', inicio: '01/04/2026', final: null,         ultEd: '01/04/2026', responsavel: 'patricia@unilever',  round: 'R1', status: 'acordo',          aguarda: 'voce' },
     ];
 
     const STATUS_LABEL = {
-      'em-negociacao':     'Em negociação',
-      'aguard-fornecedor': 'Aguard. fornecedor',
-      'rascunho':          'Rascunho',
-      'fechado':           'Fechado',
-    };
-    const STATUS_ICON = {
-      'em-negociacao':     'hourglass_empty',
-      'aguard-fornecedor': 'schedule',
-      'rascunho':          'edit',
-      'fechado':           'check_circle',
-    };
-
-    // Acoes contextuais por status (menu hover na coluna Acoes)
-    const ROW_MENUS_POR_STATUS = {
-      'em-negociacao':     [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Cancelar', action: 'cancelar', danger: true }],
-      'aguard-fornecedor': [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Lembrar fornecedor', action: 'lembrar' }, { label: 'Cancelar', action: 'cancelar', danger: true }],
-      'rascunho':          [{ label: 'Continuar edição', action: 'continuar' }, { label: 'Excluir', action: 'excluir', danger: true }],
-      'fechado':           [{ label: 'Ver detalhes', action: 'abrir' }, { label: 'Duplicar', action: 'duplicar' }],
+      'em-analise':       'Em análise',
+      'proposta-enviada': 'Proposta enviada',
+      'em-tratativa':     'Em tratativa',
+      'acordo':           'Acordo',
+      'fechado':          'Fechado',
     };
 
     const state = {
-      filterCluster: 'todos',
-      filterFornecedor: 'todos',
-      filterResponsavel: 'todos',
-      filterStatus: 'todos',
-      search: '',
-      sort: { key: 'ultEd', dir: 'desc' },
+      filterVarejista:  'todos',
+      filterStatus:     'todos',
+      filterAguarda:    'todos',
+      filterUltacao:    'qualquer',
+      search:           '',
+      sort:             { key: 'ultEd', dir: 'desc' },
     };
+
+    const VAREJISTA_VALUE_MAP = { estrela: 'Supermercado Estrela', carrefour: 'Carrefour', 'pao-de-acucar': 'Pão de Açúcar', assai: 'Assaí' };
 
     const tbody       = document.getElementById('negTbody');
     const table       = document.getElementById('negTable');
-    const emptyState  = document.getElementById('emptyState');
+    const filterEmpty = document.getElementById('filterEmpty');
     const pagination  = document.getElementById('pagination');
+    const totalEl     = document.getElementById('paginationTotal');
 
-    // ─── Render ──────────────────────────────────────────────
     function applyFilters() {
       let rows = NEGOCIACOES.slice();
-      if (state.filterStatus !== 'todos')      rows = rows.filter(r => r.status === state.filterStatus);
-      if (state.filterResponsavel !== 'todos') rows = rows.filter(r => r.responsavel === state.filterResponsavel);
-      if (state.filterFornecedor !== 'todos')  rows = rows.filter(r => r.fornecedor === state.filterFornecedor);
-      if (state.filterCluster !== 'todos') {
-        rows = rows.filter(r => (r.loja || '').includes(`Cluster ${state.filterCluster}`));
+      if (state.filterStatus !== 'todos')    rows = rows.filter(r => r.status === state.filterStatus);
+      if (state.filterAguarda !== 'todos')   rows = rows.filter(r => r.aguarda === state.filterAguarda);
+      if (state.filterVarejista !== 'todos') {
+        const nome = VAREJISTA_VALUE_MAP[state.filterVarejista];
+        if (nome) rows = rows.filter(r => r.varejista === nome);
       }
       if (state.search.trim()) {
         const q = state.search.trim().toLowerCase();
         rows = rows.filter(r =>
           r.titulo.toLowerCase().includes(q) ||
-          r.fornecedor.toLowerCase().includes(q)
+          (r.varejista || '').toLowerCase().includes(q)
         );
       }
       if (state.sort.key && state.sort.dir) {
@@ -815,45 +916,35 @@
     function renderRows() {
       const rows = applyFilters();
       tbody.innerHTML = rows.map(r => {
-        const statusLabel = STATUS_LABEL[r.status];
-        const statusIcon  = STATUS_ICON[r.status];
-        const fornecChip  = r.fornec
-          ? '<span class="grid__chip grid__chip--gray">Fornecedor</span>'
-          : '';
-        const loja        = r.loja ?? '<span class="cell-empty">—</span>';
-        const final       = r.final ?? '<span class="cell-empty">—</span>';
-        const round       = r.round
+        const statusLabel = STATUS_LABEL[r.status] || r.status;
+        const loja  = r.loja ?? '<span class="cell-empty">—</span>';
+        const final = r.final ?? '<span class="cell-empty">—</span>';
+        const round = r.round
           ? `<span class="grid__chip grid__chip--gray neg-round">${r.round}</span>`
           : '<span class="cell-empty">—</span>';
         let aguarda = '<span class="cell-empty">—</span>';
-        if (r.aguarda === 'voce') {
-          aguarda = '<span class="neg-aguarda neg-aguarda--voce">Você</span>';
-        } else if (r.aguarda === 'fornec') {
-          aguarda = '<span class="neg-aguarda neg-aguarda--fornec">Fornec.</span>';
-        }
+        if (r.aguarda === 'voce')      aguarda = '<span class="neg-aguarda neg-aguarda--voce">Você</span>';
+        else if (r.aguarda === 'varejista') aguarda = '<span class="neg-aguarda neg-aguarda--fornec">Varej.</span>';
 
         const rowClass = r.aguarda === 'voce' ? ' class="row-aguarda-voce"' : '';
         return `
           <tr${rowClass}>
             <td>
               <div class="neg-title">
-                <a class="neg-title__name" href="A.8.7.html" style="color:inherit;text-decoration:none">${r.titulo}</a>
+                <a class="neg-title__name" href="#" style="color:inherit;text-decoration:none">${r.titulo}</a>
                 <div class="neg-title__meta">
-                  ${fornecChip}
                   <span class="neg-title__count">${r.produtos} produtos</span>
                 </div>
               </div>
             </td>
             <td>${loja}</td>
-            <td>${r.fornecedor}</td>
+            <td>${r.varejista}</td>
             <td>${r.inicio}</td>
             <td>${final}</td>
             <td>${r.ultEd}</td>
             <td>${r.responsavel}</td>
             <td>${round}</td>
-            <td>
-              <span class="neg-status neg-status--${r.status}">${statusLabel}</span>
-            </td>
+            <td><span class="neg-status neg-status--${r.status}">${statusLabel}</span></td>
             <td>${aguarda}</td>
             <td class="col-acoes">
               <div class="row-actions" data-id="${r.id}">
@@ -867,86 +958,36 @@
       }).join('');
 
       const isEmpty = rows.length === 0;
-      emptyState.hidden = !isEmpty;
+      filterEmpty.hidden = !isEmpty;
       table.style.display = isEmpty ? 'none' : '';
       pagination.hidden = isEmpty;
+      if (totalEl) totalEl.textContent = rows.length;
     }
 
-    // ─── Searchbar (no header) ──────────────────────────────
+    // ─── Hook nos filtros chips: agora aplicam state + re-render ───
+    document.querySelectorAll('.filtro-chip-wrapper input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const key = radio.name;
+        const stateKey = 'filter' + key.charAt(0).toUpperCase() + key.slice(1);
+        if (stateKey in state) {
+          state[stateKey] = radio.value;
+          if (!document.getElementById('gridWrap').hidden) renderRows();
+        }
+      });
+    });
+
+    // ─── Searchbar: filtro por titulo / varejista ───
     const searchInput = document.getElementById('searchInput');
     let searchTimer = null;
     searchInput.addEventListener('input', (e) => {
-      const v = e.target.value;
       clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => { state.search = v; renderRows(); }, 200);
+      searchTimer = setTimeout(() => {
+        state.search = e.target.value;
+        if (!document.getElementById('gridWrap').hidden) renderRows();
+      }, 200);
     });
 
-    // ─── Popular dropdown de Fornecedor com os valores unicos do mock ───
-    (function populaFornecedorDropdown() {
-      const list = document.querySelector('[data-filter="fornecedor"] .filtro-dropdown__list');
-      if (!list) return;
-      const unique = [...new Set(NEGOCIACOES.map(n => n.fornecedor))].sort();
-      unique.forEach(f => {
-        const id = `forn-${f.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
-        list.insertAdjacentHTML('beforeend',
-          `<label class="filtro-dropdown__item"><input type="radio" name="fornecedor" value="${f}" /><span>${f}</span></label>`
-        );
-      });
-    })();
-
-    // ─── Filtros chips ──────────────────────────────────────
-    // Default (sem filtro aplicado): mostra so o nome. Apos selecionar, "Nome: valor".
-    const FILTRO_DEFAULTS = { produto: 'Produto', loja: 'Loja', cluster: 'Cluster', fornecedor: 'Fornecedor', responsavel: 'Responsável', status: 'Status' };
-    const FILTRO_LABELS = {
-      status:  { 'em-negociacao': 'Status: em negociação', 'aguard-fornecedor': 'Status: aguard. fornecedor', rascunho: 'Status: rascunho', fechado: 'Status: fechado' },
-      cluster: { '01': 'Cluster 01', '02': 'Cluster 02' },
-    };
-    function closeAllFiltros() {
-      document.querySelectorAll('.filtro-chip-wrapper').forEach(w => {
-        w.querySelector('[data-trigger]').classList.remove('is-open');
-        w.querySelector('[data-dropdown]').classList.remove('is-open');
-      });
-    }
-    document.querySelectorAll('.filtro-chip-wrapper').forEach(wrapper => {
-      const trigger  = wrapper.querySelector('[data-trigger]');
-      const dropdown = wrapper.querySelector('[data-dropdown]');
-      const labelEl  = trigger.querySelector('[data-label]');
-      const filterKey = wrapper.dataset.filter;
-
-      trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const willOpen = !dropdown.classList.contains('is-open');
-        closeAllFiltros();
-        if (willOpen) {
-          trigger.classList.add('is-open');
-          dropdown.classList.add('is-open');
-        }
-      });
-
-      dropdown.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-          const val = radio.value;
-          const isDefault = val === 'todos' || val === 'todas';
-          if (isDefault) {
-            labelEl.textContent = FILTRO_DEFAULTS[filterKey];
-          } else if (filterKey === 'responsavel') {
-            labelEl.textContent = `Resp.: ${val.split('@')[0]}`;
-          } else if (filterKey === 'fornecedor') {
-            const curto = val.split(/\s+/)[0];
-            labelEl.textContent = `Fornec.: ${curto}`;
-          } else {
-            const labelMap = FILTRO_LABELS[filterKey] || {};
-            labelEl.textContent = labelMap[val] || val;
-          }
-          const stateKey = `filter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}`;
-          if (stateKey in state) { state[stateKey] = val; renderRows(); }
-          trigger.classList.remove('is-open');
-          dropdown.classList.remove('is-open');
-        });
-      });
-    });
-
-    // ─── Sort cycle ─────────────────────────────────────────
+    // ─── Sort cycle ───
     document.querySelectorAll('.grid__sort-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const key = btn.dataset.sort;
@@ -974,233 +1015,55 @@
       });
     });
 
-    // ─── Click-outside dos dropdowns de filtros ──────────────
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.filtro-chip-wrapper')) closeAllFiltros();
+    // ─── Limpar filtros tambem reseta o state real ───
+    document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+      state.filterVarejista = 'todos';
+      state.filterStatus    = 'todos';
+      state.filterAguarda   = 'todos';
+      state.filterUltacao   = 'qualquer';
+      if (!document.getElementById('gridWrap').hidden) renderRows();
+    });
+    document.getElementById('clearFiltersLink')?.addEventListener('click', () => {
+      document.getElementById('clearFiltersBtn').click();
     });
 
-    // ─── Limpar filtros ─────────────────────────────────────
-    function clearAllFilters() {
-      state.filterCluster = 'todos';
-      state.filterFornecedor = 'todos';
-      state.filterResponsavel = 'todos';
-      state.filterStatus = 'todos';
-      state.search = '';
-      searchInput.value = '';
-      // resetar UI dos chips
-      document.querySelectorAll('.filtro-chip-wrapper').forEach(w => {
-        const labelEl = w.querySelector('[data-label]');
-        const key = w.dataset.filter;
-        labelEl.textContent = FILTRO_DEFAULTS[key];
-        w.querySelectorAll('input[type="radio"]').forEach(r => r.checked = (r.value === 'todos' || r.value === 'todas'));
-      });
-      renderRows();
-    }
-    document.getElementById('clearFiltersBtn').addEventListener('click', clearAllFilters);
-    document.getElementById('clearFiltersLink')?.addEventListener('click', clearAllFilters);
-
-    // ─── Sidebar toggle ─────────────────────────────────────
-    const sidebar = document.getElementById('sidebar');
-    const seta = document.getElementById('sidebarSeta');
-    let expanded = false;
-    seta.addEventListener('click', () => {
-      expanded = !expanded;
-      sidebar.classList.toggle('is-expanded', expanded);
-      seta.classList.toggle('is-flipped', expanded);
-      const sidebarW = expanded ? 220 : 52;
-      // Title bar e' section card (tem gap lateral); filtros/grid mantem alinhamento ao sidebar.
-      document.querySelector('.title-bar').style.left = (sidebarW + 12) + 'px';
-      document.querySelectorAll('.filtros, .grid').forEach(el => el.style.left = sidebarW + 'px');
-    });
-    // Aplicar offset inicial do title-bar (sidebar comeca recolhida: 52 + 12 = 64px).
-    document.querySelector('.title-bar').style.left = '64px';
-    // Popup flutuante (sidebar recolhida) — clique no item-pai abre menu ao lado do icone.
-    const sidebarPopup = document.getElementById('sidebarPopup');
-    function openSidebarPopup(triggerEl) {
-      const rect = triggerEl.getBoundingClientRect();
-      sidebarPopup.hidden = false;
-      sidebarPopup.style.left = (rect.right + 8) + 'px';
-      sidebarPopup.style.top = rect.top + 'px';
-    }
-    function closeSidebarPopup() { sidebarPopup.hidden = true; }
-    document.querySelectorAll('[data-toggle-group]').forEach(trigger => {
-      trigger.addEventListener('click', (e) => {
-        if (sidebar.classList.contains('is-expanded')) {
-          const group = document.getElementById(trigger.dataset.toggleGroup);
-          if (group) group.classList.toggle('is-open');
-        } else {
-          e.stopPropagation();
-          if (!sidebarPopup.hidden) closeSidebarPopup();
-          else openSidebarPopup(trigger);
-        }
-      });
-    });
-    document.addEventListener('click', (e) => {
-      if (sidebarPopup.hidden) return;
-      if (!sidebarPopup.contains(e.target) && !e.target.closest('[data-toggle-group]')) closeSidebarPopup();
-    });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarPopup(); });
-
-    // ─── CTA Nova negociação ────────────────────────────────
-    document.getElementById('novaNegBtn').addEventListener('click', () => {
-      showToast('Fluxo de nova negociação ainda nao implementado.', 'info');
-    });
-
-    // ─── Toast helper (igual ao da 0.1) ─────────────────────
-    const toastContainer = document.getElementById('toastContainer');
-    function showToast(message, variant = 'success', durationMs = 5000) {
-      const iconMap = { success: 'check_circle', error: 'error', info: 'info', warning: 'warning' };
-      const now = new Date();
-      const pad = n => String(n).padStart(2, '0');
-      const timestamp = `${pad(now.getHours())}:${pad(now.getMinutes())}, ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
-      const toast = document.createElement('div');
-      toast.className = `toast toast--${variant}`;
-      toast.innerHTML = `
-        <div class="toast__content-wrap">
-          <span class="material-icons-outlined toast__icon">${iconMap[variant] || 'info'}</span>
-          <div class="toast__content">
-            <span class="toast__body">${message}</span>
-            <span class="toast__meta">${timestamp}</span>
-          </div>
-        </div>
-        <button class="toast__close" type="button" aria-label="Fechar">
-          <span class="material-icons-outlined" style="font-size:16px">close</span>
-        </button>
-      `;
-      toastContainer.appendChild(toast);
-      const close = () => toast.remove();
-      toast.querySelector('.toast__close').addEventListener('click', close);
-      if (durationMs) setTimeout(close, durationMs);
-    }
-
-    // ─── Menu de acoes da linha (hover, contextual) ─────────
-    const rowMenu = document.getElementById('rowActionsMenu');
-    let rowMenuTrigger = null;
-    let rowMenuCloseTimer = null;
-
-    function renderRowMenu(status) {
-      const items = ROW_MENUS_POR_STATUS[status] || [];
-      rowMenu.innerHTML = items.map((it, i) => {
-        const divider = i > 0 ? '<div class="context-menu__divider"></div>' : '';
-        const danger  = it.danger ? ' context-menu__item--danger' : '';
-        return `${divider}<button class="context-menu__item${danger}" type="button" data-action="${it.action}">${it.label}</button>`;
-      }).join('');
-    }
-    function positionRowMenu(trigger) {
-      const rect = trigger.getBoundingClientRect();
-      rowMenu.classList.add('is-open');
-      const menuW = rowMenu.offsetWidth;
-      const menuH = rowMenu.offsetHeight;
-      let top  = rect.bottom + 4;
-      let left = rect.right - menuW;
-      if (left < 8) left = 8;
-      if (top + menuH > window.innerHeight - 8) top = rect.top - menuH - 4;
-      rowMenu.style.top  = top + 'px';
-      rowMenu.style.left = left + 'px';
-    }
-    function openRowMenu(trigger) {
-      clearTimeout(rowMenuCloseTimer);
-      rowMenuTrigger = trigger;
-      const wrapper = trigger.closest('.row-actions');
-      const id = parseInt(wrapper.dataset.id, 10);
-      const neg = NEGOCIACOES.find(n => n.id === id);
-      if (!neg) return;
-      renderRowMenu(neg.status);
-      positionRowMenu(trigger);
-    }
-    function scheduleCloseRowMenu() {
-      clearTimeout(rowMenuCloseTimer);
-      rowMenuCloseTimer = setTimeout(() => {
-        rowMenu.classList.remove('is-open');
-        rowMenuTrigger = null;
-      }, 120);
-    }
-
-    document.addEventListener('mouseover', (e) => {
-      const trigger = e.target.closest('.row-actions__trigger');
-      if (trigger) openRowMenu(trigger);
-    });
-    document.addEventListener('mouseout', (e) => {
-      const trigger = e.target.closest('.row-actions__trigger');
-      if (!trigger) return;
-      const toMenu = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.context-menu');
-      if (!toMenu) scheduleCloseRowMenu();
-    });
-    rowMenu.addEventListener('mouseenter', () => clearTimeout(rowMenuCloseTimer));
-    rowMenu.addEventListener('mouseleave', () => scheduleCloseRowMenu());
-
-    document.querySelector('.grid').addEventListener('scroll', () => {
-      rowMenu.classList.remove('is-open');
-      rowMenuTrigger = null;
-    }, true);
-
-    // Acoes do menu contextual
-    rowMenu.addEventListener('click', (e) => {
-      const btn = e.target.closest('.context-menu__item');
-      if (!btn || !rowMenuTrigger) return;
-      const action = btn.dataset.action;
-      const wrapper = rowMenuTrigger.closest('.row-actions');
-      const id = parseInt(wrapper.dataset.id, 10);
-      const neg = NEGOCIACOES.find(n => n.id === id);
-      if (!neg) return;
-      const titulo = neg.titulo;
-
-      if (action === 'abrir') {
-        // Toda negociacao abre em A.8.7 (Round 2). "Enviar contraproposta" leva ao Round 3 (A.18).
-        window.location.href = 'A.8.7.html';
-        return;
-      } else if (action === 'continuar') {
-        showToast(`Continuando edição de "${titulo}".`, 'info');
-      } else if (action === 'cancelar') {
-        const idx = NEGOCIACOES.indexOf(neg);
-        if (idx >= 0) NEGOCIACOES.splice(idx, 1);
-        showToast(`Negociação "${titulo}" cancelada.`, 'success');
-      } else if (action === 'excluir') {
-        const idx = NEGOCIACOES.indexOf(neg);
-        if (idx >= 0) NEGOCIACOES.splice(idx, 1);
-        showToast(`Rascunho "${titulo}" excluído.`, 'success');
-      } else if (action === 'lembrar') {
-        showToast(`Lembrete enviado ao fornecedor de "${titulo}".`, 'success');
-      } else if (action === 'duplicar') {
-        const nextId = Math.max(...NEGOCIACOES.map(n => n.id)) + 1;
-        NEGOCIACOES.unshift({ ...neg, id: nextId, titulo: `${titulo} (cópia)`, status: 'rascunho', round: null, aguarda: null, ultEd: new Date().toLocaleDateString('pt-BR') });
-        showToast(`"${titulo}" duplicado como rascunho.`, 'success');
-      }
-      rowMenu.classList.remove('is-open');
-      rowMenuTrigger = null;
-      renderRows();
-    });
-
-    // ─── Dev mode ──────────────────────────────────────────
-    const NEG_SNAPSHOT = JSON.parse(JSON.stringify(NEGOCIACOES));
-    const devMenu = document.getElementById('devMenu');
-    const DEV_ACTIONS = {
-      'toast-success': () => showToast('Convite enviado para Unilever Brasil Ltda.', 'success'),
-      'add-neg': () => {
-        const nextId = Math.max(...NEGOCIACOES.map(n => n.id)) + 1;
-        NEGOCIACOES.unshift({
-          id: nextId, fornec: false, titulo: 'Nova negociação demo', produtos: 8,
-          loja: 'Cluster 03', fornecedor: 'MONDELEZ BRASIL', inicio: '20/05/2026',
-          final: null, ultEd: '20/05/2026', responsavel: 'marcos.keller@infoprice',
-          round: null, status: 'rascunho', aguarda: null,
-        });
+    // ═══════════ Dev menu: alternar empty <-> grid populado ═══════════
+    const devMenu       = document.getElementById('devMenu');
+    const emptyBodyWrap = document.getElementById('emptyBodyWrap');
+    const gridWrap      = document.getElementById('gridWrap');
+    function setVariant(v) {
+      if (v === 'populate') {
+        emptyBodyWrap.hidden = true;
+        gridWrap.hidden = false;
         renderRows();
-        showToast('Negociação criada como rascunho.', 'success');
-      },
-      'toggle-sidebar': () => seta.click(),
-      'reset-all': () => {
-        NEGOCIACOES.length = 0;
-        NEG_SNAPSHOT.forEach(n => NEGOCIACOES.push({ ...n }));
-        clearAllFilters();
-        toastContainer.innerHTML = '';
-      },
-      'hide-menu': () => devMenu.classList.add('is-hidden'),
-    };
-    devMenu.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-dev]');
-      if (!btn) return;
-      const action = DEV_ACTIONS[btn.dataset.dev];
-      if (action) action();
+      } else {
+        emptyBodyWrap.hidden = false;
+        gridWrap.hidden = true;
+      }
+    }
+    console.log('[devmenu] script carregado. devMenu=', devMenu, 'emptyBodyWrap=', emptyBodyWrap, 'gridWrap=', gridWrap);
+    console.log('[devmenu] itens encontrados:', document.querySelectorAll('[data-dev]').length);
+
+    // Clique no trigger (bolt) abre/fecha o painel
+    document.getElementById('devMenuTrigger').addEventListener('click', (e) => {
+      e.stopPropagation();
+      devMenu.classList.toggle('is-open');
+      console.log('[devmenu] trigger clicado. is-open agora=', devMenu.classList.contains('is-open'));
+    });
+    // Clique fora fecha
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dev-menu')) devMenu.classList.remove('is-open');
+    });
+    // Acoes dos itens
+    document.querySelectorAll('[data-dev]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const dev = btn.dataset.dev;
+        console.log('[devmenu] item clicado:', dev);
+        if (dev === 'populate')       setVariant('populate');
+        else if (dev === 'empty')     setVariant('empty');
+        else if (dev === 'hide-menu') devMenu.classList.add('is-hidden');
+        devMenu.classList.remove('is-open');
+      });
     });
     document.addEventListener('keydown', (e) => {
       if (e.key.toLowerCase() !== 'd') return;
@@ -1208,9 +1071,14 @@
       if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
       devMenu.classList.toggle('is-hidden');
     });
-
-    // ─── Inicializa ────────────────────────────────────────
-    renderRows();
+    // ─── CTAs "Nova tabela" / "Enviar nova tabela" -> A.7 ───
+    function goToNovaTabela() {
+      // Em prod: navega para A.7 (Upload de Nova Tabela).
+      alert('Fluxo "Nova tabela" (A.7) ainda nao prototipado.');
+    }
+    document.getElementById('novaNegBtn').addEventListener('click', goToNovaTabela);
+    document.getElementById('emptyCtaBtn').addEventListener('click', goToNovaTabela);
   </script>
 </body>
 </html>
+
