@@ -111,24 +111,83 @@
       overflow-y: auto;
     }
 
-    /* ─── Modal ─── */
+    /* ─── Modal de confirmacao nested (Recusar convite) ─── */
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+      z-index: 1100; /* acima do .modal-overlay */
+    }
+    .confirm-overlay[hidden] { display: none; }
+    .confirm-modal {
+      width: 100%;
+      max-width: 420px;
+      background: var(--color-white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-elevation);
+      padding: var(--space-4) var(--space-4) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .confirm-modal__title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+      margin: 0;
+    }
+    .confirm-modal__body {
+      font-size: var(--font-size-md);
+      line-height: 20px;
+      color: var(--color-gray-800);
+      margin: 0;
+    }
+    .confirm-modal__actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: var(--space-2);
+    }
+
+    /* ─── Modal (novo padrao: header branco + body cinza claro) ─── */
     .vincular-modal {
       width: 100%;
       max-width: 520px;
       background: var(--color-white);
-      border-radius: var(--radius-md);
+      border-radius: 10px;
       box-shadow: var(--shadow-elevation);
-      padding: 32px 32px 28px;
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 48px);
+      overflow: hidden;
+    }
+    .vincular-modal__header {
+      background: var(--color-white);
+      padding: 20px 32px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .vincular-modal__logo {
+      height: 24px;
+      width: auto;
+      display: inline-block;
+    }
+    .vincular-modal__body {
+      background: var(--color-gray-50, #FAFAFA);
+      padding: 24px 32px 28px;
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
-      max-height: calc(100vh - 48px);
       overflow-y: auto;
     }
 
     /* ─── Badge azul superior ─── */
     .vincular-badge {
-      align-self: center;
+      align-self: flex-start;
       padding: 4px 14px;
       background: var(--color-blue-light-10);
       border: 1px solid var(--color-blue-light-20);
@@ -142,10 +201,10 @@
     }
 
     .vincular-heading {
-      text-align: center;
+      text-align: left;
       font-size: var(--font-size-2xl);
-      line-height: 28px;
-      font-weight: var(--font-weight-semibold);
+      line-height: 30px;
+      font-weight: var(--font-weight-bold);
       color: var(--color-gray-900);
       margin: 0;
     }
@@ -401,6 +460,14 @@
   <div class="modal-overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="vincularTitle">
     <section class="vincular-modal" role="document">
 
+      <!-- Header: faixa branca com logo InfoPrice a direita -->
+      <div class="vincular-modal__header">
+        <img class="vincular-modal__logo" src="https://marcoskip.github.io/infoprice-prototipos/assets/logo-principal.svg" alt="InfoPrice" />
+      </div>
+
+      <!-- Body: conteudo alinhado a esquerda sobre fundo cinza claro -->
+      <div class="vincular-modal__body">
+
       <!-- Badge azul superior -->
       <span class="vincular-badge">Novo varejista quer negociar com você</span>
 
@@ -470,7 +537,23 @@
         Ao aceitar, <strong>Supermercado Estrela</strong> passa a enxergar a Unilever Brasil como fornecedor parceiro no IPA.
       </p>
 
+      </div><!-- /.vincular-modal__body -->
+
     </section>
+  </div>
+
+  <!-- ════════════ Modal de confirmacao "Recusar convite" (nested sobre o 0.4.7) ════════════ -->
+  <div class="confirm-overlay" id="refuseConfirm" hidden role="dialog" aria-modal="true" aria-labelledby="refuseConfirmTitle">
+    <div class="confirm-modal">
+      <h2 class="confirm-modal__title" id="refuseConfirmTitle">Recusar convite?</h2>
+      <p class="confirm-modal__body">
+        Você está prestes a recusar o convite do <strong>Supermercado Estrela</strong>. O convite será descartado e o varejista será notificado. Para retomar o vínculo depois, será necessário um novo convite.
+      </p>
+      <div class="confirm-modal__actions">
+        <button type="button" class="btn btn--primary btn--ghost btn--medium" id="refuseConfirmCancel">Voltar</button>
+        <button type="button" class="btn btn--secondary btn--red btn--medium" id="refuseConfirmOk">Recusar convite</button>
+      </div>
+    </div>
   </div>
 
   <!-- ──────── Demo controls (data-demo-only — remover antes de prod) ──────── -->
@@ -584,8 +667,20 @@
       // Em prod, idealmente abrir direto a aba do varejista recem-vinculado (/varejistas/estrela).
       setTimeout(() => { window.location.href = 'A.6.1.html'; }, 1500);
     });
+    // Recusar: abre modal de confirmacao (acao destrutiva — convite descartado).
+    const refuseConfirm = document.getElementById('refuseConfirm');
     document.getElementById('refuseBtn').addEventListener('click', () => {
-      // Recusar: convite descartado, volta para a ultima tela do app (painel do fornecedor).
+      refuseConfirm.hidden = false;
+    });
+    document.getElementById('refuseConfirmCancel').addEventListener('click', () => {
+      refuseConfirm.hidden = true;
+    });
+    refuseConfirm.addEventListener('click', (e) => {
+      if (e.target === refuseConfirm) refuseConfirm.hidden = true;
+    });
+    document.getElementById('refuseConfirmOk').addEventListener('click', () => {
+      // Confirmado: convite descartado, volta para a ultima tela do app (painel do fornecedor).
+      refuseConfirm.hidden = true;
       window.location.href = 'A.6.1.html';
     });
     function setLoading(isLoading) {
@@ -593,14 +688,17 @@
       confirmBtn.disabled = isLoading || currentValue().length !== 6;
     }
 
-    // ═══════════ ESC fecha overlay (nao recusa) ═══════════
+    // ═══════════ ESC: se modal de confirmacao aberto, fecha ele primeiro;
+    //              senao, fecha o overlay principal (nao recusa, convite fica pendente). ═══════════
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        const overlay = document.getElementById('overlay');
-        overlay.style.display = 'none';
-        // Em prod: navega de volta pra ultima pagina do app, convite continua pendente.
-        console.log('[0.4.7] ESC pressionado — modal fechado, convite continua pendente.');
+      if (e.key !== 'Escape') return;
+      if (!refuseConfirm.hidden) {
+        refuseConfirm.hidden = true;
+        return;
       }
+      const overlay = document.getElementById('overlay');
+      overlay.style.display = 'none';
+      console.log('[0.4.7] ESC pressionado — modal fechado, convite continua pendente.');
     });
 
     // ═══════════ Demo states ═══════════
@@ -655,5 +753,6 @@
     setState('typing');
   </script>
 
+  <script src="tutorial.js"></script>
 </body>
 </html>

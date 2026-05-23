@@ -356,6 +356,10 @@
     /* Body com gap entre secoes */
     .invite-form { display: flex; flex-direction: column; gap: 20px; }
 
+    /* Textos de apoio dentro do modal Convidar fornecedor (override do DS):
+       DS define --font-size-xs (10px); aqui aumentamos para 13px mantendo a cor gray-600. */
+    #inviteModal .form-field__helper { font-size: 13px; line-height: 18px; }
+
     /* Secao do form: agrupa label de secao + campos */
     .invite-form__section { display: flex; flex-direction: column; gap: 12px; }
 
@@ -444,7 +448,7 @@
           <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
         </div>
         <div class="sidebar__subitems">
-          <a class="sidebar__subitem" href="#">Negociação fornecedor</a>
+          <a class="sidebar__subitem" href="A.8.6.html">Triagem</a>
           <a class="sidebar__subitem" href="A.9.html">Negociações salvas</a>
           <a class="sidebar__subitem" href="#">Fornecedores</a>
         </div>
@@ -469,7 +473,7 @@
 
   <!-- Popup flutuante exibido ao clicar em [data-toggle-group] com a sidebar recolhida -->
   <div class="sidebar-popup" id="sidebarPopup" hidden role="menu" aria-label="Negociações fornecedor">
-    <a class="sidebar-popup__item" href="#" role="menuitem">Negociação fornecedor</a>
+    <a class="sidebar-popup__item" href="A.8.6.html" role="menuitem">Triagem</a>
     <a class="sidebar-popup__item" href="A.9.html" role="menuitem">Negociações salvas</a>
     <a class="sidebar-popup__item" href="0.1.html" role="menuitem">Fornecedores</a>
   </div>
@@ -479,7 +483,6 @@
     <div class="title-bar__left">
       <div class="title-bar__top-row">
         <span class="title-bar__heading">Fornecedores</span>
-        <span class="title-bar__badge">Atualizado em 19/05/2026, 04:05</span>
       </div>
       <div class="title-bar__bottom-row">
         <span class="title-bar__subtitle">Centralize aqui os fornecedores que negociam com você no IPA.</span>
@@ -776,6 +779,27 @@
     </div>
   </div>
 
+  <!-- ════════════ Modal de confirmacao generico (acoes do menu contextual) ════════════ -->
+  <div class="modal-backdrop" id="confirmModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+      <div class="modal__header">
+        <div class="invite-modal__header-top">
+          <span class="modal__title" id="confirmModalTitle">Confirmar ação</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal__body">
+        <p id="confirmModalBody" style="font-size:14px;line-height:20px;color:var(--color-gray-800);margin:0;"></p>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Cancelar</button>
+        <button type="button" class="btn btn--primary btn--medium" id="confirmModalConfirmBtn">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Container de toasts (fixo no canto, .toast-container do DS) -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -1066,16 +1090,15 @@
       ],
       inativo:  [
         { label: 'Reativar vínculo', action: 'reativar' },
-        { label: 'Remover', action: 'remover', danger: true },
+        { label: 'Remover vínculo', action: 'remover', danger: true },
       ],
     };
 
     function renderRowMenu(status) {
       const items = ROW_MENUS_POR_STATUS[status] || [];
-      rowMenu.innerHTML = items.map((it, i) => {
-        const divider = i > 0 ? '<div class="context-menu__divider"></div>' : '';
-        const danger  = it.danger ? ' context-menu__item--danger' : '';
-        return `${divider}<button class="context-menu__item${danger}" type="button" data-action="${it.action}">${it.label}</button>`;
+      rowMenu.innerHTML = items.map((it) => {
+        const danger = it.danger ? ' context-menu__item--danger' : '';
+        return `<button class="context-menu__item${danger}" type="button" data-action="${it.action}">${it.label}</button>`;
       }).join('');
     }
 
@@ -1106,16 +1129,87 @@
       positionRowMenu(trigger);
     }
 
-    // Acoes do menu contextual
-    rowMenu.addEventListener('click', (e) => {
-      const btn = e.target.closest('.context-menu__item');
-      if (!btn || !rowMenuTrigger) return;
-      const action = btn.dataset.action;
-      const wrapper = rowMenuTrigger.closest('.row-actions');
-      const id = parseInt(wrapper.dataset.id, 10);
-      const fornecedor = FORNECEDORES.find(f => f.id === id);
-      if (!fornecedor) return;
+    // ─── Modal de confirmacao generico (config por acao) ───
+    // Cada acao do menu contextual dispara confirmacao antes de executar.
+    // O botao confirmar pode ser destrutivo (vermelho) ou primario (azul) conforme variant.
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmModalTitle = document.getElementById('confirmModalTitle');
+    const confirmModalBody  = document.getElementById('confirmModalBody');
+    const confirmModalBtn   = document.getElementById('confirmModalConfirmBtn');
+    let pendingConfirm = null; // { action, fornecedorId }
 
+    function CONFIRM_CONFIG(action, empresa) {
+      switch (action) {
+        case 'inativar':
+          return {
+            title: 'Inativar vínculo?',
+            body: `O vínculo com <strong>${empresa}</strong> será inativado. As negociações em andamento são preservadas, mas <strong>${empresa}</strong> deixa de enviar novas tabelas. Você pode reativar depois.`,
+            cta: 'Inativar vínculo',
+            variant: 'danger',
+          };
+        case 'reativar':
+          return {
+            title: 'Reativar vínculo?',
+            body: `O vínculo com <strong>${empresa}</strong> será reativado. <strong>${empresa}</strong> volta a poder enviar tabelas e responder propostas.`,
+            cta: 'Reativar vínculo',
+            variant: 'primary',
+          };
+        case 'reenviar':
+          return {
+            title: 'Reenviar convite?',
+            body: `Um novo e-mail será enviado para o representante de <strong>${empresa}</strong> com um link válido por 7 dias. O link anterior continua válido.`,
+            cta: 'Reenviar convite',
+            variant: 'primary',
+          };
+        case 'cancelar':
+          return {
+            title: 'Cancelar convite?',
+            body: `O convite para <strong>${empresa}</strong> será cancelado e o link no e-mail deixará de funcionar. Esta ação não pode ser desfeita.`,
+            cta: 'Cancelar convite',
+            variant: 'danger',
+          };
+        case 'remover':
+          return {
+            title: 'Remover vínculo?',
+            body: `O vínculo com <strong>${empresa}</strong> será removido permanentemente da sua carteira. Para reativar depois, será necessário enviar um novo convite. Esta ação não pode ser desfeita.`,
+            cta: 'Remover vínculo',
+            variant: 'danger',
+          };
+        default:
+          return null;
+      }
+    }
+
+    function openConfirmModal(action, fornecedor) {
+      const cfg = CONFIRM_CONFIG(action, fornecedor.empresa);
+      if (!cfg) return;
+      pendingConfirm = { action, fornecedorId: fornecedor.id };
+      confirmModalTitle.textContent = cfg.title;
+      confirmModalBody.innerHTML = cfg.body;
+      confirmModalBtn.textContent = cfg.cta;
+      confirmModalBtn.className = cfg.variant === 'danger'
+        ? 'btn btn--secondary btn--red btn--medium'
+        : 'btn btn--primary btn--medium';
+      confirmModal.classList.add('is-open');
+      confirmModal.setAttribute('aria-hidden', 'false');
+    }
+    function closeConfirmModal() {
+      confirmModal.classList.remove('is-open');
+      confirmModal.setAttribute('aria-hidden', 'true');
+      pendingConfirm = null;
+    }
+    confirmModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', closeConfirmModal));
+    confirmModal.addEventListener('click', (e) => { if (e.target === confirmModal) closeConfirmModal(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && confirmModal.classList.contains('is-open')) closeConfirmModal();
+    });
+
+    // Executa a acao confirmada
+    confirmModalBtn.addEventListener('click', () => {
+      if (!pendingConfirm) return;
+      const { action, fornecedorId } = pendingConfirm;
+      const fornecedor = FORNECEDORES.find(f => f.id === fornecedorId);
+      if (!fornecedor) { closeConfirmModal(); return; }
       const empresa = fornecedor.empresa;
 
       if (action === 'inativar') {
@@ -1136,10 +1230,24 @@
         showToast(`${empresa} removido da carteira.`, 'success');
       }
 
-      // Fecha o menu e re-renderiza a tabela
+      closeConfirmModal();
+      renderRows();
+    });
+
+    // Acoes do menu contextual — agora abrem modal de confirmacao
+    rowMenu.addEventListener('click', (e) => {
+      const btn = e.target.closest('.context-menu__item');
+      if (!btn || !rowMenuTrigger) return;
+      const action = btn.dataset.action;
+      const wrapper = rowMenuTrigger.closest('.row-actions');
+      const id = parseInt(wrapper.dataset.id, 10);
+      const fornecedor = FORNECEDORES.find(f => f.id === id);
+
+      // Fecha o menu hover antes de abrir o modal
       rowMenu.classList.remove('is-open');
       rowMenuTrigger = null;
-      renderRows();
+
+      if (fornecedor) openConfirmModal(action, fornecedor);
     });
 
     function scheduleCloseRowMenu() {
@@ -1486,5 +1594,6 @@
     // ─── Inicializa ──────────────────────────────────────────
     renderRows();
   </script>
+  <script src="tutorial.js"></script>
 </body>
 </html>

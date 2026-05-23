@@ -77,7 +77,7 @@ Implemente uma vez e reuse — não duplique:
 - **Sidebar varejista:** Negociação fornecedores · Negociações salvas · Fornecedores
 - **Sidebar fornecedor:** Início · Tabelas
 - **Header de contexto:** logo IPA + nome da empresa + menu do usuário
-- **Status pill** (negociação): Em análise · Proposta enviada · Em tratativa · Acordo · Fechado · Recusado
+- **Status pill** (negociação): Em análise · Proposta enviada · Em negociação · Acordo · Fechado · Recusado
 - **Status pill** (vínculo): Ativo · Convite pendente · Inativo
 - **Chip de filtro:** label + contador + chevron, abre popover com checkbox + busca
 - **Header de coluna ordenável:** label + glyph (⇅ inativo · ↓ desc · ↑ asc), ciclo de 3 cliques

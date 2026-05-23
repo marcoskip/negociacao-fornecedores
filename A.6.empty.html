@@ -65,6 +65,10 @@
       justify-content: center;
       padding: var(--space-6);
     }
+    /* `display: flex` acima sobrescreve [hidden] em alguns browsers — forca display:none.
+       Aplica em ambos os wrappers (empty-body + grid__wrapper) para o toggle funcionar. */
+    .grid__wrapper[hidden],
+    .empty-body[hidden] { display: none !important; }
     .empty-state-fornec {
       max-width: 440px;
       width: 100%;
@@ -315,10 +319,12 @@
       white-space: nowrap;
     }
     .neg-status .material-icons-outlined { font-size: 14px; color: inherit; }
-    .neg-status--em-negociacao { background: var(--color-gray-200); color: var(--color-gray-800); }
-    .neg-status--aguard-fornecedor { background: var(--color-orange-light-20); color: var(--color-orange-700); }
-    .neg-status--rascunho { background: var(--color-gray-100); color: var(--color-gray-700); }
-    .neg-status--fechado { background: var(--color-green-light-20); color: var(--color-green-700); }
+    /* Mapeamento adaptado ao COPY.md (status da negociacao no contexto fornecedor) — mesma paleta da A.9 */
+    .neg-status--em-analise       { background: var(--color-gray-100);        color: var(--color-gray-700); }
+    .neg-status--proposta-enviada { background: var(--color-orange-light-20); color: var(--color-orange-700); }
+    .neg-status--em-negociacao     { background: var(--color-gray-200);        color: var(--color-gray-800); }
+    .neg-status--acordo           { background: var(--color-green-light-10);  color: var(--color-green-600); }
+    .neg-status--fechado          { background: var(--color-green-light-20);  color: var(--color-green-700); }
 
     /* Indicador "Aguarda" */
     .neg-aguarda {
@@ -426,6 +432,439 @@
       font-family: 'JetBrains Mono', monospace;
       color: var(--color-gray-500);
     }
+
+    /* ═══════════════ Modal "Nova tabela de precos" ═══════════════ */
+    /* overflow:hidden garante que o radius do .modal corte tambem o footer */
+    .nt-modal {
+      width: 100%; max-width: 880px;
+      max-height: calc(100vh - 64px);
+      display: flex; flex-direction: column;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .nt-modal .modal__body { flex: 1; overflow-y: auto; padding: 20px 28px; display: flex; flex-direction: column; gap: 18px; }
+    /* Header e footer sem divisores (PM: layout cleaner) */
+    .nt-modal .modal__header { padding: 18px 28px; border-bottom: none; }
+    .nt-modal .modal__footer { padding: 14px 28px; border-top: none; background: var(--color-white); display: flex; align-items: center; justify-content: space-between; }
+    /* `display: flex` em modal__body/footer e outros elementos do modal sobrescreve [hidden] — forca display:none */
+    .nt-modal .modal__body[hidden],
+    .nt-modal .modal__footer[hidden],
+    .nt-modal [hidden] { display: none !important; }
+    .nt-modal__subtitle { font-size: var(--font-size-sm); color: var(--color-gray-600); margin-top: 2px; }
+
+    /* Toggle Upload/Manual (segmented) */
+    .nt-mode {
+      display: inline-flex;
+      border: 1px solid var(--color-gray-400);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      width: fit-content;
+    }
+    .nt-mode__btn {
+      display: inline-flex; align-items: center;
+      padding: 8px 20px;
+      background: var(--color-white);
+      color: var(--color-gray-700);
+      border: none; cursor: pointer;
+      font-family: inherit;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      transition: background 120ms ease, color 120ms ease;
+    }
+    .nt-mode__btn:hover:not(.is-active) { background: var(--color-gray-100); }
+    .nt-mode__btn.is-active {
+      background: var(--color-brand-primary);
+      color: var(--color-white);
+    }
+
+    /* Form grid */
+    .nt-form { display: flex; flex-direction: column; gap: 14px; }
+    .nt-form__row { display: flex; flex-direction: column; gap: 6px; }
+    .nt-form__row--inline { flex-direction: row; gap: 16px; }
+    .nt-form__row--inline > .nt-form__col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    /* Subseção (ex.: Abrangência → seletor de alvo)
+       Header usa mesmo estilo dos labels de form (Nome da tabela / Varejista) */
+    .nt-form__group { gap: 10px; }
+    .nt-form__group-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-800);
+    }
+    .nt-form__label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-800);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nt-form__label-toggle {
+      display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer; user-select: none;
+    }
+    .nt-form__label .nt-form__required { color: var(--color-red-600); }
+    .nt-form__input,
+    .nt-form__select {
+      width: 100%; height: 36px;
+      padding: 0 12px;
+      font-family: inherit;
+      font-size: var(--font-size-md);
+      color: var(--color-gray-900);
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-400);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .nt-form__input::placeholder { color: var(--color-gray-500); }
+    .nt-form__input:focus,
+    .nt-form__select:focus { border-color: var(--color-brand-primary); box-shadow: var(--shadow-focus); }
+    .nt-form__input:disabled,
+    .nt-form__select:disabled { background: var(--color-gray-100); color: var(--color-gray-500); cursor: not-allowed; }
+    .nt-form__select { appearance: none; padding-right: 32px; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23747474' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+
+    /* Toggle (switch) — usado pro "Final de vigencia" */
+    .nt-switch {
+      position: relative;
+      display: inline-block;
+      width: 32px; height: 18px;
+      flex-shrink: 0;
+    }
+    .nt-switch input { opacity: 0; width: 0; height: 0; }
+    .nt-switch__slider {
+      position: absolute; inset: 0;
+      background: var(--color-gray-400);
+      border-radius: 999px;
+      transition: background 120ms ease;
+    }
+    .nt-switch__slider::before {
+      content: ""; position: absolute;
+      width: 14px; height: 14px;
+      left: 2px; top: 2px;
+      background: var(--color-white);
+      border-radius: 50%;
+      transition: transform 120ms ease;
+    }
+    .nt-switch input:checked + .nt-switch__slider { background: var(--color-brand-primary); }
+    .nt-switch input:checked + .nt-switch__slider::before { transform: translateX(14px); }
+
+    /* Busca de produtos */
+    .nt-search-row { display: flex; flex-direction: column; gap: 6px; }
+    .nt-search-row__header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+    }
+    .nt-searchbar {
+      position: relative;
+      display: flex; align-items: center; gap: 8px;
+      width: 100%;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-400);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      height: 36px;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .nt-searchbar:focus-within {
+      border-color: var(--color-brand-primary);
+      box-shadow: var(--shadow-focus);
+    }
+    .nt-searchbar .material-icons-outlined { color: var(--color-gray-500); font-size: 18px; }
+    .nt-searchbar__input {
+      flex: 1; min-width: 0;
+      border: none; outline: none; background: transparent;
+      font-family: inherit; font-size: var(--font-size-md);
+      color: var(--color-gray-900);
+    }
+    .nt-searchbar__input::placeholder { color: var(--color-gray-500); }
+    .nt-search-hint {
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-600);
+      text-align: right;
+    }
+    .nt-search-hint a {
+      color: var(--color-brand-primary);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* Dropdown autocomplete */
+    .nt-autocomplete {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-elevation);
+      max-height: 240px;
+      overflow-y: auto;
+      z-index: 50;
+    }
+    .nt-autocomplete[hidden] { display: none; }
+    .nt-autocomplete__item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background 100ms ease;
+    }
+    .nt-autocomplete__item:hover,
+    .nt-autocomplete__item.is-focused { background: var(--color-gray-100); }
+    .nt-autocomplete__sku {
+      min-width: 60px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-700);
+    }
+    .nt-autocomplete__name {
+      font-size: var(--font-size-md);
+      color: var(--color-gray-900);
+    }
+    .nt-autocomplete__empty {
+      padding: 12px;
+      text-align: center;
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-600);
+    }
+
+    /* Lista de produtos adicionados (zebra) */
+    .nt-list-wrap {
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      max-height: 280px;
+      overflow-y: auto;
+      background: var(--color-white);
+    }
+
+    /* ═══ Container "dropcard" (Figma: node 2307:56430) ═══
+       BG #f5f9fe + border dashed brand + radius 6 + padding 16 + gap 12. */
+    .nt-dropcard {
+      border: 1px dashed var(--color-brand-primary);
+      border-radius: 6px;
+      background: var(--color-blue-light-5, #f5f9fe);
+      padding: 16px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px;
+      width: 100%;
+      transition: background 120ms ease;
+    }
+    .nt-dropcard.is-dragover { background: var(--color-blue-light-10); }
+    /* Icone redondo: 30x30, BG azul claro, conteudo azul brand */
+    .nt-dropcard__icon {
+      width: 30px; height: 30px;
+      border-radius: 999px;
+      background: var(--color-blue-light-15, #e1eefd);
+      color: var(--color-brand-primary);
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nt-dropcard__icon .material-icons-outlined { font-size: 16px; }
+    /* Bloco de texto */
+    .nt-dropcard__hero {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+    .nt-dropcard__title {
+      font-family: var(--font-family-base);
+      font-size: 16px;
+      line-height: 20px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+    }
+    .nt-dropcard__sub {
+      font-size: 12px;
+      line-height: 18px;
+      color: var(--color-gray-800);
+    }
+    .nt-dropcard__sub a {
+      color: var(--color-brand-primary);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    /* Botao "Adicionar arquivo": chip cinza sem borda */
+    .nt-dropcard__btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 10px;
+      padding: 14px 12px;
+      background: var(--color-gray-100);
+      border: none;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: var(--font-size-md);
+      line-height: 20px;
+      color: var(--color-gray-700);
+      font-weight: var(--font-weight-regular);
+      cursor: pointer;
+      transition: background 120ms ease;
+    }
+    .nt-dropcard__btn:hover { background: var(--color-gray-200); }
+    .nt-dropcard__btn .material-icons-outlined { font-size: 16px; color: var(--color-gray-700); }
+
+    /* Helper "Baixe o modelo de arquivo" — link com icone open_in_new a esquerda */
+    .nt-download-helper {
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+      font-size: 12px;
+      line-height: 18px;
+      padding: 0;
+    }
+    .nt-download-helper a {
+      color: var(--color-brand-primary);
+      font-weight: var(--font-weight-regular);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .nt-download-helper a:hover { text-decoration: underline; }
+    .nt-download-helper a .material-icons-outlined { font-size: 12px; }
+    .nt-list {
+      display: grid;
+      grid-template-columns: 90px 1fr 160px 80px;
+    }
+    .nt-list__head {
+      display: contents;
+    }
+    .nt-list__head > span {
+      padding: 10px 14px;
+      background: var(--color-gray-100);
+      border-bottom: 1px solid var(--color-gray-300);
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--line-height-sm);
+      color: var(--color-gray-700);
+      text-align: left;
+    }
+    .nt-list__row { display: contents; }
+    .nt-list__row > .nt-list__cell {
+      padding: 10px 14px;
+      display: flex; align-items: center;
+      border-bottom: 1px solid var(--color-gray-200);
+      min-height: 48px;
+    }
+    /* Zebra: linhas pares ficam com fundo gray-50 (a cor base e branca do wrapper) */
+    .nt-list__row.is-even > .nt-list__cell { background: var(--color-gray-50); }
+    .nt-list__cell--sku {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-700);
+    }
+    .nt-list__cell--name { font-size: var(--font-size-md); color: var(--color-gray-900); }
+    .nt-list__cell--remove { justify-content: flex-end; }
+    /* Inputs da linha — mesmo padrao do .grid__form-field/.grid__form-input do index.html */
+    .nt-list__preco-wrap {
+      display: inline-flex; align-items: center;
+      width: 100%; height: 32px;
+      border: 1px solid var(--color-gray-500);
+      border-radius: var(--radius-sm);
+      background: var(--color-white);
+      overflow: hidden;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .nt-list__preco-wrap:focus-within { border-color: var(--color-brand-primary); box-shadow: var(--shadow-focus); }
+    .nt-list__preco-prefix {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0 8px; height: 100%;
+      background: var(--color-gray-100);
+      border-right: 1px solid var(--color-gray-300);
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-md);
+      color: var(--color-gray-700);
+      pointer-events: none;
+    }
+    .nt-list__preco-input {
+      flex: 1; min-width: 0;
+      border: none; outline: none; background: transparent;
+      padding: 0 10px;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-regular);
+      color: var(--color-gray-900);
+      text-align: right;
+    }
+    /* Linha de inputs livres (insercao manual) */
+    .nt-list__sku-input,
+    .nt-list__name-input {
+      width: 100%; height: 32px;
+      padding: 0 10px;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-regular);
+      color: var(--color-gray-900);
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-500);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .nt-list__sku-input:focus,
+    .nt-list__name-input:focus { border-color: var(--color-brand-primary); box-shadow: var(--shadow-focus); }
+    .nt-list__remove {
+      background: transparent;
+      border: none;
+      color: var(--color-gray-600);
+      font-family: inherit;
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      transition: background 100ms ease, color 100ms ease;
+    }
+    .nt-list__remove:hover { background: var(--color-red-light-10); color: var(--color-red-600); }
+
+    /* ─── Etapa 2 (revisao) ─── */
+    .nt-review { display: flex; flex-direction: column; gap: 16px; }
+    .nt-review__meta { display: flex; flex-direction: column; gap: 12px; }
+    .nt-review__field { display: flex; flex-direction: column; gap: 2px; }
+    .nt-review__field-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-600);
+    }
+    .nt-review__field-value {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+    }
+    .nt-review__list { display: grid; grid-template-columns: 90px 1fr 160px; border: 1px solid var(--color-gray-300); border-radius: var(--radius-md); overflow: hidden; }
+    .nt-review__list > .nt-review__th {
+      padding: 10px 14px;
+      background: var(--color-gray-100);
+      border-bottom: 1px solid var(--color-gray-300);
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--line-height-sm);
+      color: var(--color-gray-700);
+      text-align: left;
+    }
+    .nt-review__list > .nt-review__cell {
+      padding: 10px 14px;
+      display: flex; align-items: center;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+    .nt-review__row.is-even > .nt-review__cell { background: var(--color-gray-50); }
+    .nt-review__row { display: contents; }
+    .nt-review__cell--preco {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+    }
+    .nt-review__cell--sku {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-800);
+    }
+
+    /* Modais de confirmacao (compactos) */
+    .nt-confirm { width: 100%; max-width: 460px; }
+    .nt-confirm .modal__body { padding: 4px 28px 20px; font-size: var(--font-size-md); line-height: 22px; color: var(--color-gray-800); }
+    .nt-confirm .modal__body strong { color: var(--color-gray-900); font-weight: var(--font-weight-semibold); }
+    .nt-confirm .modal__footer { border-top: none; padding-top: 0; padding-bottom: 20px; }
+
   </style>
 </head>
 <body>
@@ -527,7 +966,7 @@
                   <label class="filtro-dropdown__item"><input type="radio" name="status" value="todos" checked /><span>Todos</span></label>
                   <label class="filtro-dropdown__item"><input type="radio" name="status" value="em-analise" /><span>Em análise</span></label>
                   <label class="filtro-dropdown__item"><input type="radio" name="status" value="proposta-enviada" /><span>Proposta enviada</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="em-tratativa" /><span>Em tratativa</span></label>
+                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="em-negociacao" /><span>Em negociação</span></label>
                   <label class="filtro-dropdown__item"><input type="radio" name="status" value="acordo" /><span>Acordo</span></label>
                   <label class="filtro-dropdown__item"><input type="radio" name="status" value="fechado" /><span>Fechado</span></label>
                 </div>
@@ -717,6 +1156,302 @@
     </div>
   </section>
 
+  <!-- ════════════ Modal de confirmacao generico (acoes destrutivas do menu hover) ════════════ -->
+  <div class="modal-backdrop" id="confirmModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+      <div class="modal__header">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;">
+          <span class="modal__title" id="confirmModalTitle">Confirmar ação</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal__body">
+        <p id="confirmModalBody" style="font-size:14px;line-height:20px;color:var(--color-gray-800);margin:0;"></p>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Voltar</button>
+        <button type="button" class="btn btn--primary btn--medium" id="confirmModalConfirmBtn">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ Modal: Nova tabela de preços (Etapa 1 + Etapa 2) ════════════════ -->
+  <div class="modal-backdrop" id="novaTabelaModal" aria-hidden="true">
+    <div class="modal nt-modal" role="dialog" aria-modal="true" aria-labelledby="ntTitle">
+
+      <!-- Header (muda entre Etapa 1 e 2) -->
+      <div class="modal__header">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;width:100%;gap:8px;">
+          <div>
+            <span class="modal__title" id="ntTitle">Nova tabela de preços</span>
+            <div class="nt-modal__subtitle" id="ntSubtitle">Etapa 1 de 2 — Inserção de produtos</div>
+          </div>
+          <button class="modal__close" data-modal-close aria-label="Fechar">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ ETAPA 1 — Inserção ═══ -->
+      <div class="modal__body" id="ntStep1">
+        <!-- Toggle Upload / Manual -->
+        <div class="nt-mode" role="tablist">
+          <button class="nt-mode__btn" id="ntModeUpload" type="button" role="tab" aria-selected="false">
+            Upload CSV/XLSX
+          </button>
+          <button class="nt-mode__btn is-active" id="ntModeManual" type="button" role="tab" aria-selected="true">
+            Inserir manualmente
+          </button>
+        </div>
+
+        <!-- Form -->
+        <div class="nt-form">
+          <div class="nt-form__row">
+            <label class="nt-form__label" for="ntNome">Nome da tabela <span class="nt-form__required">*</span></label>
+            <input class="nt-form__input" id="ntNome" type="text" placeholder="Ex.: Tabela Q2 — Higiene & Beleza" required />
+          </div>
+          <div class="nt-form__row">
+            <label class="nt-form__label" for="ntVarejista">Varejista <span class="nt-form__required">*</span></label>
+            <select class="nt-form__select" id="ntVarejista" required>
+              <option value="">Selecione o varejista…</option>
+              <option value="estrela">Supermercado Estrela</option>
+              <option value="carrefour">Carrefour</option>
+              <option value="paodeacucar">Pão de Açúcar</option>
+              <option value="assai">Assaí</option>
+            </select>
+          </div>
+          <div class="nt-form__row nt-form__row--inline">
+            <div class="nt-form__col">
+              <label class="nt-form__label" for="ntInicio">Início de vigência</label>
+              <input class="nt-form__input" id="ntInicio" type="date" />
+            </div>
+            <div class="nt-form__col">
+              <label class="nt-form__label">
+                <span class="nt-form__label-toggle">
+                  <span class="nt-switch">
+                    <input type="checkbox" id="ntFinalToggle" />
+                    <span class="nt-switch__slider"></span>
+                  </span>
+                  <span>Final de vigência</span>
+                </span>
+              </label>
+              <input class="nt-form__input" id="ntFinal" type="date" disabled />
+            </div>
+          </div>
+
+          <!-- Abrangência: select de nivel + alvo (lojas/clusters) aparece ao escolher -->
+          <div class="nt-form__row nt-form__group">
+            <span class="nt-form__group-label">Abrangência</span>
+            <div class="nt-form__row nt-form__row--inline">
+              <div class="nt-form__col">
+                <select class="nt-form__select" id="ntAbrangNivel" aria-label="Nível de abrangência">
+                  <option value="">Selecione um nível</option>
+                  <option value="lojas">Lojas</option>
+                  <option value="cluster">Cluster</option>
+                </select>
+              </div>
+              <div class="nt-form__col" id="ntAbrangAlvoCol" hidden>
+                <select class="nt-form__select" id="ntAbrangAlvo" aria-label="Selecionar alvo">
+                  <option value="">Selecione…</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Busca de produtos (MODO MANUAL apenas) -->
+        <div class="nt-search-row" id="ntSearchRow">
+          <label class="nt-form__label">Produtos</label>
+          <div class="nt-searchbar" id="ntSearchbar">
+            <span class="material-icons-outlined">search</span>
+            <input class="nt-searchbar__input" id="ntSearchInput" type="text" placeholder="Digite nome ou o SKU do produto" autocomplete="off" />
+            <div class="nt-autocomplete" id="ntAutocomplete" hidden></div>
+          </div>
+          <div class="nt-search-hint">
+            Não achou o produto na busca? <a id="ntInsertManualLink">Inserir informações manualmente</a>
+          </div>
+        </div>
+
+        <!-- Lista (varia conforme o modo: manual = empty padrao; upload = dropzone) -->
+        <div id="ntListContainer">
+          <!-- Empty state MODO MANUAL (dropcard, mesma estrutura) -->
+          <div class="nt-dropcard" id="ntListEmptyManual">
+            <span class="nt-dropcard__icon" aria-hidden="true">
+              <span class="material-icons-outlined">inventory_2</span>
+            </span>
+            <div class="nt-dropcard__hero">
+              <div class="nt-dropcard__title">Você ainda não adicionou nenhum produto aqui.</div>
+              <div class="nt-dropcard__sub">
+                Pesquise no campo acima ou <a id="ntInsertManualLink2">insira manualmente</a>.
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty state MODO UPLOAD (dropcard com paperclip + "Adicionar arquivo") -->
+          <div class="nt-dropcard" id="ntListEmptyUpload" hidden>
+            <span class="nt-dropcard__icon" aria-hidden="true">
+              <span class="material-icons-outlined">attach_file</span>
+            </span>
+            <div class="nt-dropcard__hero">
+              <div class="nt-dropcard__title">Novo envio de arquivo</div>
+              <div class="nt-dropcard__sub">
+                Envie seu arquivo em formato .xls ou .csv.<br/>
+                Arraste o arquivo aqui ou clique para selecionar.
+              </div>
+            </div>
+            <button type="button" class="nt-dropcard__btn" id="ntFilePickerBtn">
+              <span class="material-icons-outlined">attach_file</span>
+              Adicionar arquivo
+            </button>
+          </div>
+
+          <!-- Lista populada (compartilhada entre os 2 modos) -->
+          <div class="nt-list-wrap" id="ntListPopulated" hidden>
+            <div class="nt-list" id="ntList">
+              <div class="nt-list__head">
+                <span>SKU</span>
+                <span>Nome do produto</span>
+                <span>Proposta preço</span>
+                <span></span>
+              </div>
+              <!-- Linhas renderizadas via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Helper "Baixe o modelo de arquivo" (MODO UPLOAD apenas) -->
+        <div class="nt-download-helper" id="ntDownloadHelper" hidden>
+          <a id="ntDownloadTemplate">
+            <span class="material-icons-outlined">open_in_new</span>
+            Baixe o modelo de arquivo
+          </a>
+        </div>
+      </div>
+
+      <!-- ═══ ETAPA 2 — Revisão ═══ -->
+      <div class="modal__body" id="ntStep2" hidden>
+        <div class="nt-review">
+          <div class="nt-review__meta">
+            <div class="nt-review__field">
+              <span class="nt-review__field-label">Nome da tabela</span>
+              <span class="nt-review__field-value" id="ntReviewNome">—</span>
+            </div>
+            <div class="nt-review__field">
+              <span class="nt-review__field-label">Varejista</span>
+              <span class="nt-review__field-value" id="ntReviewVarejista">—</span>
+            </div>
+            <div class="nt-review__field">
+              <span class="nt-review__field-label">Vigência</span>
+              <span class="nt-review__field-value" id="ntReviewVigencia">—</span>
+            </div>
+          </div>
+
+          <div class="nt-review__list" id="ntReviewList">
+            <span class="nt-review__th">SKU</span>
+            <span class="nt-review__th">Nome do produto</span>
+            <span class="nt-review__th">Proposta preço</span>
+            <!-- Linhas renderizadas via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer (muda entre Etapa 1 e 2) -->
+      <div class="modal__footer" id="ntFooter1">
+        <button type="button" class="btn btn--primary btn--ghost btn--medium" id="ntSaveDraftBtn1">Salvar rascunho</button>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Cancelar</button>
+          <button type="button" class="btn btn--primary btn--medium" id="ntNextBtn" disabled>Próximo</button>
+        </div>
+      </div>
+      <div class="modal__footer" id="ntFooter2" hidden>
+        <button type="button" class="btn btn--primary btn--ghost btn--medium" id="ntSaveDraftBtn2">Salvar rascunho</button>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" id="ntBackBtn">Voltar</button>
+          <button type="button" class="btn btn--primary btn--medium" id="ntSendBtn">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ Modal: Confirmar descarte (fechamento com dirty content) ════════════════ -->
+  <div class="modal-backdrop" id="discardModal" aria-hidden="true">
+    <div class="modal nt-confirm" role="dialog" aria-modal="true" aria-labelledby="ntDiscardTitle">
+      <div class="modal__header">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;">
+          <span class="modal__title" id="ntDiscardTitle">Descartar alterações?</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal__body">
+        Você fez alterações nesta tabela. Se sair agora, o trabalho não salvo
+        <strong>será perdido</strong>. Para preservar o progresso, escolha
+        <strong>Salvar rascunho</strong> antes de sair.
+      </div>
+      <div class="modal__footer">
+        <div></div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Voltar</button>
+          <button type="button" class="btn btn--secondary btn--red btn--medium" id="discardConfirmBtn">Descartar e sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ Modal: Confirmar salvar rascunho ════════════════ -->
+  <div class="modal-backdrop" id="saveDraftModal" aria-hidden="true">
+    <div class="modal nt-confirm" role="dialog" aria-modal="true" aria-labelledby="ntSaveTitle">
+      <div class="modal__header">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;">
+          <span class="modal__title" id="ntSaveTitle">Salvar como rascunho?</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal__body">
+        Esta tabela vai pra <strong>Negociações Salvas</strong> com o badge <strong>"Rascunho"</strong>.
+        Você pode retomar a edição a qualquer momento.
+      </div>
+      <div class="modal__footer">
+        <div></div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Voltar</button>
+          <button type="button" class="btn btn--primary btn--medium" id="saveDraftConfirmBtn">Salvar rascunho</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ Modal: Confirmar envio ao varejista ════════════════ -->
+  <div class="modal-backdrop" id="sendTabelaModal" aria-hidden="true">
+    <div class="modal nt-confirm" role="dialog" aria-modal="true" aria-labelledby="ntSendTitle">
+      <div class="modal__header">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;">
+          <span class="modal__title" id="ntSendTitle">Enviar tabela ao varejista?</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal__body">
+        A tabela ficará disponível para triagem de <strong id="ntSendVarejistaNome">{varejista}</strong>.
+        O comprador responsável receberá um e-mail avisando sobre a nova tabela. Você não poderá editar
+        após o envio — apenas acompanhar pelo painel.
+      </div>
+      <div class="modal__footer">
+        <div></div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Voltar</button>
+          <button type="button" class="btn btn--primary btn--medium" id="sendTabelaConfirmBtn">Enviar tabela</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Container de toasts (.toast-container do DS) -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -737,6 +1472,11 @@
       <button class="dev-menu__item" data-dev="empty" type="button">
         <span class="material-icons-outlined">inbox</span>
         <span>Voltar pro empty state</span>
+      </button>
+      <div class="dev-menu__divider"></div>
+      <button class="dev-menu__item" data-dev="fill-nova-tabela" type="button">
+        <span class="material-icons-outlined">post_add</span>
+        <span>Preencher modal Nova tabela</span>
       </button>
       <div class="dev-menu__divider"></div>
       <button class="dev-menu__item" data-dev="hide-menu" type="button">
@@ -797,7 +1537,7 @@
     const FILTRO_DEFAULTS = { varejista: 'Varejista', status: 'Status', aguarda: 'Aguarda', ultacao: 'Última ação' };
     const FILTRO_LABELS = {
       varejista: { estrela: 'Supermercado Estrela', carrefour: 'Carrefour', 'pao-de-acucar': 'Pão de Açúcar', assai: 'Assaí' },
-      status:    { 'em-analise': 'Status: em análise', 'proposta-enviada': 'Status: proposta enviada', 'em-tratativa': 'Status: em tratativa', acordo: 'Status: acordo', fechado: 'Status: fechado' },
+      status:    { 'em-analise': 'Status: em análise', 'proposta-enviada': 'Status: proposta enviada', 'em-negociacao': 'Status: em negociação', acordo: 'Status: acordo', fechado: 'Status: fechado' },
       aguarda:   { voce: 'Aguarda: você', varejista: 'Aguarda: varejista' },
       ultacao:   { hoje: 'Hoje', '7d': 'Últimos 7 dias', '30d': 'Últimos 30 dias', '90d': 'Últimos 90 dias' },
     };
@@ -850,21 +1590,21 @@
 
     // ═══════════ Grid populado: mock data Unilever × varejistas ═══════════
     const NEGOCIACOES = [
-      { id: 1, titulo: 'Tabela Q2 - Higiene & Beleza',    produtos: 9,  loja: 'Cluster 01',     varejista: 'Supermercado Estrela', inicio: '20/04/2026', final: null,         ultEd: '21/05/2026', responsavel: 'patricia@unilever',  round: 'R3', status: 'em-tratativa',    aguarda: 'voce' },
+      { id: 1, titulo: 'Tabela Q2 - Higiene & Beleza',    produtos: 9,  loja: 'Cluster 01',     varejista: 'Supermercado Estrela', inicio: '20/04/2026', final: null,         ultEd: '21/05/2026', responsavel: 'patricia@unilever',  round: 'R3', status: 'em-negociacao',    aguarda: 'voce' },
       { id: 2, titulo: 'Linha OMO - reajuste Q2',         produtos: 12, loja: 'Cluster 01, 02', varejista: 'Carrefour',            inicio: '19/04/2026', final: null,         ultEd: '19/05/2026', responsavel: 'roberto@unilever',   round: 'R2', status: 'proposta-enviada', aguarda: 'varejista' },
-      { id: 3, titulo: 'Linha Knorr - sopas e caldos',    produtos: 6,  loja: 'Cluster 01',     varejista: 'Pão de Açúcar',        inicio: '08/04/2026', final: null,         ultEd: '12/05/2026', responsavel: 'patricia@unilever',  round: 'R2', status: 'em-tratativa',    aguarda: 'varejista' },
+      { id: 3, titulo: 'Linha Knorr - sopas e caldos',    produtos: 6,  loja: 'Cluster 01',     varejista: 'Pão de Açúcar',        inicio: '08/04/2026', final: null,         ultEd: '12/05/2026', responsavel: 'patricia@unilever',  round: 'R2', status: 'em-negociacao',    aguarda: 'varejista' },
       { id: 4, titulo: 'Linha Dove - cuidados pessoais',  produtos: 8,  loja: null,             varejista: 'Assaí',                inicio: '07/04/2026', final: null,         ultEd: '08/05/2026', responsavel: 'roberto@unilever',   round: 'R1', status: 'em-analise',      aguarda: 'varejista' },
-      { id: 5, titulo: 'Linha Kibon - sorvetes',          produtos: 5,  loja: 'Cluster 02',     varejista: 'Supermercado Estrela', inicio: '07/04/2026', final: null,         ultEd: '07/05/2026', responsavel: 'patricia@unilever',  round: 'R3', status: 'em-tratativa',    aguarda: 'voce' },
+      { id: 5, titulo: 'Linha Kibon - sorvetes',          produtos: 5,  loja: 'Cluster 02',     varejista: 'Supermercado Estrela', inicio: '07/04/2026', final: null,         ultEd: '07/05/2026', responsavel: 'patricia@unilever',  round: 'R3', status: 'em-negociacao',    aguarda: 'voce' },
       { id: 6, titulo: "Linha Hellmann's - molhos",        produtos: 4,  loja: null,             varejista: 'Carrefour',            inicio: '04/04/2026', final: null,         ultEd: '04/05/2026', responsavel: 'patricia@unilever',  round: null, status: 'em-analise',      aguarda: 'varejista' },
       { id: 7, titulo: 'Linha Lipton - chás',             produtos: 4,  loja: 'Cluster 01',     varejista: 'Pão de Açúcar',        inicio: '08/04/2026', final: '08/04/2026', ultEd: '08/04/2026', responsavel: 'roberto@unilever',   round: 'R2', status: 'fechado',         aguarda: null },
-      { id: 8, titulo: 'Linha Rexona - desodorantes',     produtos: 4,  loja: 'Cluster 02',     varejista: 'Assaí',                inicio: '02/04/2026', final: null,         ultEd: '02/04/2026', responsavel: 'patricia@unilever',  round: 'R1', status: 'em-tratativa',    aguarda: 'varejista' },
+      { id: 8, titulo: 'Linha Rexona - desodorantes',     produtos: 4,  loja: 'Cluster 02',     varejista: 'Assaí',                inicio: '02/04/2026', final: null,         ultEd: '02/04/2026', responsavel: 'patricia@unilever',  round: 'R1', status: 'em-negociacao',    aguarda: 'varejista' },
       { id: 9, titulo: 'Linha Comfort - amaciantes',      produtos: 4,  loja: 'Cluster 01, 02', varejista: 'Supermercado Estrela', inicio: '01/04/2026', final: null,         ultEd: '01/04/2026', responsavel: 'patricia@unilever',  round: 'R1', status: 'acordo',          aguarda: 'voce' },
     ];
 
     const STATUS_LABEL = {
       'em-analise':       'Em análise',
       'proposta-enviada': 'Proposta enviada',
-      'em-tratativa':     'Em tratativa',
+      'em-negociacao':     'Em negociação',
       'acordo':           'Acordo',
       'fechado':          'Fechado',
     };
@@ -1059,26 +1799,710 @@
       btn.addEventListener('click', () => {
         const dev = btn.dataset.dev;
         console.log('[devmenu] item clicado:', dev);
-        if (dev === 'populate')       setVariant('populate');
-        else if (dev === 'empty')     setVariant('empty');
-        else if (dev === 'hide-menu') devMenu.classList.add('is-hidden');
+        if (dev === 'populate')             setVariant('populate');
+        else if (dev === 'empty')           setVariant('empty');
+        else if (dev === 'fill-nova-tabela') ntDevFillModal();
+        else if (dev === 'hide-menu')       devMenu.classList.add('is-hidden');
         devMenu.classList.remove('is-open');
       });
     });
+
+    // ─── Dev: preenche modal Nova tabela com mock data ───
+    function ntDevFillModal() {
+      // Garante modal aberto e modo manual
+      if (!ntModal.classList.contains('is-open')) ntOpenModal();
+      ntSetMode('manual');
+
+      // Metadados
+      ntNome.value = 'Tabela Q2 — Higiene & Beleza';
+      ntVarejista.value = 'estrela';
+
+      // Vigencia: hoje ate +30 dias (formato YYYY-MM-DD pro input type="date")
+      const fmt = (d) => d.toISOString().slice(0, 10);
+      const hoje = new Date();
+      const fim  = new Date(hoje); fim.setDate(fim.getDate() + 30);
+      ntInicio.value = fmt(hoje);
+      ntFinalToggle.checked = true;
+      ntFinal.disabled = false;
+      ntFinal.value = fmt(fim);
+
+      // Limpa linhas anteriores e popula com mock
+      ntLines = [];
+      ntLineIdCounter = 1;
+      const mock = [
+        { sku: '4521', nome: 'Shampoo Seda Cocriações Cachos 325ml',         preco: '12,50' },
+        { sku: '4498', nome: 'Condicionador Dove Nutrição Completa 200ml',   preco: '14,90' },
+        { sku: '3877', nome: 'Sabonete Dove Original 90g',                    preco: '5,20'  },
+        { sku: '6021', nome: 'Sabonete Líquido Lux Botanicals 250ml',         preco: '11,80' },
+        { sku: '5887', nome: 'Desodorante Aerosol Axe Black 152ml',           preco: '23,90' },
+        { sku: '4763', nome: 'Shampoo Clear Men Anticaspa 200ml',             preco: '16,40' },
+        { sku: '5419', nome: 'Desodorante Dove Invisible Dry 150ml',          preco: '18,10' },
+      ];
+      mock.forEach(p => ntLines.push({ id: ntLineIdCounter++, sku: p.sku, nome: p.nome, preco: p.preco, isManual: false }));
+      ntRenderList();
+      ntUpdateNextEnabled();
+      showToast(`Modal preenchido com ${mock.length} produtos mock.`, 'success');
+    }
     document.addEventListener('keydown', (e) => {
       if (e.key.toLowerCase() !== 'd') return;
       const tag = (e.target.tagName || '').toLowerCase();
       if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
       devMenu.classList.toggle('is-hidden');
     });
-    // ─── CTAs "Nova tabela" / "Enviar nova tabela" -> A.7 ───
-    function goToNovaTabela() {
-      // Em prod: navega para A.7 (Upload de Nova Tabela).
-      alert('Fluxo "Nova tabela" (A.7) ainda nao prototipado.');
+    // ════════════════════════════════════════════════════════════════════════
+    // MENU CONTEXTUAL (hover do lapis) + MODAL DE CONFIRMACAO
+    // Mesma logica da A.9, adaptada para o contexto fornecedor.
+    // Status do fornecedor: em-analise, proposta-enviada, em-negociacao, acordo, fechado.
+    // "Lembrar varejista" no lugar de "Lembrar fornecedor".
+    // ════════════════════════════════════════════════════════════════════════
+    const ROW_MENUS_POR_STATUS = {
+      'em-analise':       [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Cancelar negociação', action: 'cancelar', danger: true }],
+      'proposta-enviada': [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Lembrar varejista', action: 'lembrar' }, { label: 'Cancelar negociação', action: 'cancelar', danger: true }],
+      'em-negociacao':     [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Cancelar negociação', action: 'cancelar', danger: true }],
+      'acordo':           [{ label: 'Abrir negociação', action: 'abrir' }],
+      'fechado':          [],
+    };
+
+    const rowMenu = document.getElementById('rowActionsMenu');
+    let rowMenuTrigger = null;
+    let rowMenuCloseTimer = null;
+
+    function renderRowMenu(status) {
+      const items = ROW_MENUS_POR_STATUS[status] || [];
+      rowMenu.innerHTML = items.map((it) => {
+        const danger = it.danger ? ' context-menu__item--danger' : '';
+        return `<button class="context-menu__item${danger}" type="button" data-action="${it.action}">${it.label}</button>`;
+      }).join('');
     }
-    document.getElementById('novaNegBtn').addEventListener('click', goToNovaTabela);
-    document.getElementById('emptyCtaBtn').addEventListener('click', goToNovaTabela);
+
+    function positionRowMenu(trigger) {
+      const rect = trigger.getBoundingClientRect();
+      rowMenu.classList.add('is-open');
+      const menuW = rowMenu.offsetWidth;
+      const menuH = rowMenu.offsetHeight;
+      let top  = rect.bottom + 4;
+      let left = rect.right - menuW;
+      if (left < 8) left = 8;
+      if (top + menuH > window.innerHeight - 8) top = rect.top - menuH - 4;
+      rowMenu.style.top  = top + 'px';
+      rowMenu.style.left = left + 'px';
+    }
+
+    function openRowMenu(trigger) {
+      clearTimeout(rowMenuCloseTimer);
+      rowMenuTrigger = trigger;
+      const wrapper = trigger.closest('.row-actions');
+      const id = parseInt(wrapper.dataset.id, 10);
+      const neg = NEGOCIACOES.find(n => n.id === id);
+      if (!neg) return;
+      const items = ROW_MENUS_POR_STATUS[neg.status] || [];
+      if (items.length === 0) { rowMenuTrigger = null; return; }
+      renderRowMenu(neg.status);
+      positionRowMenu(trigger);
+    }
+
+    function scheduleCloseRowMenu() {
+      clearTimeout(rowMenuCloseTimer);
+      rowMenuCloseTimer = setTimeout(() => {
+        rowMenu.classList.remove('is-open');
+        rowMenuTrigger = null;
+      }, 250);
+    }
+
+    document.addEventListener('mouseover', (e) => {
+      const trigger = e.target.closest('.row-actions__trigger');
+      if (trigger) openRowMenu(trigger);
+    });
+    document.addEventListener('mouseout', (e) => {
+      const trigger = e.target.closest('.row-actions__trigger');
+      if (!trigger) return;
+      const toMenu = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.context-menu');
+      if (!toMenu) scheduleCloseRowMenu();
+    });
+    rowMenu.addEventListener('mouseenter', () => clearTimeout(rowMenuCloseTimer));
+    rowMenu.addEventListener('mouseleave', () => scheduleCloseRowMenu());
+    document.querySelector('.grid').addEventListener('scroll', () => {
+      rowMenu.classList.remove('is-open');
+      rowMenuTrigger = null;
+    }, true);
+
+    // ─── Modal de confirmacao (acoes destrutivas + lembrar varejista) ───
+    const confirmModal      = document.getElementById('confirmModal');
+    const confirmModalTitle = document.getElementById('confirmModalTitle');
+    const confirmModalBody  = document.getElementById('confirmModalBody');
+    const confirmModalBtn   = document.getElementById('confirmModalConfirmBtn');
+    let pendingConfirm = null; // { action, negId }
+
+    function CONFIRM_CONFIG(action, titulo, varejista) {
+      switch (action) {
+        case 'cancelar':
+          return {
+            title: 'Cancelar negociação?',
+            body: `A negociação <strong>"${titulo}"</strong> com <strong>${varejista}</strong> será cancelada e o varejista será notificado. As propostas e mensagens trocadas serão preservadas para histórico, mas o processo não poderá ser retomado. Esta ação não pode ser desfeita.`,
+            cta: 'Cancelar negociação',
+            variant: 'danger',
+          };
+        case 'lembrar':
+          return {
+            title: 'Enviar lembrete ao varejista?',
+            body: `Um e-mail de lembrete será enviado ao varejista <strong>${varejista}</strong> sobre a negociação <strong>"${titulo}"</strong>, sinalizando que a proposta está aguardando resposta.`,
+            cta: 'Enviar lembrete',
+            variant: 'primary',
+          };
+        default: return null;
+      }
+    }
+
+    function openConfirmModal(action, neg) {
+      const cfg = CONFIRM_CONFIG(action, neg.titulo, neg.varejista);
+      if (!cfg) return;
+      pendingConfirm = { action, negId: neg.id };
+      confirmModalTitle.textContent = cfg.title;
+      confirmModalBody.innerHTML = cfg.body;
+      confirmModalBtn.textContent = cfg.cta;
+      confirmModalBtn.className = cfg.variant === 'danger'
+        ? 'btn btn--secondary btn--red btn--medium'
+        : 'btn btn--primary btn--medium';
+      confirmModal.classList.add('is-open');
+      confirmModal.setAttribute('aria-hidden', 'false');
+    }
+    function closeConfirmModal() {
+      confirmModal.classList.remove('is-open');
+      confirmModal.setAttribute('aria-hidden', 'true');
+      pendingConfirm = null;
+    }
+    confirmModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', closeConfirmModal));
+    confirmModal.addEventListener('click', (e) => { if (e.target === confirmModal) closeConfirmModal(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && confirmModal.classList.contains('is-open')) closeConfirmModal();
+    });
+
+    confirmModalBtn.addEventListener('click', () => {
+      if (!pendingConfirm) return;
+      const { action, negId } = pendingConfirm;
+      const neg = NEGOCIACOES.find(n => n.id === negId);
+      if (!neg) { closeConfirmModal(); return; }
+      const titulo = neg.titulo;
+
+      if (action === 'cancelar') {
+        const idx = NEGOCIACOES.indexOf(neg);
+        if (idx >= 0) NEGOCIACOES.splice(idx, 1);
+        showToast(`Negociação "${titulo}" cancelada.`, 'success');
+      } else if (action === 'lembrar') {
+        showToast(`Lembrete enviado ao varejista de "${titulo}".`, 'success');
+      }
+      closeConfirmModal();
+      renderRows();
+    });
+
+    // Acoes do menu contextual — abrem o modal de confirmacao
+    rowMenu.addEventListener('click', (e) => {
+      const btn = e.target.closest('.context-menu__item');
+      if (!btn || !rowMenuTrigger) return;
+      const action = btn.dataset.action;
+      const wrapper = rowMenuTrigger.closest('.row-actions');
+      const id = parseInt(wrapper.dataset.id, 10);
+      const neg = NEGOCIACOES.find(n => n.id === id);
+
+      // Fecha o menu hover antes de qualquer fluxo
+      rowMenu.classList.remove('is-open');
+      rowMenuTrigger = null;
+
+      if (!neg) return;
+
+      if (action === 'abrir') {
+        showToast(`Abrindo "${neg.titulo}".`, 'info');
+      } else if (action === 'cancelar' || action === 'lembrar') {
+        openConfirmModal(action, neg);
+      }
+    });
+    // ════════════════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════════════
+    // Modal "Nova tabela de precos" — Etapa 1 (insercao) + Etapa 2 (revisao)
+    // + modais de confirmacao "Salvar rascunho" e "Enviar tabela"
+    // ═══════════════════════════════════════════════════════════════════════
+
+    // Catalogo mock do varejista — busca/autocomplete
+    const NT_CATALOG = [
+      { sku: '1024', nome: 'OMO Lavagem Perfeita 2l' },
+      { sku: '1045', nome: 'OMO Lavagem Perfeita 5l' },
+      { sku: '2056', nome: 'OMO Puro Cuidado Líquido' },
+      { sku: '4122', nome: 'OMO Proteção Antiodor em Pó' },
+      { sku: '7891', nome: 'OMO Lavagem Perfeita 1.6kg' },
+      { sku: '7893', nome: 'Brilhante Puro Cuidado 1kg' },
+      { sku: '7896', nome: 'Brilhante Puro Cuidado 500g' },
+      { sku: '7897', nome: 'Brilhante Pura Lavagem 2kg' },
+      { sku: '4521', nome: 'Shampoo Seda Cocriações Cachos 325ml' },
+      { sku: '4498', nome: 'Condicionador Dove Nutrição Completa 200ml' },
+      { sku: '3877', nome: 'Sabonete Dove Original 90g' },
+      { sku: '5142', nome: 'Desodorante Rexona Women Powder 150ml' },
+      { sku: '6021', nome: 'Sabonete Líquido Lux Botanicals 250ml' },
+      { sku: '5887', nome: 'Desodorante Aerosol Axe Black 152ml' },
+      { sku: '6234', nome: 'Creme Dental Close-Up Red Hot 90g' },
+      { sku: '4763', nome: 'Shampoo Clear Men Anticaspa 200ml' },
+      { sku: '5419', nome: 'Desodorante Dove Invisible Dry 150ml' },
+    ];
+
+    // Estado do modal
+    let ntLineIdCounter = 1;
+    let ntLines = []; // { id, sku, nome, preco, isManual }
+
+    const ntModal       = document.getElementById('novaTabelaModal');
+    const ntStep1       = document.getElementById('ntStep1');
+    const ntStep2       = document.getElementById('ntStep2');
+    const ntFooter1     = document.getElementById('ntFooter1');
+    const ntFooter2     = document.getElementById('ntFooter2');
+    const ntSubtitle    = document.getElementById('ntSubtitle');
+    const ntTitle       = document.getElementById('ntTitle');
+    const ntNome        = document.getElementById('ntNome');
+    const ntVarejista   = document.getElementById('ntVarejista');
+    const ntInicio      = document.getElementById('ntInicio');
+    const ntFinal       = document.getElementById('ntFinal');
+    const ntFinalToggle = document.getElementById('ntFinalToggle');
+    const ntSearchRow      = document.getElementById('ntSearchRow');
+    const ntSearchbar      = document.getElementById('ntSearchbar');
+    const ntSearchInput    = document.getElementById('ntSearchInput');
+    const ntAutocomplete   = document.getElementById('ntAutocomplete');
+    const ntListEmptyManual= document.getElementById('ntListEmptyManual');
+    const ntListEmptyUpload= document.getElementById('ntListEmptyUpload');
+    const ntDownloadHelper = document.getElementById('ntDownloadHelper');
+    const ntListPop        = document.getElementById('ntListPopulated');
+    const ntList           = document.getElementById('ntList');
+    const ntNextBtn        = document.getElementById('ntNextBtn');
+
+    // Modo atual: 'manual' ou 'upload'
+    let ntMode = 'manual';
+
+    function ntOpenModal() {
+      ntResetState();
+      ntModal.classList.add('is-open');
+      ntModal.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => ntNome.focus());
+    }
+    // Fecha o modal direto, sem checagens. Usado por: Salvar rascunho confirmado, Enviar confirmado, Descartar confirmado.
+    function ntCloseModalDirect() {
+      ntModal.classList.remove('is-open');
+      ntModal.setAttribute('aria-hidden', 'true');
+      ntAutocomplete.hidden = true;
+    }
+    // Verifica se ha dados preenchidos. Se sim, abre modal de confirmacao de descarte; senao, fecha direto.
+    function ntHasDirtyContent() {
+      return !!(ntNome.value.trim() || ntVarejista.value || (ntInicio.value) || ntLines.length > 0);
+    }
+    function ntTryCloseModal() {
+      if (ntHasDirtyContent()) ntOpenDiscardConfirm();
+      else ntCloseModalDirect();
+    }
+    // Alias retrocompativel — antigos chamadores continuam funcionando.
+    function ntCloseModal() { ntCloseModalDirect(); }
+    function ntResetState() {
+      ntLines = [];
+      ntLineIdCounter = 1;
+      ntMode = 'manual';
+      ntNome.value = '';
+      ntVarejista.value = '';
+      ntInicio.value = '';
+      ntFinal.value = '';
+      ntFinalToggle.checked = false;
+      ntFinal.disabled = true;
+      ntSearchInput.value = '';
+      ntAutocomplete.hidden = true;
+      // Reset Abrangência
+      ntAbrangNivel.value = '';
+      ntAbrangAlvo.value = '';
+      ntAbrangAlvoCol.hidden = true;
+      ntGoToStep(1);
+      ntSetMode('manual'); // ja chama ntRenderList()
+    }
+
+    // ─── Abrangência (nivel → mostra select de alvos especifico) ───
+    const ntAbrangNivel   = document.getElementById('ntAbrangNivel');
+    const ntAbrangAlvo    = document.getElementById('ntAbrangAlvo');
+    const ntAbrangAlvoCol = document.getElementById('ntAbrangAlvoCol');
+    const ABRANG_OPTS = {
+      lojas: [
+        { value: '1', label: '1 - Supermercados Nova União' },
+        { value: '2', label: '2 - Rede BomLar' },
+        { value: '3', label: '3 - Super Vale Verde' },
+        { value: '4', label: '4 - Atacadão Econômico' },
+        { value: '5', label: '5 - CompreMais Supermercados' },
+        { value: '6', label: '6 - InfoFarma' },
+        { value: 'todas', label: 'Todas as lojas' },
+      ],
+      cluster: [
+        { value: '01', label: 'Cluster 01' },
+        { value: '02', label: 'Cluster 02' },
+        { value: 'todas', label: 'Todos os clusters' },
+      ],
+    };
+    ntAbrangNivel.addEventListener('change', () => {
+      const nivel = ntAbrangNivel.value;
+      if (!nivel) {
+        ntAbrangAlvoCol.hidden = true;
+        ntAbrangAlvo.innerHTML = '<option value="">Selecione…</option>';
+        return;
+      }
+      const opts = ABRANG_OPTS[nivel] || [];
+      const placeholder = nivel === 'lojas' ? 'Selecione as lojas…' : 'Selecione o cluster…';
+      ntAbrangAlvo.innerHTML = `<option value="">${placeholder}</option>` +
+        opts.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+      ntAbrangAlvoCol.hidden = false;
+    });
+
+    // ─── Toggle Upload ↔ Manual ───
+    function ntSetMode(mode) {
+      ntMode = mode;
+      const isUpload = mode === 'upload';
+      // Searchbar (so modo manual)
+      ntSearchRow.hidden = isUpload;
+      // Botoes do segmented
+      document.getElementById('ntModeUpload').classList.toggle('is-active', isUpload);
+      document.getElementById('ntModeUpload').setAttribute('aria-selected', isUpload);
+      document.getElementById('ntModeManual').classList.toggle('is-active', !isUpload);
+      document.getElementById('ntModeManual').setAttribute('aria-selected', !isUpload);
+      // Re-render — controla os empty states corretos + helper download
+      ntRenderList();
+    }
+    document.getElementById('ntModeUpload').addEventListener('click', () => ntSetMode('upload'));
+    document.getElementById('ntModeManual').addEventListener('click', () => ntSetMode('manual'));
+
+    // ─── Dropzone: drag-drop + click pra abrir picker ───
+    function ntMockUploadCSV() {
+      // Simula leitura de planilha. Em prod: parseia arquivo real (PapaParse/SheetJS).
+      const sample = [
+        { sku: '7891', nome: 'OMO Lavagem Perfeita 1.6kg',  preco: '24,98' },
+        { sku: '7892', nome: 'OMO Progress 2kg',            preco: '32,50' },
+        { sku: '7893', nome: 'Brilhante Puro Cuidado 1kg',  preco: '18,90' },
+        { sku: '4521', nome: 'Shampoo Seda Cocriações 325ml', preco: '12,50' },
+        { sku: '3877', nome: 'Sabonete Dove Original 90g',  preco: '4,80' },
+      ];
+      sample.forEach(p => ntLines.push({ id: ntLineIdCounter++, sku: p.sku, nome: p.nome, preco: p.preco, isManual: false }));
+      ntRenderList();
+      showToast(`${sample.length} produtos importados da planilha.`, 'success');
+    }
+    document.getElementById('ntFilePickerBtn').addEventListener('click', ntMockUploadCSV);
+    const ntDropzone = document.getElementById('ntListEmptyUpload');
+    ntDropzone.addEventListener('dragover', (e) => { e.preventDefault(); ntDropzone.classList.add('is-dragover'); });
+    ntDropzone.addEventListener('dragleave', () => ntDropzone.classList.remove('is-dragover'));
+    ntDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      ntDropzone.classList.remove('is-dragover');
+      ntMockUploadCSV();
+    });
+
+    // Download do template (mock — gera CSV pra demo)
+    document.getElementById('ntDownloadTemplate').addEventListener('click', () => {
+      const csv = 'SKU,descricao,preco\n7891,OMO Lavagem Perfeita 1.6kg,24.98\n';
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'modelo-tabela-precos.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Modelo CSV baixado.', 'success');
+    });
+
+    // Final de vigencia: toggle on/off habilita o input
+    ntFinalToggle.addEventListener('change', () => {
+      ntFinal.disabled = !ntFinalToggle.checked;
+      if (!ntFinalToggle.checked) ntFinal.value = '';
+    });
+
+    // ─── Searchbar + autocomplete ───
+    let ntAcResults = [];
+    let ntAcFocusedIdx = 0;
+
+    function ntRenderAutocomplete() {
+      if (ntAcResults.length === 0) {
+        ntAutocomplete.innerHTML = `<div class="nt-autocomplete__empty">Nenhum produto encontrado. <a id="ntInsertManualLink3" style="color:var(--color-brand-primary);font-weight:600;cursor:pointer;text-decoration:underline;">Inserir manualmente</a></div>`;
+        const link = document.getElementById('ntInsertManualLink3');
+        if (link) link.addEventListener('mousedown', (e) => { e.preventDefault(); ntAddManualLine(); ntAutocomplete.hidden = true; });
+        return;
+      }
+      ntAutocomplete.innerHTML = ntAcResults.map((p, i) => `
+        <div class="nt-autocomplete__item ${i === ntAcFocusedIdx ? 'is-focused' : ''}" data-sku="${p.sku}" data-nome="${p.nome.replace(/"/g, '&quot;')}">
+          <span class="nt-autocomplete__sku">${p.sku}</span>
+          <span class="nt-autocomplete__name">${p.nome}</span>
+        </div>
+      `).join('');
+      ntAutocomplete.querySelectorAll('[data-sku]').forEach(item => {
+        item.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          ntAddProductFromCatalog(item.dataset.sku, item.dataset.nome);
+        });
+      });
+    }
+
+    ntSearchInput.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      if (q.length < 1) { ntAutocomplete.hidden = true; return; }
+      ntAcResults = NT_CATALOG
+        .filter(p => p.nome.toLowerCase().includes(q) || p.sku.includes(q))
+        .filter(p => !ntLines.some(l => l.sku === p.sku && !l.isManual));
+      ntAcFocusedIdx = 0;
+      ntAutocomplete.hidden = false;
+      ntRenderAutocomplete();
+    });
+    ntSearchInput.addEventListener('focus', () => {
+      if (ntSearchInput.value.trim().length >= 1 && ntAcResults.length) ntAutocomplete.hidden = false;
+    });
+    ntSearchInput.addEventListener('keydown', (e) => {
+      if (ntAutocomplete.hidden) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); ntAcFocusedIdx = Math.min(ntAcFocusedIdx + 1, ntAcResults.length - 1); ntRenderAutocomplete(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); ntAcFocusedIdx = Math.max(ntAcFocusedIdx - 1, 0); ntRenderAutocomplete(); }
+      else if (e.key === 'Enter') {
+        if (ntAcResults[ntAcFocusedIdx]) {
+          e.preventDefault();
+          const p = ntAcResults[ntAcFocusedIdx];
+          ntAddProductFromCatalog(p.sku, p.nome);
+        }
+      } else if (e.key === 'Escape') {
+        ntAutocomplete.hidden = true;
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#ntSearchbar')) ntAutocomplete.hidden = true;
+    });
+
+    // ─── Adicionar produto (do catalogo ou manual) ───
+    function ntAddProductFromCatalog(sku, nome) {
+      ntLines.push({ id: ntLineIdCounter++, sku, nome, preco: '', isManual: false });
+      ntSearchInput.value = '';
+      ntAutocomplete.hidden = true;
+      ntRenderList();
+      ntSearchInput.focus();
+    }
+    function ntAddManualLine() {
+      ntLines.push({ id: ntLineIdCounter++, sku: '', nome: '', preco: '', isManual: true });
+      ntRenderList();
+      requestAnimationFrame(() => {
+        const last = ntLines[ntLines.length - 1];
+        const row = ntList.querySelector(`[data-line-id="${last.id}"]`);
+        if (row) row.querySelector('.nt-list__sku-input').focus();
+      });
+    }
+    document.getElementById('ntInsertManualLink').addEventListener('click', ntAddManualLine);
+    document.getElementById('ntInsertManualLink2').addEventListener('click', ntAddManualLine);
+
+    // ─── Render da lista (controla ambos empty states conforme o modo) ───
+    function ntRenderList() {
+      const isEmpty = ntLines.length === 0;
+      ntListPop.hidden = isEmpty;
+      if (isEmpty) {
+        ntListEmptyManual.hidden = (ntMode !== 'manual');
+        ntListEmptyUpload.hidden = (ntMode !== 'upload');
+        ntDownloadHelper.hidden  = (ntMode !== 'upload');
+      } else {
+        ntListEmptyManual.hidden = true;
+        ntListEmptyUpload.hidden = true;
+        // Download helper continua visivel no upload mesmo apos popular (linkable)
+        ntDownloadHelper.hidden  = (ntMode !== 'upload');
+      }
+      if (isEmpty) { ntUpdateNextEnabled(); return; }
+
+      // Mantem cabecalho fixo + renderiza rows
+      const head = ntList.querySelector('.nt-list__head');
+      ntList.innerHTML = '';
+      ntList.appendChild(head);
+      ntLines.forEach((line, i) => {
+        const row = document.createElement('div');
+        row.className = 'nt-list__row ' + (i % 2 === 1 ? 'is-even' : '');
+        row.dataset.lineId = line.id;
+        row.innerHTML = `
+          <span class="nt-list__cell nt-list__cell--sku">${
+            line.isManual
+              ? `<input class="nt-list__sku-input" type="text" value="${line.sku}" data-field="sku" placeholder="SKU" aria-label="SKU" />`
+              : line.sku
+          }</span>
+          <span class="nt-list__cell nt-list__cell--name">${
+            line.isManual
+              ? `<input class="nt-list__name-input" type="text" value="${(line.nome||'').replace(/"/g,'&quot;')}" data-field="nome" placeholder="Nome do produto" aria-label="Nome do produto" />`
+              : line.nome
+          }</span>
+          <span class="nt-list__cell">
+            <span class="nt-list__preco-wrap">
+              <span class="nt-list__preco-prefix">R$</span>
+              <input class="nt-list__preco-input" type="text" inputmode="decimal" value="${line.preco}" data-field="preco" placeholder="0,00" aria-label="Preço" />
+            </span>
+          </span>
+          <span class="nt-list__cell nt-list__cell--remove">
+            <button class="nt-list__remove" type="button" data-remove>Remover</button>
+          </span>
+        `;
+        ntList.appendChild(row);
+      });
+      ntUpdateNextEnabled();
+    }
+
+    function ntUpdateNextEnabled() {
+      const hasLines = ntLines.length > 0;
+      const allValid = ntLines.every(l => l.sku && l.nome && l.preco);
+      const hasName = ntNome.value.trim().length > 0;
+      const hasVarejista = !!ntVarejista.value;
+      ntNextBtn.disabled = !(hasLines && allValid && hasName && hasVarejista);
+    }
+    ntNome.addEventListener('input', ntUpdateNextEnabled);
+    ntVarejista.addEventListener('change', ntUpdateNextEnabled);
+
+    // Edit/remove da lista (delegacao)
+    ntList.addEventListener('input', (e) => {
+      const input = e.target.closest('input');
+      if (!input) return;
+      const row = input.closest('[data-line-id]');
+      const lineId = parseInt(row.dataset.lineId, 10);
+      const line = ntLines.find(l => l.id === lineId);
+      if (!line) return;
+      const field = input.dataset.field;
+      if (field === 'preco') {
+        const digits = input.value.replace(/\D/g, '');
+        if (!digits) { line.preco = ''; input.value = ''; ntUpdateNextEnabled(); return; }
+        const padded = digits.padStart(3, '0');
+        const inteiros = padded.slice(0, -2).replace(/^0+(?=\d)/, '');
+        const cents = padded.slice(-2);
+        line.preco = `${inteiros},${cents}`;
+        input.value = line.preco;
+      } else if (field === 'sku') {
+        line.sku = input.value;
+      } else if (field === 'nome') {
+        line.nome = input.value;
+      }
+      ntUpdateNextEnabled();
+    });
+    ntList.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-remove]');
+      if (!btn) return;
+      const row = btn.closest('[data-line-id]');
+      const lineId = parseInt(row.dataset.lineId, 10);
+      ntLines = ntLines.filter(l => l.id !== lineId);
+      ntRenderList();
+    });
+
+    // ─── Navegacao Etapa 1 ↔ Etapa 2 ───
+    function ntGoToStep(step) {
+      if (step === 1) {
+        ntTitle.textContent = 'Nova tabela de preços';
+        ntSubtitle.textContent = 'Etapa 1 de 2 — Inserção de produtos';
+        ntStep1.hidden = false;
+        ntStep2.hidden = true;
+        ntFooter1.hidden = false;
+        ntFooter2.hidden = true;
+      } else {
+        ntTitle.textContent = 'Revise sua tabela';
+        ntSubtitle.textContent = 'Etapa 2 de 2 — Revisão';
+        ntStep1.hidden = true;
+        ntStep2.hidden = false;
+        ntFooter1.hidden = true;
+        ntFooter2.hidden = false;
+        ntRenderReview();
+      }
+    }
+    function ntRenderReview() {
+      document.getElementById('ntReviewNome').textContent = ntNome.value || '—';
+      const varejistaLabel = ntVarejista.options[ntVarejista.selectedIndex]?.text || '—';
+      document.getElementById('ntReviewVarejista').textContent = varejistaLabel;
+      const ini = ntInicio.value ? new Date(ntInicio.value).toLocaleDateString('pt-BR') : '—';
+      const fim = ntFinalToggle.checked && ntFinal.value
+        ? new Date(ntFinal.value).toLocaleDateString('pt-BR') : null;
+      document.getElementById('ntReviewVigencia').textContent = fim ? `De ${ini} a ${fim}` : `A partir de ${ini}`;
+
+      // Tabela de revisao
+      const list = document.getElementById('ntReviewList');
+      // Mantem o cabecalho (primeiros 3 <span>)
+      const heads = list.querySelectorAll('.nt-review__th');
+      list.innerHTML = '';
+      heads.forEach(h => list.appendChild(h));
+      ntLines.forEach((line, i) => {
+        const row = document.createElement('div');
+        row.className = 'nt-review__row ' + (i % 2 === 1 ? 'is-even' : '');
+        row.innerHTML = `
+          <span class="nt-review__cell nt-review__cell--sku">${line.sku}</span>
+          <span class="nt-review__cell">${line.nome}</span>
+          <span class="nt-review__cell nt-review__cell--preco">R$ ${line.preco || '0,00'}</span>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    ntNextBtn.addEventListener('click', () => ntGoToStep(2));
+    document.getElementById('ntBackBtn').addEventListener('click', () => ntGoToStep(1));
+
+    // ─── Modal de confirmacao: Salvar rascunho ───
+    const saveDraftModal = document.getElementById('saveDraftModal');
+    function ntOpenSaveDraft() {
+      saveDraftModal.classList.add('is-open');
+      saveDraftModal.setAttribute('aria-hidden', 'false');
+    }
+    function ntCloseSaveDraft() {
+      saveDraftModal.classList.remove('is-open');
+      saveDraftModal.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('ntSaveDraftBtn1').addEventListener('click', ntOpenSaveDraft);
+    document.getElementById('ntSaveDraftBtn2').addEventListener('click', ntOpenSaveDraft);
+    saveDraftModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', ntCloseSaveDraft));
+    saveDraftModal.addEventListener('click', (e) => { if (e.target === saveDraftModal) ntCloseSaveDraft(); });
+    document.getElementById('saveDraftConfirmBtn').addEventListener('click', () => {
+      ntCloseSaveDraft();
+      ntCloseModal();
+      showToast(`Tabela "${ntNome.value || 'sem nome'}" salva como rascunho em Negociações Salvas.`, 'success');
+    });
+
+    // ─── Modal de confirmacao: Enviar tabela ───
+    const sendTabelaModal = document.getElementById('sendTabelaModal');
+    function ntOpenSendTabela() {
+      const varejistaLabel = ntVarejista.options[ntVarejista.selectedIndex]?.text || 'o varejista';
+      document.getElementById('ntSendVarejistaNome').textContent = varejistaLabel;
+      sendTabelaModal.classList.add('is-open');
+      sendTabelaModal.setAttribute('aria-hidden', 'false');
+    }
+    function ntCloseSendTabela() {
+      sendTabelaModal.classList.remove('is-open');
+      sendTabelaModal.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('ntSendBtn').addEventListener('click', ntOpenSendTabela);
+    sendTabelaModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', ntCloseSendTabela));
+    sendTabelaModal.addEventListener('click', (e) => { if (e.target === sendTabelaModal) ntCloseSendTabela(); });
+    document.getElementById('sendTabelaConfirmBtn').addEventListener('click', () => {
+      ntCloseSendTabela();
+      ntCloseModal();
+      const varejistaLabel = ntVarejista.options[ntVarejista.selectedIndex]?.text || 'o varejista';
+      showToast(`Tabela enviada para ${varejistaLabel}. Aguarde a triagem.`, 'success', 6000);
+    });
+
+    // ─── Modal "Descartar alterações?" ───
+    const discardModal = document.getElementById('discardModal');
+    function ntOpenDiscardConfirm() {
+      discardModal.classList.add('is-open');
+      discardModal.setAttribute('aria-hidden', 'false');
+    }
+    function ntCloseDiscardConfirm() {
+      discardModal.classList.remove('is-open');
+      discardModal.setAttribute('aria-hidden', 'true');
+    }
+    discardModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', ntCloseDiscardConfirm));
+    discardModal.addEventListener('click', (e) => { if (e.target === discardModal) ntCloseDiscardConfirm(); });
+    document.getElementById('discardConfirmBtn').addEventListener('click', () => {
+      ntCloseDiscardConfirm();
+      ntCloseModalDirect();
+    });
+
+    // ─── Fechar modal principal: X, Cancelar, ESC passam pelo confirm de descarte (se dirty). ───
+    // Click no backdrop NÃO fecha (etapa importante — evita perda acidental do trabalho).
+    ntModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', ntTryCloseModal));
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      // Ordem de prioridade: confirms aninhados > autocomplete > modal principal
+      if (discardModal.classList.contains('is-open')) { ntCloseDiscardConfirm(); return; }
+      if (saveDraftModal.classList.contains('is-open')) { ntCloseSaveDraft(); return; }
+      if (sendTabelaModal.classList.contains('is-open')) { ntCloseSendTabela(); return; }
+      if (!ntAutocomplete.hidden) { ntAutocomplete.hidden = true; return; }
+      if (ntModal.classList.contains('is-open')) ntTryCloseModal();
+    });
+
+    // ─── Conecta os CTAs "Nova tabela" a abrir o modal ───
+    document.getElementById('novaNegBtn').addEventListener('click', ntOpenModal);
+    document.getElementById('emptyCtaBtn').addEventListener('click', ntOpenModal);
   </script>
+  <script src="tutorial.js"></script>
 </body>
 </html>
 

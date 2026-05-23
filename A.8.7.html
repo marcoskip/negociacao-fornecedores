@@ -184,10 +184,12 @@
       font-weight: var(--font-weight-semibold);
     }
 
-    /* ─── Histórico de rounds (timeline) ─────────── */
+    /* ─── Timeline dinamica de rounds ─────────────
+       Mesmo padrao da A.18 (ver doc la). */
+    .a87-rounds { display: flex; align-items: stretch; gap: 8px; }
     .a87-rounds__list {
+      flex: 1;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
     }
     .a87-round {
@@ -197,7 +199,12 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      text-align: left;
+      font-family: inherit;
+      cursor: pointer;
+      transition: box-shadow 120ms ease;
     }
+    .a87-round:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
     .a87-round__head { display: flex; align-items: center; justify-content: space-between; }
     .a87-round__step {
       display: inline-flex; align-items: center; justify-content: center;
@@ -209,13 +216,9 @@
       background: transparent;
     }
     .a87-round__time { font-size: 10px; }
-    .a87-round__title {
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-semibold);
-    }
+    .a87-round__title { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
     .a87-round__hint { font-size: 12px; line-height: 16px; }
 
-    /* Variantes — todas as cores (border, texto, step) seguem o currentColor do .a87-round */
     .a87-round.is-done {
       background: var(--color-gray-200);
       border-color: var(--color-gray-500);
@@ -226,10 +229,109 @@
       border-color: var(--color-blue-500);
       color: var(--color-blue-500);
     }
+    .a87-round.is-viewing {
+      background: var(--color-orange-light-10);
+      border-color: var(--color-orange-600);
+      color: var(--color-orange-700);
+      box-shadow: 0 0 0 2px var(--color-orange-light-20);
+    }
     .a87-round.is-future {
       background: var(--color-gray-200);
       border-color: var(--color-gray-500);
       color: var(--color-gray-500);
+    }
+
+    /* ─── Dropdown overflow + banner + read-only (mesmo da A.18) ─── */
+    .a87-rounds__overflow { position: relative; display: flex; }
+    .a87-rounds__overflow[hidden] { display: none; }
+    .a87-rounds__overflow-trigger {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0 14px;
+      border: 1px dashed var(--color-gray-400);
+      background: var(--color-white);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: inherit; font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-700);
+      white-space: nowrap;
+      transition: border-color 120ms ease, background 120ms ease;
+    }
+    .a87-rounds__overflow-trigger:hover { border-color: var(--color-gray-600); background: var(--color-gray-50); }
+    .a87-rounds__overflow-trigger .material-icons-outlined { font-size: 16px; }
+    .a87-rounds__overflow-menu {
+      position: absolute; top: calc(100% + 4px); right: 0;
+      min-width: 280px; max-height: 280px; overflow-y: auto;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+      padding: 6px; z-index: 50;
+    }
+    .a87-rounds__overflow-menu[hidden] { display: none; }
+    .a87-rounds__overflow-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      width: 100%; padding: 8px 10px;
+      border: none; background: transparent; cursor: pointer;
+      font-family: inherit; font-size: var(--font-size-sm);
+      color: var(--color-gray-900); border-radius: var(--radius-sm);
+      text-align: left;
+    }
+    .a87-rounds__overflow-item:hover { background: var(--color-gray-100); }
+    .a87-rounds__overflow-item__main { display: inline-flex; align-items: center; gap: 8px; }
+    .a87-rounds__overflow-item__label { font-weight: var(--font-weight-semibold); }
+    .a87-rounds__overflow-item__date { font-size: var(--font-size-xs); color: var(--color-gray-600); white-space: nowrap; }
+    /* Badges de autoria do round (mesmo padrao das pills "Aguarda" da A.9) */
+    .a87-rounds__overflow-badge {
+      display: inline-flex; align-items: center;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 9px; font-weight: var(--font-weight-bold);
+      letter-spacing: 0.4px; line-height: 12px;
+      text-transform: uppercase;
+    }
+    .a87-rounds__overflow-badge--voce { background: var(--color-blue-light-10); color: var(--color-brand-primary); }
+    .a87-rounds__overflow-badge--fornec { background: var(--color-gray-300); color: var(--color-gray-800); }
+
+    .a87-historic-banner {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--color-orange-light-10);
+      border: 1px solid var(--color-orange-light-20);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px; margin-bottom: 12px;
+    }
+    .a87-historic-banner[hidden] { display: none; }
+    .a87-historic-banner .material-icons-outlined { color: var(--color-orange-700); font-size: 18px; }
+    .a87-historic-banner__text {
+      flex: 1; font-size: var(--font-size-md); line-height: 20px;
+      color: var(--color-orange-700);
+    }
+    .a87-historic-banner__text strong { font-weight: var(--font-weight-semibold); }
+    .a87-historic-banner__text .a87-historic-banner__date { color: var(--color-gray-700); font-weight: var(--font-weight-regular); margin-left: 4px; }
+    .a87-historic-banner .a87-historic-banner__back {
+      margin-left: 8px;
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-brand-primary);
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .a87-historic-banner .a87-historic-banner__back:hover { color: var(--color-blue-600); }
+
+    /* Modo read-only do tbody quando visualizando round historico:
+       opacidade global reduzida + pointer-events bloqueado em toda a tabela. */
+    .a87-tbody--readonly {
+      opacity: 0.4;
+      pointer-events: none;
+      user-select: none;
+    }
+    .a87-tbody--readonly .grid__form-input {
+      background: var(--color-gray-50);
+      color: var(--color-gray-700);
     }
 
     /* ─── Action bar ──────────────────────────────── */
@@ -277,17 +379,19 @@
     }
 
     /* Inputs editaveis (Novo custo / Novo preco) usam .grid__form-field do DS direto.
-       Padding generoso e .grid__form-field limitado a 92px com inline-flex pra criar
+       Padding generoso e .grid__form-field limitado a 84px com inline-flex pra criar
        espaco em volta dos inputs (gap visual entre as 2 colunas adjacentes). */
-    /* Padding extra nas colunas Proposta fornecedor (7) + Sua proposta (9) — gap visual */
-    .a87-grid-wrapper .grid__table tbody td:nth-child(7),
-    .a87-grid-wrapper .grid__table tbody td:nth-child(9) {
-      padding-left: 16px;
-      padding-right: 16px;
+    /* Padding extra nas colunas Proposta fornecedor (8) + Novo custo (10) + Novo preco (11) — gap visual */
+    .a87-grid-wrapper .grid__table tbody td:nth-child(8),
+    .a87-grid-wrapper .grid__table tbody td:nth-child(10),
+    .a87-grid-wrapper .grid__table tbody td:nth-child(11) {
+      padding-left: 12px;
+      padding-right: 12px;
     }
-    /* Sua proposta (9) tem input: limita largura pra criar respiro */
-    .a87-grid-wrapper .grid__table tbody td:nth-child(9) .grid__form-field {
-      width: 92px;
+    /* Inputs (Novo custo + Novo preco) — limita largura pra criar respiro */
+    .a87-grid-wrapper .grid__table tbody td:nth-child(10) .grid__form-field,
+    .a87-grid-wrapper .grid__table tbody td:nth-child(11) .grid__form-field {
+      width: 84px;
     }
     /* .grid__var dentro do .grid__cell (flex column) estica por default — forca tamanho natural */
     .a87-grid-wrapper .grid__cell .grid__var { align-self: flex-start; }
@@ -343,41 +447,61 @@
       color: var(--color-white);
     }
 
-    /* Estados da linha — Aprovada (verde) / Rejeitada (vermelho) */
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--approved td {
+    /* Estados da linha — Aprovada (verde) / Rejeitada ou Cancelada (vermelho)
+       --approved / --rejected: aplicado pelos botoes manuais "Aceitar"/"Recusar".
+       --fornecedor-aceitou / --cancelado: aplicado pelo snapshot historico do round. */
+    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--approved td,
+    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--fornecedor-aceitou td {
       background: var(--color-green-light-15) !important;
     }
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected td {
+    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected td,
+    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--cancelado td {
       background: var(--color-red-light-20) !important;
     }
 
-    /* Em ambos estados: form, checkbox e botão "Comentar" ficam desabilitados */
-    .a87-product-row--approved .grid__form-field,
-    .a87-product-row--rejected .grid__form-field,
-    .a87-product-row--approved .grid__check,
-    .a87-product-row--rejected .grid__check,
-    .a87-product-row--approved [data-comment-trigger],
-    .a87-product-row--rejected [data-comment-trigger] {
-      opacity: 0.4;
-      pointer-events: none;
-    }
+    /* Linhas com status decidido (Aceitou/Cancelado) permanecem editaveis —
+       apenas o BG colorido sinaliza visualmente o status; sem lock de pointer-events. */
 
-    /* Reforco visual extra apenas para a rejeitada */
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected .grid__val-main,
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected .grid__val-sub,
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected .grid__produto-name,
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected .a87-delta-val {
-      color: var(--color-gray-600) !important;
+    /* Badge de estoque do varejista (vai dentro do .grid__produto-chips, abaixo do nome).
+       Icone "unidades.svg" reaproveitado do index.html (coluna Estoque). */
+    .a87-estoque-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      background: var(--color-gray-200);
+      border-radius: 999px;
+      font-size: var(--font-size-xs);
+      line-height: 14px;
+      color: var(--color-gray-600);
+      font-weight: var(--font-weight-semibold);
     }
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected .grid__val-main {
-      text-decoration: line-through;
+    /* Icone SVG renderizado em gray-600 (#959595): brightness(0) torna preto puro,
+       depois invert(58%) clareia ate o tom equivalente ao token. */
+    .a87-estoque-chip img { width: 12px; height: 12px; display: block; filter: brightness(0) invert(58%); }
+
+    /* Botao-icone da coluna "Comentar" — mesmo glifo (chat_bubble com scaleX(-1))
+       do composed-btn de filtro de comentarios acima do grid. */
+    .a87-comment-icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--color-gray-700);
+      cursor: pointer;
+      transition: background 100ms ease, color 100ms ease;
     }
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected .grid__var,
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected .grid__chip,
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--rejected .indicador {
-      opacity: 0.4;
-      filter: grayscale(0.4);
-    }
+    .a87-comment-icon-btn:hover { background: var(--color-gray-100); color: var(--color-gray-900); }
+    .a87-comment-icon-btn .material-icons { font-size: 18px; transform: scaleX(-1); }
+    /* Estado "tem comentario salvo" — destaca em azul */
+    .a87-comment-icon-btn.is-saved { color: var(--color-brand-primary); }
+    .a87-comment-icon-btn.is-saved:hover { background: var(--color-blue-light-10); }
+
 
     /* Sub-row de mensagem (entre 1a e 2a linha) */
     .a87-subrow td { background: var(--color-orange-light-10) !important; }
@@ -511,8 +635,21 @@
     }
 
     /* Dev menu (mesmo padrao das outras telas) */
-    .dev-menu { position: fixed; bottom: 16px; right: 16px; z-index: 9500; font-family: var(--font-family-base); }
+    .dev-menu { position: fixed; bottom: 16px; right: 16px; z-index: 9500; font-family: var(--font-family-base); display: flex; align-items: center; gap: 8px; }
     .dev-menu.is-hidden { display: none; }
+    .dev-nav-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--color-gray-900);
+      color: var(--color-white);
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-elevation);
+      transition: background 100ms ease;
+    }
+    .dev-nav-btn:hover:not(:disabled) { background: var(--color-gray-800); }
+    .dev-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .dev-nav-btn .material-icons-outlined { font-size: 20px; }
     .dev-menu__trigger {
       width: 44px; height: 44px;
       border-radius: 50%;
@@ -613,7 +750,7 @@
           <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
         </div>
         <div class="sidebar__subitems">
-          <a class="sidebar__subitem" href="#">Negociação fornecedor</a>
+          <a class="sidebar__subitem" href="A.8.6.html">Triagem</a>
           <a class="sidebar__subitem" href="A.9.html">Negociações salvas</a>
           <a class="sidebar__subitem" href="0.1.html">Fornecedores</a>
         </div>
@@ -635,7 +772,7 @@
 
   <!-- Popup flutuante exibido ao clicar em [data-toggle-group] com a sidebar recolhida -->
   <div class="sidebar-popup" id="sidebarPopup" hidden role="menu" aria-label="Negociações fornecedor">
-    <a class="sidebar-popup__item" href="#" role="menuitem">Negociação fornecedor</a>
+    <a class="sidebar-popup__item" href="A.8.6.html" role="menuitem">Triagem</a>
     <a class="sidebar-popup__item" href="A.9.html" role="menuitem">Negociações salvas</a>
     <a class="sidebar-popup__item" href="0.1.html" role="menuitem">Fornecedores</a>
   </div>
@@ -658,7 +795,7 @@
           <span class="a87-header__title">Unilever · Tabela Q2 - Higiene &amp; Beleza</span>
         </div>
         <div class="a87-header__meta">
-          <span class="badge badge--filled badge--orange">Em tratativa</span>
+          <span class="badge badge--filled badge--orange">Em negociação</span>
           <span class="badge badge--ghost badge--orange">Iniciada pelo fornecedor</span>
           <button class="btn btn--link btn--medium" type="button">
             <span class="material-icons-outlined">file_download</span>
@@ -674,45 +811,31 @@
       </div>
     </div>
 
-    <!-- ── Histórico de rounds ────────────────────── -->
-    <div class="a87-rounds">
-      <div class="a87-rounds__list">
-
-        <div class="a87-round is-done">
-          <div class="a87-round__head">
-            <span class="a87-round__step">1</span>
-            <span class="a87-round__time">20/04, 14:22</span>
-          </div>
-          <span class="a87-round__title">Round 1 · Fornecedor enviou proposta</span>
-          <span class="a87-round__hint">5 itens · R$ 0,00 -195% vs atual</span>
-        </div>
-
-        <div class="a87-round is-current">
-          <div class="a87-round__head">
-            <span class="a87-round__step">2</span>
-            <span class="a87-round__time">agora</span>
-          </div>
-          <span class="a87-round__title">Round 2 · Aguardando sua resposta</span>
-          <span class="a87-round__hint">Edite custos/preços e envie contraproposta ou feche o negócio</span>
-        </div>
-
-        <div class="a87-round is-future">
-          <div class="a87-round__head">
-            <span class="a87-round__step">3</span>
-          </div>
-          <span class="a87-round__title">Round 3 · Fornecedor responde</span>
-          <span class="a87-round__hint">Aceita, recusa ou contraproposta item</span>
-        </div>
-
-        <div class="a87-round is-future">
-          <div class="a87-round__head">
-            <span class="a87-round__step">4</span>
-          </div>
-          <span class="a87-round__title">Round 4 · Fechamento</span>
-          <span class="a87-round__hint">Fechar negócio trava vigência e notifica</span>
-        </div>
-
+    <!-- ── Timeline dinamica (renderizada via JS conforme currentRound) ── -->
+    <div class="a87-rounds" id="a87RoundsTimeline">
+      <div class="a87-rounds__list" id="a87RoundsList">
+        <!-- Cards renderizados em runtime por renderTimeline() -->
       </div>
+      <div class="a87-rounds__overflow" id="a87RoundsOverflow" hidden>
+        <button class="a87-rounds__overflow-trigger" type="button" id="overflowTrigger" aria-haspopup="menu">
+          <span class="material-icons-outlined">history</span>
+          <span>Rounds anteriores</span>
+          <span class="material-icons-outlined">keyboard_arrow_down</span>
+        </button>
+        <div class="a87-rounds__overflow-menu" id="overflowMenu" hidden role="menu">
+          <!-- Itens renderizados em runtime -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Banner de visualizacao historica ── -->
+    <div class="a87-historic-banner" id="a87HistoricBanner" hidden role="status">
+      <span class="material-icons-outlined" aria-hidden="true">history</span>
+      <span class="a87-historic-banner__text">
+        Visualizando histórico do <strong id="a87HistoricLabel">Round X</strong>
+        <span class="a87-historic-banner__date" id="a87HistoricDate">DD/MM, HH:MM</span>
+        <button type="button" class="a87-historic-banner__back" id="backToCurrentRoundBtn">Voltar ao Round atual</button>
+      </span>
     </div>
 
     <!-- ── Toolbar do grid (info + filtros rapidos + CTA) ─ -->
@@ -753,18 +876,20 @@
     <div class="a87-grid-wrapper">
       <table class="grid__table">
         <colgroup>
-          <col style="width:36px">  <!-- checkbox -->
-          <col style="width:70px">  <!-- SKU -->
-          <col style="width:22%">   <!-- Produto -->
-          <col style="width:12%">   <!-- Margem obj -->
-          <col style="width:12%">   <!-- Custo atual -->
-          <col style="width:12%">   <!-- Ideal compra -->
-          <col style="width:128px"> <!-- Proposta fornecedor (valor + variação) -->
-          <col style="width:80px">  <!-- Δ vs atual -->
-          <col style="width:128px"> <!-- Sua proposta (input + gap) -->
-          <col style="width:100px"> <!-- Comentar -->
-          <col style="width:96px">  <!-- Indicador de custos -->
-          <col style="width:80px">  <!-- Aprovar / Rejeitar item -->
+          <col style="width:32px">   <!-- checkbox -->
+          <col style="width:64px">   <!-- SKU -->
+          <col style="width:18%">    <!-- Produto -->
+          <col style="width:7%">     <!-- Margem obj -->
+          <col style="width:8%">     <!-- Custo atual -->
+          <col style="width:8%">     <!-- Preco Concorrente (ressuscitada) -->
+          <col style="width:8%">     <!-- Ideal compra -->
+          <col style="width:108px">  <!-- Proposta fornecedor (valor + variação) -->
+          <col style="width:72px">   <!-- Δ vs atual -->
+          <col style="width:108px">  <!-- Novo custo (ressuscitada — input) -->
+          <col style="width:108px">  <!-- Novo preco (ressuscitada — input) -->
+          <col style="width:40px">   <!-- Comentar (icone) -->
+          <col style="width:96px">   <!-- Indicador de custos -->
+          <col style="width:72px">   <!-- Aprovar / Rejeitar item -->
         </colgroup>
         <thead>
           <tr>
@@ -778,6 +903,7 @@
             </th>
             <th><div class="grid__th-content"><span>Margem obj.</span></div></th>
             <th><div class="grid__th-content"><span>Custo atual</span></div></th>
+            <th><div class="grid__th-content"><span>Preço Concor.</span></div></th>
             <th>
               <div class="grid__th-content">
                 <span>Ideal compra</span>
@@ -791,7 +917,8 @@
               </div>
             </th>
             <th><div class="grid__th-content"><span>Δ vs atual</span></div></th>
-            <th><div class="grid__th-content"><span>Sua proposta</span></div></th>
+            <th><div class="grid__th-content"><span>Novo custo</span></div></th>
+            <th><div class="grid__th-content"><span>Novo preço</span></div></th>
             <th></th>
             <th>
               <div class="grid__th-content">
@@ -813,6 +940,8 @@
                 <div class="grid__produto-name">SHAMPOO SEDA COCRIACOES CACHOS 325ML</div>
                 <div class="grid__produto-chips">
                   <span class="grid__chip grid__chip--gray">4 lojas</span>
+                
+                  <span class="a87-estoque-chip"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span>142</span></span>
                 </div>
               </div>
             </td>
@@ -821,6 +950,11 @@
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 12,90</span>
                 <span class="grid__val-sub">PMZ R$ 16,98</span>
+              </div>
+            </td>
+            <td>
+              <div class="grid__cell">
+                <span class="grid__val-main">R$ 14,90</span>
               </div>
             </td>
             <td>
@@ -839,11 +973,17 @@
             <td>
               <div class="grid__form-field">
                 <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" />
+                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
               </div>
             </td>
             <td>
-              <button class="btn btn--link btn--medium" type="button" data-comment-trigger>Comentar</button>
+              <div class="grid__form-field">
+                <span class="grid__form-prefix">R$</span>
+                <input type="text" class="grid__form-input" placeholder="—" data-input="preco" />
+              </div>
+            </td>
+            <td>
+              <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
             <td>
               <div class="indicador indicador--regular">
@@ -864,7 +1004,7 @@
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
             <td></td>
-            <td colspan="10">
+            <td colspan="12">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -889,6 +1029,8 @@
                 <div class="grid__produto-name">CONDICIONADOR DOVE NUTRICAO COMPLETA 200ML</div>
                 <div class="grid__produto-chips">
                   <span class="grid__chip grid__chip--gray">4 lojas</span>
+                
+                  <span class="a87-estoque-chip"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span>87</span></span>
                 </div>
               </div>
             </td>
@@ -897,6 +1039,11 @@
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 14,50</span>
                 <span class="grid__val-sub">PMZ R$ 18,59</span>
+              </div>
+            </td>
+            <td>
+              <div class="grid__cell">
+                <span class="grid__val-main">R$ 16,40</span>
               </div>
             </td>
             <td>
@@ -915,11 +1062,17 @@
             <td>
               <div class="grid__form-field">
                 <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" />
+                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
               </div>
             </td>
             <td>
-              <button class="btn btn--link btn--medium" type="button" data-comment-trigger>Comentar</button>
+              <div class="grid__form-field">
+                <span class="grid__form-prefix">R$</span>
+                <input type="text" class="grid__form-input" placeholder="—" data-input="preco" />
+              </div>
+            </td>
+            <td>
+              <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
             <td>
               <div class="indicador indicador--regular">
@@ -940,7 +1093,7 @@
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
             <td></td>
-            <td colspan="10">
+            <td colspan="12">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -965,6 +1118,8 @@
                 <div class="grid__produto-name">SABONETE DOVE ORIGINAL 90G</div>
                 <div class="grid__produto-chips">
                   <span class="grid__chip grid__chip--gray">4 lojas</span>
+                
+                  <span class="a87-estoque-chip"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span>320</span></span>
                 </div>
               </div>
             </td>
@@ -973,6 +1128,11 @@
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 4,90</span>
                 <span class="grid__val-sub">PMZ R$ 6,81</span>
+              </div>
+            </td>
+            <td>
+              <div class="grid__cell">
+                <span class="grid__val-main">R$ 5,50</span>
               </div>
             </td>
             <td>
@@ -991,11 +1151,17 @@
             <td>
               <div class="grid__form-field">
                 <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" />
+                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
               </div>
             </td>
             <td>
-              <button class="btn btn--link btn--medium" type="button" data-comment-trigger>Comentar</button>
+              <div class="grid__form-field">
+                <span class="grid__form-prefix">R$</span>
+                <input type="text" class="grid__form-input" placeholder="—" data-input="preco" />
+              </div>
+            </td>
+            <td>
+              <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
             <td>
               <div class="indicador indicador--ruim">
@@ -1016,7 +1182,7 @@
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
             <td></td>
-            <td colspan="10">
+            <td colspan="12">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1041,6 +1207,8 @@
                 <div class="grid__produto-name">DESODORANTE REXONA WOMEN POWDER 150ML</div>
                 <div class="grid__produto-chips">
                   <span class="grid__chip grid__chip--gray">3 lojas</span>
+                
+                  <span class="a87-estoque-chip"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span>56</span></span>
                 </div>
               </div>
             </td>
@@ -1049,6 +1217,11 @@
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 18,90</span>
                 <span class="grid__val-sub">PMZ R$ 23,05</span>
+              </div>
+            </td>
+            <td>
+              <div class="grid__cell">
+                <span class="grid__val-main">R$ 19,80</span>
               </div>
             </td>
             <td>
@@ -1067,11 +1240,17 @@
             <td>
               <div class="grid__form-field">
                 <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" />
+                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
               </div>
             </td>
             <td>
-              <button class="btn btn--link btn--medium" type="button" data-comment-trigger>Comentar</button>
+              <div class="grid__form-field">
+                <span class="grid__form-prefix">R$</span>
+                <input type="text" class="grid__form-input" placeholder="—" data-input="preco" />
+              </div>
+            </td>
+            <td>
+              <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
             <td>
               <div class="indicador indicador--muito-ruim">
@@ -1092,7 +1271,7 @@
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
             <td></td>
-            <td colspan="10">
+            <td colspan="12">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1117,6 +1296,8 @@
                 <div class="grid__produto-name">SABONETE LIQUIDO LUX BOTANICALS 250ML</div>
                 <div class="grid__produto-chips">
                   <span class="grid__chip grid__chip--gray">2 lojas</span>
+                
+                  <span class="a87-estoque-chip"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span>24</span></span>
                 </div>
               </div>
             </td>
@@ -1125,6 +1306,11 @@
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 11,20</span>
                 <span class="grid__val-sub">PMZ R$ 15,14</span>
+              </div>
+            </td>
+            <td>
+              <div class="grid__cell">
+                <span class="grid__val-main">R$ 12,30</span>
               </div>
             </td>
             <td>
@@ -1143,11 +1329,17 @@
             <td>
               <div class="grid__form-field">
                 <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" />
+                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
               </div>
             </td>
             <td>
-              <button class="btn btn--link btn--medium" type="button" data-comment-trigger>Comentar</button>
+              <div class="grid__form-field">
+                <span class="grid__form-prefix">R$</span>
+                <input type="text" class="grid__form-input" placeholder="—" data-input="preco" />
+              </div>
+            </td>
+            <td>
+              <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
             <td>
               <div class="indicador indicador--regular">
@@ -1168,7 +1360,7 @@
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
             <td></td>
-            <td colspan="10">
+            <td colspan="12">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1193,6 +1385,8 @@
                 <div class="grid__produto-name">DESODORANTE AEROSOL AXE BLACK 152ML</div>
                 <div class="grid__produto-chips">
                   <span class="grid__chip grid__chip--gray">3 lojas</span>
+                
+                  <span class="a87-estoque-chip"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span>78</span></span>
                 </div>
               </div>
             </td>
@@ -1201,6 +1395,11 @@
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 22,40</span>
                 <span class="grid__val-sub">PMZ R$ 28,00</span>
+              </div>
+            </td>
+            <td>
+              <div class="grid__cell">
+                <span class="grid__val-main">R$ 23,90</span>
               </div>
             </td>
             <td>
@@ -1219,11 +1418,17 @@
             <td>
               <div class="grid__form-field">
                 <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" />
+                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
               </div>
             </td>
             <td>
-              <button class="btn btn--link btn--medium" type="button" data-comment-trigger>Comentar</button>
+              <div class="grid__form-field">
+                <span class="grid__form-prefix">R$</span>
+                <input type="text" class="grid__form-input" placeholder="—" data-input="preco" />
+              </div>
+            </td>
+            <td>
+              <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
             <td>
               <div class="indicador indicador--ruim">
@@ -1244,7 +1449,7 @@
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
             <td></td>
-            <td colspan="10">
+            <td colspan="12">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1269,6 +1474,8 @@
                 <div class="grid__produto-name">CREME DENTAL CLOSE-UP RED HOT 90G</div>
                 <div class="grid__produto-chips">
                   <span class="grid__chip grid__chip--gray">4 lojas</span>
+                
+                  <span class="a87-estoque-chip"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span>415</span></span>
                 </div>
               </div>
             </td>
@@ -1277,6 +1484,11 @@
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 5,30</span>
                 <span class="grid__val-sub">PMZ R$ 7,57</span>
+              </div>
+            </td>
+            <td>
+              <div class="grid__cell">
+                <span class="grid__val-main">R$ 5,80</span>
               </div>
             </td>
             <td>
@@ -1295,11 +1507,17 @@
             <td>
               <div class="grid__form-field">
                 <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" />
+                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
               </div>
             </td>
             <td>
-              <button class="btn btn--link btn--medium" type="button" data-comment-trigger>Comentar</button>
+              <div class="grid__form-field">
+                <span class="grid__form-prefix">R$</span>
+                <input type="text" class="grid__form-input" placeholder="—" data-input="preco" />
+              </div>
+            </td>
+            <td>
+              <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
             <td>
               <div class="indicador indicador--ruim">
@@ -1320,7 +1538,7 @@
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
             <td></td>
-            <td colspan="10">
+            <td colspan="12">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1345,6 +1563,8 @@
                 <div class="grid__produto-name">SHAMPOO CLEAR MEN ANTICASPA 200ML</div>
                 <div class="grid__produto-chips">
                   <span class="grid__chip grid__chip--gray">4 lojas</span>
+                
+                  <span class="a87-estoque-chip"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span>91</span></span>
                 </div>
               </div>
             </td>
@@ -1353,6 +1573,11 @@
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 16,80</span>
                 <span class="grid__val-sub">PMZ R$ 21,54</span>
+              </div>
+            </td>
+            <td>
+              <div class="grid__cell">
+                <span class="grid__val-main">R$ 18,20</span>
               </div>
             </td>
             <td>
@@ -1371,11 +1596,17 @@
             <td>
               <div class="grid__form-field">
                 <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" />
+                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
               </div>
             </td>
             <td>
-              <button class="btn btn--link btn--medium" type="button" data-comment-trigger>Comentar</button>
+              <div class="grid__form-field">
+                <span class="grid__form-prefix">R$</span>
+                <input type="text" class="grid__form-input" placeholder="—" data-input="preco" />
+              </div>
+            </td>
+            <td>
+              <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
             <td>
               <div class="indicador indicador--bom">
@@ -1396,7 +1627,7 @@
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
             <td></td>
-            <td colspan="10">
+            <td colspan="12">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1421,6 +1652,8 @@
                 <div class="grid__produto-name">DESODORANTE DOVE INVISIBLE DRY 150ML</div>
                 <div class="grid__produto-chips">
                   <span class="grid__chip grid__chip--gray">3 lojas</span>
+                
+                  <span class="a87-estoque-chip"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span>68</span></span>
                 </div>
               </div>
             </td>
@@ -1429,6 +1662,11 @@
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 18,90</span>
                 <span class="grid__val-sub">PMZ R$ 25,20</span>
+              </div>
+            </td>
+            <td>
+              <div class="grid__cell">
+                <span class="grid__val-main">R$ 20,10</span>
               </div>
             </td>
             <td>
@@ -1447,11 +1685,17 @@
             <td>
               <div class="grid__form-field">
                 <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" />
+                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
               </div>
             </td>
             <td>
-              <button class="btn btn--link btn--medium" type="button" data-comment-trigger>Comentar</button>
+              <div class="grid__form-field">
+                <span class="grid__form-prefix">R$</span>
+                <input type="text" class="grid__form-input" placeholder="—" data-input="preco" />
+              </div>
+            </td>
+            <td>
+              <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
             <td>
               <div class="indicador indicador--bom">
@@ -1472,7 +1716,7 @@
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
             <td></td>
-            <td colspan="10">
+            <td colspan="12">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1664,6 +1908,35 @@
         <span>Demo completa (preenche tudo)</span>
       </button>
       <div class="dev-menu__divider"></div>
+      <button class="dev-menu__item" data-dev="round-2" type="button">
+        <span class="material-icons-outlined">timeline</span>
+        <span>Simular Round 2 (atual)</span>
+      </button>
+      <button class="dev-menu__item" data-dev="round-3" type="button">
+        <span class="material-icons-outlined">timeline</span>
+        <span>Simular Round 3 (atual)</span>
+      </button>
+      <button class="dev-menu__item" data-dev="round-5" type="button">
+        <span class="material-icons-outlined">timeline</span>
+        <span>Simular Round 5 (atual)</span>
+      </button>
+      <button class="dev-menu__item" data-dev="round-6" type="button">
+        <span class="material-icons-outlined">timeline</span>
+        <span>Simular Round 6 (limite)</span>
+      </button>
+      <button class="dev-menu__item" data-dev="round-7" type="button">
+        <span class="material-icons-outlined">timeline</span>
+        <span>Simular Round 7 (overflow)</span>
+      </button>
+      <button class="dev-menu__item" data-dev="round-8" type="button">
+        <span class="material-icons-outlined">timeline</span>
+        <span>Simular Round 8 (overflow)</span>
+      </button>
+      <button class="dev-menu__item" data-dev="round-9" type="button">
+        <span class="material-icons-outlined">timeline</span>
+        <span>Simular Round 9 (acordo final)</span>
+      </button>
+      <div class="dev-menu__divider"></div>
       <button class="dev-menu__item" data-dev="open-contraproposta" type="button">
         <span class="material-icons-outlined">forward</span>
         <span>Abrir modal "Contraproposta"</span>
@@ -1696,12 +1969,343 @@
         <span class="dev-menu__item-shortcut">D</span>
       </button>
     </div>
+    <button type="button" class="dev-nav-btn" id="devPrevRound" aria-label="Round anterior" title="Recuar 1 round">
+      <span class="material-icons-outlined">chevron_left</span>
+    </button>
+    <button type="button" class="dev-nav-btn" id="devNextRound" aria-label="Próximo round" title="Avançar 1 round">
+      <span class="material-icons-outlined">chevron_right</span>
+    </button>
     <button class="dev-menu__trigger" id="devMenuTrigger" aria-label="Dev controls">
       <span class="material-icons-outlined">bolt</span>
     </button>
   </div>
 
   <script>
+    // ════════════════════════════════════════════════════════════════════════
+    // TIMELINE DINAMICA DE ROUNDS + SNAPSHOT HISTORICO
+    // (mesma logica da A.18 — ver comentarios la. Aqui currentRound default = 2)
+    // ════════════════════════════════════════════════════════════════════════
+
+    // 9 produtos no tbody, na ordem (SKU correspondente)
+    const PRODUCT_SKUS = [4521, 4498, 3877, 5142, 6021, 5887, 6234, 4763, 5419];
+
+    // Storytelling completo (mesmo da A.18 — ver doc la). currentRound default = 2.
+    const ROUND_SNAPSHOTS = {
+      1: { by: 'fornecedor', date: '18/04', dateFull: '18/04/2026, 09:00',
+           hint: 'Unilever enviou tabela inicial · 9 itens · proposta agressiva',
+           products: {
+             4521: { propostaFornec: { val: '16,90', delta: '+31,0%' } },
+             4498: { propostaFornec: { val: '17,80', delta: '+22,8%' } },
+             3877: { propostaFornec: { val: '6,20',  delta: '+26,5%' } },
+             5142: { propostaFornec: { val: '22,80', delta: '+20,6%' } },
+             6021: { propostaFornec: { val: '13,20', delta: '+17,9%' } },
+             5887: { propostaFornec: { val: '26,80', delta: '+19,6%' } },
+             6234: { propostaFornec: { val: '6,50',  delta: '+22,6%' } },
+             4763: { propostaFornec: { val: '19,20', delta: '+14,3%' } },
+             5419: { propostaFornec: { val: '21,40', delta: '+13,2%' } },
+           } },
+      2: { by: 'varejista', date: '21/04', dateFull: '21/04/2026, 09:15',
+           hint: 'Você contrapôs em 9 itens com custo/preço alvo',
+           isCurrent: true,
+           products: {
+             4521: { novoCusto: '11,80', novoPreco: '16,50' },
+             4498: { novoCusto: '13,40', novoPreco: '18,40' },
+             3877: { novoCusto: '4,40',  novoPreco: '6,20'  },
+             5142: { novoCusto: '17,20', novoPreco: '21,80' },
+             6021: { novoCusto: '10,60', novoPreco: '14,30' },
+             5887: { novoCusto: '21,80', novoPreco: '27,40' },
+             6234: { novoCusto: '4,90',  novoPreco: '7,10'  },
+             4763: { novoCusto: '15,90', novoPreco: '20,40' },
+             5419: { novoCusto: '17,60', novoPreco: '22,40' },
+           } },
+      3: { by: 'fornecedor', date: '22/04', dateFull: '22/04/2026, 16:30',
+           hint: '4 aceitos · 2 contrapropostas · 2 mantidos · 1 cancelado',
+           products: {
+             4521: { propostaFornec: { val: '12,50', delta: '-3,1%'  }, status: 'aceitou' },
+             4498: { propostaFornec: { val: '14,90', delta: '+2,8%'  }, status: 'contrapropos' },
+             3877: { propostaFornec: { val: '5,20',  delta: '+6,1%'  }, status: 'manteve' },
+             5142: { status: 'cancelado' },
+             6021: { propostaFornec: { val: '10,80', delta: '-3,6%'  }, status: 'aceitou' },
+             5887: { propostaFornec: { val: '23,90', delta: '+6,7%'  }, status: 'contrapropos' },
+             6234: { propostaFornec: { val: '5,90',  delta: '+11,3%' }, status: 'manteve' },
+             4763: { propostaFornec: { val: '16,40', delta: '-2,4%'  }, status: 'aceitou' },
+             5419: { propostaFornec: { val: '18,10', delta: '-4,2%'  }, status: 'aceitou' },
+           } },
+      4: { by: 'varejista', date: '23/04', dateFull: '23/04/2026, 14:20',
+           hint: 'Você contrapôs nos 4 itens restantes (Dove, Axe, Close-Up)',
+           products: {
+             4498: { novoCusto: '13,80' },
+             3877: { novoCusto: '4,60'  },
+             5887: { novoCusto: '22,50' },
+             6234: { novoCusto: '5,10'  },
+           } },
+      5: { by: 'fornecedor', date: '24/04', dateFull: '24/04/2026, 10:45',
+           hint: '1 aceito (Cond. Dove) · 2 contrapropostas · 1 cancelado (Close-Up)',
+           products: {
+             4498: { propostaFornec: { val: '13,80', delta: '-4,8%' }, status: 'aceitou' },
+             3877: { propostaFornec: { val: '4,80',  delta: '-2,0%' }, status: 'contrapropos' },
+             5887: { propostaFornec: { val: '23,40', delta: '+4,5%' }, status: 'contrapropos' },
+             6234: { status: 'cancelado' },
+           } },
+      6: { by: 'varejista', date: '25/04', dateFull: '25/04/2026, 11:30',
+           hint: 'Você contrapôs em Sabonete Dove e Axe Black',
+           products: {
+             3877: { novoCusto: '4,70'  },
+             5887: { novoCusto: '22,80' },
+           } },
+      7: { by: 'fornecedor', date: '26/04', dateFull: '26/04/2026, 15:10',
+           hint: '1 aceito (Sabonete Dove) · 1 contraproposta (Axe Black)',
+           products: {
+             3877: { propostaFornec: { val: '4,70', delta: '-4,1%' }, status: 'aceitou' },
+             5887: { propostaFornec: { val: '23,10', delta: '+3,1%' }, status: 'contrapropos' },
+           } },
+      8: { by: 'varejista', date: '27/04', dateFull: '27/04/2026, 09:50',
+           hint: 'Oferta final em Axe Black',
+           products: {
+             5887: { novoCusto: '23,00' },
+           } },
+      9: { by: 'fornecedor', date: '28/04', dateFull: '28/04/2026, 14:00',
+           hint: 'Acordo fechado — 7 aceitos · 2 cancelados',
+           products: {
+             5887: { propostaFornec: { val: '23,00', delta: '+2,7%' }, status: 'aceitou' },
+           } },
+    };
+
+    function getStateFor(round, sku) {
+      const state = { propostaFornec: null, novoCusto: '', novoPreco: '', status: null };
+      for (let r = 1; r <= round; r++) {
+        const snap = ROUND_SNAPSHOTS[r];
+        if (!snap || !snap.products) continue;
+        const ev = snap.products[sku];
+        if (!ev) continue;
+        if (ev.propostaFornec)          state.propostaFornec = ev.propostaFornec;
+        if (ev.novoCusto !== undefined) state.novoCusto = ev.novoCusto;
+        if (ev.novoPreco !== undefined) state.novoPreco = ev.novoPreco;
+        if (ev.status)                  state.status = ev.status;
+      }
+      return state;
+    }
+
+    const STATUS_BADGE_MAP = {
+      'aceitou':       { cls: 'badge badge--filled badge--green',                 label: 'Aceitou' },
+      'contrapropos':  { cls: 'badge badge--filled badge--orange',                label: 'Contrapôs' },
+      'manteve':       { cls: 'badge badge--filled badge--gray a87-badge-manteve', label: 'Manteve' },
+      'cancelado':     { cls: 'badge badge--filled badge--red',                   label: 'Cancelado' },
+    };
+    function applyRoundState(round) {
+      const productRows = document.querySelectorAll('.a87-product-row');
+      productRows.forEach((tr, i) => {
+        const sku = PRODUCT_SKUS[i];
+        const state = getStateFor(round, sku);
+        const cells = tr.querySelectorAll('td');
+
+        const propostaCell = cells[7] && cells[7].querySelector('.grid__cell');
+        if (propostaCell) {
+          const valMain = propostaCell.querySelector('.grid__val-main');
+          let varEl    = propostaCell.querySelector('.grid__var');
+          if (state.propostaFornec) {
+            if (valMain) valMain.textContent = 'R$ ' + state.propostaFornec.val;
+            if (!varEl) {
+              varEl = document.createElement('span');
+              varEl.className = 'grid__var';
+              propostaCell.appendChild(varEl);
+            }
+            varEl.textContent = state.propostaFornec.delta;
+            const isNegative = state.propostaFornec.delta.startsWith('-');
+            varEl.classList.toggle('grid__var--up',   isNegative);
+            varEl.classList.toggle('grid__var--down', !isNegative);
+          } else {
+            if (valMain) valMain.textContent = '—';
+            if (varEl) varEl.textContent = '';
+          }
+        }
+        const deltaVal = tr.querySelector('.a87-delta-val');
+        if (deltaVal) deltaVal.textContent = state.propostaFornec ? state.propostaFornec.delta : '—';
+
+        const inputCusto = tr.querySelector('[data-input="custo"]');
+        const inputPreco = tr.querySelector('[data-input="preco"]');
+        if (inputCusto) inputCusto.value = state.novoCusto;
+        if (inputPreco) inputPreco.value = state.novoPreco;
+
+        const chips = tr.querySelector('.grid__produto-chips');
+        if (chips) {
+          const oldBadge = chips.querySelector('.badge');
+          if (oldBadge) oldBadge.remove();
+          if (state.status && STATUS_BADGE_MAP[state.status]) {
+            const cfg = STATUS_BADGE_MAP[state.status];
+            const badge = document.createElement('span');
+            badge.className = cfg.cls;
+            badge.textContent = cfg.label;
+            const estoque = chips.querySelector('.a87-estoque-chip');
+            if (estoque) chips.insertBefore(badge, estoque);
+            else chips.appendChild(badge);
+          }
+        }
+
+        tr.classList.remove('a87-product-row--fornecedor-aceitou', 'a87-product-row--cancelado');
+        if (state.status === 'aceitou')   tr.classList.add('a87-product-row--fornecedor-aceitou');
+        if (state.status === 'cancelado') tr.classList.add('a87-product-row--cancelado');
+      });
+    }
+
+    let currentRound = 2;
+    let viewingRound = 2;
+
+    const timelineEl       = document.getElementById('a87RoundsList');
+    const overflowEl       = document.getElementById('a87RoundsOverflow');
+    const overflowTrigger  = document.getElementById('overflowTrigger');
+    const overflowMenu     = document.getElementById('overflowMenu');
+    const historicBanner   = document.getElementById('a87HistoricBanner');
+    const historicLabelEl  = document.getElementById('a87HistoricLabel');
+    const historicDateEl   = document.getElementById('a87HistoricDate');
+    const backToCurrentBtn = document.getElementById('backToCurrentRoundBtn');
+
+    function snapshotFor(n) {
+      if (ROUND_SNAPSHOTS[n]) return ROUND_SNAPSHOTS[n];
+      const autores = ['fornecedor', 'varejista'];
+      return { by: autores[(n - 1) % 2], date: `R${n}`, dateFull: `Round ${n}`, hint: `Round ${n} · histórico simulado` };
+    }
+
+    function cardHTML(n) {
+      const snap = snapshotFor(n);
+      const isCurrent = n === currentRound;
+      const isViewing = n === viewingRound;
+      const isDone    = n < currentRound;
+      let cls = 'a87-round';
+      if (isViewing && !isCurrent) cls += ' is-viewing';
+      else if (isCurrent)          cls += ' is-current';
+      else if (isDone)             cls += ' is-done';
+      const time = isCurrent ? 'agora' : snap.date;
+      const titlePrefix = isCurrent
+        ? 'Aguardando sua resposta'
+        : (snap.by === 'fornecedor' ? 'Fornecedor respondeu' : 'Você enviou contraproposta');
+      return `
+        <button class="${cls}" type="button" data-round="${n}" aria-current="${isCurrent ? 'step' : 'false'}">
+          <div class="a87-round__head">
+            <span class="a87-round__step">${n}</span>
+            <span class="a87-round__time">${time}</span>
+          </div>
+          <span class="a87-round__title">Round ${n} · ${titlePrefix}</span>
+          <span class="a87-round__hint">${snap.hint}</span>
+        </button>
+      `;
+    }
+
+    function renderTimeline() {
+      if (currentRound < 2) {
+        document.getElementById('a87RoundsTimeline').hidden = true;
+        return;
+      }
+      document.getElementById('a87RoundsTimeline').hidden = false;
+
+      const MAX_VISIBLE = 6;
+      let visibleRounds = [];
+      let hiddenRounds  = [];
+      if (currentRound <= MAX_VISIBLE) {
+        for (let i = 1; i <= currentRound; i++) visibleRounds.push(i);
+        overflowEl.hidden = true;
+      } else {
+        // R7+ — logica ciclica: cards visiveis crescem de 2 a 6, depois reinicia.
+        // numCards = ((currentRound - 2) % 5) + 2
+        //   R7=2, R8=3, R9=4, R10=5, R11=6, R12=2, R13=3, ...
+        const numCards = ((currentRound - 2) % 5) + 2;
+        const startCard = currentRound - numCards + 1;
+        for (let i = startCard; i <= currentRound; i++) visibleRounds.push(i);
+        // Dropdown lista todos os rounds anteriores fora da timeline (R2 ate startCard-1)
+        for (let i = 2; i < startCard; i++) hiddenRounds.push(i);
+        overflowEl.hidden = false;
+        overflowMenu.innerHTML = hiddenRounds.reverse().map(n => {
+          const snap = snapshotFor(n);
+          const isVoce = snap.by === 'varejista';
+          const badgeClass = isVoce ? 'a87-rounds__overflow-badge--voce' : 'a87-rounds__overflow-badge--fornec';
+          const badgeText  = isVoce ? 'VOCÊ' : 'FORNEC.';
+          return `<button class="a87-rounds__overflow-item" type="button" data-round="${n}" role="menuitem">
+            <span class="a87-rounds__overflow-item__main">
+              <span class="a87-rounds__overflow-item__label">Round ${n}</span>
+              <span class="a87-rounds__overflow-badge ${badgeClass}">${badgeText}</span>
+            </span>
+            <span class="a87-rounds__overflow-item__date">${snap.dateFull.split(',')[0]}</span>
+          </button>`;
+        }).join('');
+      }
+      timelineEl.style.gridTemplateColumns = `repeat(${visibleRounds.length}, 1fr)`;
+      timelineEl.innerHTML = visibleRounds.map(n => cardHTML(n)).join('');
+      timelineEl.querySelectorAll('[data-round]').forEach(card => {
+        card.addEventListener('click', () => viewRound(parseInt(card.dataset.round, 10)));
+      });
+      overflowMenu.querySelectorAll('[data-round]').forEach(item => {
+        item.addEventListener('click', () => {
+          viewRound(parseInt(item.dataset.round, 10));
+          overflowMenu.hidden = true;
+        });
+      });
+    }
+
+    function applyReadonlyMode(isHistorical) {
+      const tbody = document.querySelector('.a87-grid-wrapper tbody');
+      if (!tbody) return;
+      tbody.classList.toggle('a87-tbody--readonly', isHistorical);
+    }
+
+    function viewRound(n) {
+      viewingRound = n;
+      const isHistorical = n !== currentRound;
+      applyRoundState(n);
+      applyReadonlyMode(isHistorical);
+      if (isHistorical) {
+        const snap = snapshotFor(n);
+        historicLabelEl.textContent = `Round ${n}`;
+        historicDateEl.textContent = `· ${snap.dateFull}`;
+        historicBanner.hidden = false;
+      } else {
+        historicBanner.hidden = true;
+      }
+      renderTimeline();
+    }
+
+    overflowTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      overflowMenu.hidden = !overflowMenu.hidden;
+    });
+    document.addEventListener('click', (e) => {
+      if (!overflowMenu.hidden && !e.target.closest('#a87RoundsOverflow')) overflowMenu.hidden = true;
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !overflowMenu.hidden) overflowMenu.hidden = true;
+    });
+
+    backToCurrentBtn.addEventListener('click', () => viewRound(currentRound));
+
+    window.__setCurrentRound = function(n) {
+      currentRound = n;
+      viewingRound = n;
+      historicBanner.hidden = true;
+      applyRoundState(n);
+      applyReadonlyMode(false);
+      renderTimeline();
+      updateDevNavState();
+    };
+
+    // ─── Setas avancar/recuar na negociacao (ao lado do dev menu) ───
+    const MIN_ROUND = 1;
+    const MAX_ROUND = 9;
+    const devPrev = document.getElementById('devPrevRound');
+    const devNext = document.getElementById('devNextRound');
+    function updateDevNavState() {
+      devPrev.disabled = currentRound <= MIN_ROUND;
+      devNext.disabled = currentRound >= MAX_ROUND;
+    }
+    devPrev.addEventListener('click', () => {
+      if (currentRound > MIN_ROUND) window.__setCurrentRound(currentRound - 1);
+    });
+    devNext.addEventListener('click', () => {
+      if (currentRound < MAX_ROUND) window.__setCurrentRound(currentRound + 1);
+    });
+
+    renderTimeline();
+    applyRoundState(currentRound);
+    updateDevNavState();
+    // ════════════════════════════════════════════════════════════════════════
     // Zebra striping aplicada via JS — primeira product row eh dark, alterna a partir dai.
     // Funciona com qualquer quantidade de comment-rows intercaladas entre produtos.
     document.querySelectorAll('.a87-grid-wrapper .a87-product-row').forEach((row, i) => {
@@ -1796,17 +2400,22 @@
     });
 
     // ─── Comentários da linha (toggle / confirmar / editar / excluir) ────
+    // Atualiza aria-label + estado visual do botao-icone (chat_bubble).
     function updateCommentTriggerLabel(row) {
       const productTr = row.previousElementSibling;
       const trigger = productTr && productTr.querySelector('[data-comment-trigger]');
       if (!trigger) return;
       const saved = row.dataset.saved === 'true';
+      let label;
       if (saved) {
-        // "Exibir comentário" / "Esconder comentário" sempre em 2 linhas
-        trigger.innerHTML = row.hidden ? 'Exibir<br>comentário' : 'Esconder<br>comentário';
+        label = row.hidden ? 'Exibir comentário' : 'Esconder comentário';
+        trigger.classList.add('is-saved');
       } else {
-        trigger.textContent = 'Comentar';
+        label = 'Comentar';
+        trigger.classList.remove('is-saved');
       }
+      trigger.setAttribute('aria-label', label);
+      trigger.title = label;
     }
 
     // Botao "Comentar" / "Exibir comentário" / "Esconder comentário"
@@ -2033,7 +2642,9 @@
     // Dev menu
     const devMenu = document.getElementById('devMenu');
     // Valores casados com os 9 produtos do tbody (R2 — varejista contrapondo proposta inicial Unilever).
-    const SAMPLE_PRECOS  = ['12,50', '14,00', '4,50', '17,80', '10,80', '22,90', '5,10', '16,40', '18,10'];
+    // 2 colunas editaveis: Novo custo (data-input="custo") e Novo preco (data-input="preco")
+    const SAMPLE_CUSTOS = ['11,80', '13,40', '4,40', '17,20', '10,60', '21,80', '4,90', '15,90', '17,60'];
+    const SAMPLE_PRECOS = ['16,50', '18,40', '6,20', '21,80', '14,30', '27,40', '7,10', '20,40', '22,40'];
     const SAMPLE_COMMENTS = [
       'Seda Cocriações fechado nas 4 lojas se conseguirem R$ 12,50.',
       'Dove Nutrição: queremos R$ 14,00. Acima disso compromete margem em duas lojas.',
@@ -2049,20 +2660,24 @@
     const DEV_ACTIONS = {
       // ─── Preencher / limpar forms ──────────────────────────
       'fill-prices': () => {
-        const tds = document.querySelectorAll('.a87-product-row td:nth-child(9) .grid__form-input');
-        tds.forEach((input, i) => {
+        const custos = document.querySelectorAll('.a87-product-row [data-input="custo"]');
+        const precos = document.querySelectorAll('.a87-product-row [data-input="preco"]');
+        custos.forEach((input, i) => {
+          input.value = SAMPLE_CUSTOS[i] || '0,00';
+          input.closest('.grid__form-field').classList.add('grid__form-field--blue');
+        });
+        precos.forEach((input, i) => {
           input.value = SAMPLE_PRECOS[i] || '0,00';
           input.closest('.grid__form-field').classList.add('grid__form-field--blue');
         });
-        showToast('Campos de "Sua proposta" preenchidos.', 'success');
+        showToast('Campos de "Novo custo" e "Novo preço" preenchidos.', 'success');
       },
       'clear-prices': () => {
-        const tds = document.querySelectorAll('.a87-product-row td:nth-child(9) .grid__form-input');
-        tds.forEach(input => {
+        document.querySelectorAll('.a87-product-row [data-input="custo"], .a87-product-row [data-input="preco"]').forEach(input => {
           input.value = '';
           input.closest('.grid__form-field').classList.remove('grid__form-field--blue');
         });
-        showToast('Campos de "Sua proposta" limpos.', 'success');
+        showToast('Campos de "Novo custo" e "Novo preço" limpos.', 'success');
       },
 
       // ─── Comentários ───────────────────────────────────────
@@ -2153,6 +2768,15 @@
         });
         showToast('Aprovações/rejeições resetadas.', 'info');
       },
+      // ─── Timeline: simular outro Round atual em runtime ────
+      'round-2':  () => { window.__setCurrentRound(2);  showToast('Round atual = 2 (timeline com 2 cards).', 'info'); },
+      'round-3':  () => { window.__setCurrentRound(3);  showToast('Round atual = 3 (timeline com 3 cards).', 'info'); },
+      'round-5':  () => { window.__setCurrentRound(5);  showToast('Round atual = 5 (timeline com 5 cards).', 'info'); },
+      'round-6':  () => { window.__setCurrentRound(6);  showToast('Round atual = 6 (timeline cheia — limite).', 'info'); },
+      'round-7':  () => { window.__setCurrentRound(7);  showToast('R7: 2 cards (R6-R7) + dropdown R2-R5.', 'info'); },
+      'round-8':  () => { window.__setCurrentRound(8);  showToast('R8: 3 cards (R6-R8) + dropdown R2-R5.', 'info'); },
+      'round-9':  () => { window.__setCurrentRound(9);  showToast('R9: acordo fechado — 7 aceitos · 2 cancelados.', 'success'); },
+
       'full-demo': () => {
         DEV_ACTIONS['fill-prices']();
         DEV_ACTIONS['fill-comments']();
@@ -2193,5 +2817,6 @@
       devMenu.classList.toggle('is-hidden');
     });
   </script>
+  <script src="tutorial.js"></script>
 </body>
 </html>

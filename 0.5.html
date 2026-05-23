@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Nova tabela para triagem — Unilever Brasil · IPA</title>
+  <!--
+    0.5 Nova tabela / negociação recebida (email transacional HTML)
+
+    Cenário base deste mock: VAREJISTA recebe uma nova tabela enviada pelo
+    fornecedor (caminho para A.8.6 Triagem).
+
+    Para o caminho inverso (FORNECEDOR recebe uma nova negociação criada pelo
+    varejista — caminho B.14) basta inverter os papéis no copy: nome do
+    destinatário, eyebrow "tabela" → "negociação", coluna "Custo proposto" →
+    "Custo-alvo", e CTA "ABRIR TABELA NA TRIAGEM" → "ABRIR NEGOCIAÇÃO".
+
+    Padrão visual: InfoPrice 2026 — mesmo do 0.3.
+      #0e9ce3  brand primary (CTA, links)
+      #eef4fa  outer BG (azul lavanda claro)
+      #ffffff  header do card
+      #FAFAFA  body/footer do card
+      #ebebeb  divisor
+      #323232  headline / strong
+      #505050  body / paragrafo
+      #747474  body secundario
+      #959595  footer / disclaimer
+  -->
+  <style>
+    body { margin: 0; padding: 0; width: 100% !important; }
+    img { border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+    a { text-decoration: none; }
+    table { border-collapse: collapse !important; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+
+    @media only screen and (max-width: 600px) {
+      .ipa-email__container { padding: 16px 0 !important; }
+      .ipa-email__card { width: 100% !important; border-radius: 0 !important; }
+      .ipa-email__header,
+      .ipa-email__body,
+      .ipa-email__footer-cell { padding-left: 24px !important; padding-right: 24px !important; }
+      .ipa-email__cta-cell a { font-size: 13px !important; }
+      .ipa-email__tabela th,
+      .ipa-email__tabela td { padding: 8px 10px !important; font-size: 12px !important; }
+      .ipa-email__meta-row td { padding: 8px 0 !important; }
+      .ipa-email__meta-row td:first-child { width: 110px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#eef4fa;font-family:'Open Sans',Arial,Helvetica,sans-serif;color:#323232;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;min-height:100vh;">
+
+  <!-- Preheader -->
+  <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">
+    Unilever Brasil enviou uma nova tabela de preços para triagem — 9 itens, vigência até 20/07/2026.
+  </div>
+
+  <!-- Container externo -->
+  <table class="ipa-email__container" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eef4fa;padding:40px 16px;min-height:100vh;height:100vh;">
+    <tr>
+      <td align="center" valign="middle">
+
+        <!-- ════════════════════ Card ════════════════════ -->
+        <table class="ipa-email__card" role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border-radius:10px;max-width:640px;overflow:hidden;">
+
+          <!-- Header -->
+          <tr>
+            <td class="ipa-email__header" style="padding:24px 40px;background:#ffffff;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="right">
+                    <img
+                      src="https://marcoskip.github.io/infoprice-prototipos/assets/logo-principal.svg"
+                      alt="InfoPrice"
+                      height="24"
+                      style="display:block;height:24px;width:auto;border:0;outline:none;text-decoration:none;"
+                    />
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Corpo -->
+          <tr>
+            <td class="ipa-email__body" style="padding:32px 40px 24px 40px;background:#FAFAFA;">
+
+              <!-- Headline -->
+              <h1 style="margin:0 0 20px 0;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:22px;line-height:30px;font-weight:700;color:#323232;text-align:left;">
+                Olá, Ana,<br/>
+                você recebeu uma nova tabela da Unilever Brasil para triagem.
+              </h1>
+
+              <!-- Divisor abaixo do headline -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="border-top:1px solid #ebebeb;line-height:0;font-size:0;">&nbsp;</td>
+                </tr>
+              </table>
+
+              <!-- Parágrafo de contexto -->
+              <p style="margin:24px 0 16px 0;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:22px;color:#505050;">
+                A <strong style="font-weight:700;color:#323232;">Unilever Brasil Ltda.</strong> enviou uma nova tabela de preços para a triagem do Supermercado Estrela. Revise os itens propostos e decida se quer iniciar uma negociação, pedir ajuste ou recusar.
+              </p>
+
+              <!-- Bloco de metadados da tabela -->
+              <table class="ipa-email__meta" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #ebebeb;border-radius:8px;margin:0 0 20px 0;">
+                <tr class="ipa-email__meta-row">
+                  <td style="padding:12px 16px 4px 16px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#747474;letter-spacing:0.4px;text-transform:uppercase;font-weight:600;width:130px;vertical-align:top;">
+                    Tabela
+                  </td>
+                  <td style="padding:12px 16px 4px 0;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#323232;font-weight:600;vertical-align:top;">
+                    Tabela Q2 — Higiene &amp; Beleza
+                  </td>
+                </tr>
+                <tr class="ipa-email__meta-row">
+                  <td style="padding:4px 16px 4px 16px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#747474;letter-spacing:0.4px;text-transform:uppercase;font-weight:600;vertical-align:top;">
+                    Vigência
+                  </td>
+                  <td style="padding:4px 16px 4px 0;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#505050;vertical-align:top;">
+                    De <strong style="font-weight:600;color:#323232;">21/05/2026</strong> a <strong style="font-weight:600;color:#323232;">20/07/2026</strong>
+                  </td>
+                </tr>
+                <tr class="ipa-email__meta-row">
+                  <td style="padding:4px 16px 4px 16px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#747474;letter-spacing:0.4px;text-transform:uppercase;font-weight:600;vertical-align:top;">
+                    Abrangência
+                  </td>
+                  <td style="padding:4px 16px 4px 0;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#505050;vertical-align:top;">
+                    Cluster 01
+                  </td>
+                </tr>
+                <tr class="ipa-email__meta-row">
+                  <td style="padding:4px 16px 12px 16px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#747474;letter-spacing:0.4px;text-transform:uppercase;font-weight:600;vertical-align:top;">
+                    Itens
+                  </td>
+                  <td style="padding:4px 16px 12px 0;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;color:#505050;vertical-align:top;">
+                    <strong style="font-weight:600;color:#323232;">9 produtos</strong>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Eyebrow "Produtos propostos" -->
+              <p style="margin:0 0 8px 0;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#747474;letter-spacing:0.4px;text-transform:uppercase;font-weight:600;">
+                Produtos propostos
+              </p>
+
+              <!-- Tabela de preços (preview) -->
+              <table class="ipa-email__tabela" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #ebebeb;border-radius:8px;margin:0 0 8px 0;overflow:hidden;">
+                <thead>
+                  <tr style="background:#f5f5f5;">
+                    <th style="padding:10px 14px;text-align:left;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#747474;letter-spacing:0.4px;text-transform:uppercase;font-weight:600;border-bottom:1px solid #ebebeb;width:70px;">
+                      SKU
+                    </th>
+                    <th style="padding:10px 14px;text-align:left;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#747474;letter-spacing:0.4px;text-transform:uppercase;font-weight:600;border-bottom:1px solid #ebebeb;">
+                      Produto
+                    </th>
+                    <th style="padding:10px 14px;text-align:right;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#747474;letter-spacing:0.4px;text-transform:uppercase;font-weight:600;border-bottom:1px solid #ebebeb;width:110px;">
+                      Custo proposto
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding:10px 14px;font-family:'JetBrains Mono','Open Sans',Arial,monospace;font-size:13px;line-height:18px;color:#747474;border-bottom:1px solid #ebebeb;">
+                      4521
+                    </td>
+                    <td style="padding:10px 14px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;border-bottom:1px solid #ebebeb;">
+                      Shampoo Seda Cocriações Cachos 325ml
+                    </td>
+                    <td style="padding:10px 14px;text-align:right;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;font-weight:600;border-bottom:1px solid #ebebeb;">
+                      R$ 12,50
+                    </td>
+                  </tr>
+                  <tr style="background:#FAFAFA;">
+                    <td style="padding:10px 14px;font-family:'JetBrains Mono','Open Sans',Arial,monospace;font-size:13px;line-height:18px;color:#747474;border-bottom:1px solid #ebebeb;">
+                      4498
+                    </td>
+                    <td style="padding:10px 14px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;border-bottom:1px solid #ebebeb;">
+                      Condicionador Dove Nutrição Completa 200ml
+                    </td>
+                    <td style="padding:10px 14px;text-align:right;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;font-weight:600;border-bottom:1px solid #ebebeb;">
+                      R$ 14,90
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 14px;font-family:'JetBrains Mono','Open Sans',Arial,monospace;font-size:13px;line-height:18px;color:#747474;border-bottom:1px solid #ebebeb;">
+                      3877
+                    </td>
+                    <td style="padding:10px 14px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;border-bottom:1px solid #ebebeb;">
+                      Sabonete Dove Original 90g
+                    </td>
+                    <td style="padding:10px 14px;text-align:right;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;font-weight:600;border-bottom:1px solid #ebebeb;">
+                      R$ 5,20
+                    </td>
+                  </tr>
+                  <tr style="background:#FAFAFA;">
+                    <td style="padding:10px 14px;font-family:'JetBrains Mono','Open Sans',Arial,monospace;font-size:13px;line-height:18px;color:#747474;border-bottom:1px solid #ebebeb;">
+                      5142
+                    </td>
+                    <td style="padding:10px 14px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;border-bottom:1px solid #ebebeb;">
+                      Desodorante Rexona Women Powder 150ml
+                    </td>
+                    <td style="padding:10px 14px;text-align:right;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;font-weight:600;border-bottom:1px solid #ebebeb;">
+                      R$ 21,50
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 14px;font-family:'JetBrains Mono','Open Sans',Arial,monospace;font-size:13px;line-height:18px;color:#747474;">
+                      6021
+                    </td>
+                    <td style="padding:10px 14px;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;">
+                      Sabonete Líquido Lux Botanicals 250ml
+                    </td>
+                    <td style="padding:10px 14px;text-align:right;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#323232;font-weight:600;">
+                      R$ 11,80
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Footnote da tabela (resto dos itens) -->
+              <p style="margin:0 0 20px 0;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#747474;text-align:center;">
+                + outros 4 itens — veja a tabela completa na triagem.
+              </p>
+
+              <!-- CTA -->
+              <table class="ipa-email__cta-cell" role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;">
+                <tr>
+                  <td align="center" style="background:#0e9ce3;border-radius:6px;">
+                    <!--[if mso]>
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="A.8.6.html" style="height:48px;v-text-anchor:middle;width:520px;" arcsize="13%" stroke="f" fillcolor="#0e9ce3">
+                      <w:anchorlock/>
+                      <center style="color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;letter-spacing:0.4px;">ABRIR TABELA NA TRIAGEM</center>
+                    </v:roundrect>
+                    <![endif]-->
+                    <!--[if !mso]><!-- -->
+                    <a
+                      href="A.8.6.html"
+                      target="_blank"
+                      style="display:block;background:#0e9ce3;color:#ffffff;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;line-height:20px;text-decoration:none;text-transform:uppercase;letter-spacing:0.4px;padding:14px 24px;border-radius:6px;text-align:center;mso-hide:all;"
+                    >
+                      Abrir tabela na triagem
+                    </a>
+                    <!--<![endif]-->
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Texto auxiliar -->
+              <p style="margin:0;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:22px;color:#505050;">
+                Você pode <strong style="font-weight:700;color:#323232;">aceitar e iniciar a negociação</strong> ou <strong style="font-weight:700;color:#323232;">recusar a tabela</strong> direto na triagem. O fornecedor é notificado da decisão automaticamente.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Divisor antes do footer -->
+          <tr>
+            <td style="padding:0 40px;background:#FAFAFA;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="border-top:1px solid #ebebeb;line-height:0;font-size:0;">&nbsp;</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td class="ipa-email__footer-cell" align="center" style="padding:20px 40px 28px 40px;background:#FAFAFA;font-family:'Open Sans',Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#959595;text-align:center;">
+              <p style="margin:0 0 4px 0;">Este email é uma mensagem automática, não o responda.</p>
+              <p style="margin:0;">
+                Em caso de dúvidas, envie mensagem para
+                <a href="mailto:contato@infoprice.co" style="color:#0e9ce3;text-decoration:none;font-weight:600;">contato@infoprice.co</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- ══════════════════ /Card ══════════════════ -->
+
+      </td>
+    </tr>
+  </table>
+
+  <script src="tutorial.js"></script>
+</body>
+</html>

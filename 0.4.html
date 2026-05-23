@@ -50,7 +50,8 @@
 
     body {
       font-family: var(--font-family-base);
-      background: var(--color-gray-100);
+      /* Fundo azul lavanda (mesmo padrao do email 0.3) */
+      background: var(--color-blue-light-10);
       color: var(--color-gray-900);
       min-height: 100vh;
       display: flex;
@@ -68,43 +69,54 @@
       align-items: center;
       justify-content: center;
       padding: var(--space-6) var(--space-4);
-      gap: var(--space-4);
     }
 
-    /* ─── Card de auth ─── */
+    /* ─── Card de auth (header branco + body cinza claro + footer integrado) ─── */
     .auth-card {
       width: 100%;
-      max-width: 460px;
+      max-width: 480px;
       background: var(--color-white);
-      border: 1px solid var(--color-gray-300);
-      border-radius: var(--radius-md);
-      padding: var(--space-6) var(--space-6) 28px;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header: faixa branca com logo InfoPrice alinhado a direita, sem divisor */
+    .auth-card__header {
+      background: var(--color-white);
+      padding: 20px 32px;
+      text-align: right;
+    }
+    .auth-card__logo {
+      height: 24px;
+      width: auto;
+      display: inline-block;
+    }
+
+    /* Body: cinza claro (gray-50), conteudo alinhado a esquerda */
+    .auth-card__body {
+      background: var(--color-gray-50, #FAFAFA);
+      padding: 28px 32px;
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    .auth-card__logo {
-      align-self: center;
-      height: 22px;
-      width: auto;
-      display: block;
-    }
-
     .auth-card__heading {
-      text-align: center;
-      font-size: var(--font-size-3xl);
-      line-height: 32px;
-      font-weight: var(--font-weight-semibold);
+      text-align: left;
+      font-size: var(--font-size-2xl);
+      line-height: 30px;
+      font-weight: var(--font-weight-bold);
       color: var(--color-gray-900);
       margin: 0;
     }
     .auth-card__subtitle {
-      text-align: center;
+      text-align: left;
       font-size: var(--font-size-md);
       line-height: 20px;
       color: var(--color-gray-700);
-      margin: -12px 0 4px;
+      margin: -12px 0 0;
     }
 
     /* ─── Bloco verde de pre-preenchimento ─── */
@@ -266,16 +278,18 @@
     }
     .auth-altlink a:hover { text-decoration: underline; }
 
-    /* ─── Rodape fino ─── */
-    .auth-footer {
+    /* ─── Footer integrado no card (mesmo BG do body, com divisor superior) ─── */
+    .auth-card__footer {
+      background: var(--color-gray-50, #FAFAFA);
+      border-top: 1px solid var(--color-gray-200);
       text-align: center;
       font-size: var(--font-size-xs);
       line-height: 16px;
       color: var(--color-gray-600);
-      padding: 0 var(--space-4) var(--space-4);
+      padding: 16px 32px 20px;
     }
-    .auth-footer a { color: var(--color-gray-600); text-decoration: underline; }
-    .auth-footer a:hover { color: var(--color-gray-800); }
+    .auth-card__footer a { color: var(--color-gray-600); text-decoration: underline; }
+    .auth-card__footer a:hover { color: var(--color-gray-800); }
 
     /* ─── Demo controls (data-demo-only — facil remover) ─── */
     [data-demo-only] {
@@ -324,6 +338,14 @@
 
     <section class="auth-card" id="authCard" aria-labelledby="authTitle">
 
+      <!-- Header: faixa branca com logo InfoPrice a direita -->
+      <div class="auth-card__header">
+        <img class="auth-card__logo" src="https://marcoskip.github.io/infoprice-prototipos/assets/logo-principal.svg" alt="InfoPrice" />
+      </div>
+
+      <!-- Body: conteudo alinhado a esquerda sobre fundo cinza claro -->
+      <div class="auth-card__body">
+
       <!-- Banner de erro de submit -->
       <div class="auth-banner" id="errorBanner" role="alert">
         <span class="material-icons-outlined">error_outline</span>
@@ -333,8 +355,7 @@
         </div>
       </div>
 
-      <!-- Logo IPA + titulo + subtitulo -->
-      <img class="auth-card__logo" src="https://marcoskip.github.io/infoprice-prototipos/assets/logo-principal.svg" alt="IPA" />
+      <!-- Heading + subtitulo -->
       <h1 class="auth-card__heading" id="authTitle">Crie sua senha</h1>
       <p class="auth-card__subtitle">patricia@unilever.com&nbsp;·&nbsp;Unilever Brasil</p>
 
@@ -459,19 +480,24 @@
 
       </form>
 
-    </section>
+      </div><!-- /.auth-card__body -->
 
-    <footer class="auth-footer">
-      InfoPrice&nbsp;·&nbsp;2026&nbsp;·&nbsp;
-      <a href="https://ipa.app/termos" target="_blank">Termos</a>&nbsp;·&nbsp;
-      <a href="https://infoprice.co/privacidade" target="_blank">Privacidade</a>&nbsp;·&nbsp;
-      <a href="https://infoprice.co/suporte" target="_blank">Suporte</a>
-    </footer>
+      <!-- Footer integrado no card (mesmo BG do body) -->
+      <div class="auth-card__footer">
+        InfoPrice&nbsp;·&nbsp;2026&nbsp;·&nbsp;
+        <a href="https://ipa.app/termos" target="_blank">Termos</a>&nbsp;·&nbsp;
+        <a href="https://infoprice.co/privacidade" target="_blank">Privacidade</a>&nbsp;·&nbsp;
+        <a href="https://infoprice.co/suporte" target="_blank">Suporte</a>
+      </div>
+
+    </section>
   </main>
 
   <!-- ──────── Demo controls (data-demo-only — remover antes de prod) ──────── -->
   <div data-demo-only role="group" aria-label="Demo states">
-    <strong>Demo states</strong>
+    <strong>Atalhos</strong>
+    <button type="button" data-demo="fill">Preencher formulário</button>
+    <strong style="margin-top:6px;">Demo states</strong>
     <button type="button" data-demo="default" class="is-active">1. Default</button>
     <button type="button" data-demo="validating">2. Senha digitada</button>
     <button type="button" data-demo="mismatch">3. Erro confirmação</button>
@@ -555,7 +581,18 @@
         case 'default':
           pwdInput.value = '';
           pwdConfirm.value = '';
+          document.getElementById('acctCargo').value = '';
           termsInput.checked = false;
+          checkRules(); checkMatch();
+          updateSubmitEnabled();
+          break;
+        case 'fill':
+          // Atalho: preenche o formulario inteiro (nome ja vem com Patricia Moura)
+          nameInput.value = 'Patrícia Moura';
+          document.getElementById('acctCargo').value = 'Gerente Comercial';
+          pwdInput.value = 'Abc12345';
+          pwdConfirm.value = 'Abc12345';
+          termsInput.checked = true;
           checkRules(); checkMatch();
           updateSubmitEnabled();
           break;
@@ -597,5 +634,6 @@
     });
   </script>
 
+  <script src="tutorial.js"></script>
 </body>
 </html>

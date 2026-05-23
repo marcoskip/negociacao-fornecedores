@@ -86,7 +86,7 @@ Tabela (4 linhas — espelhar wireframe):
 
 | ID | Negociação | Itens | Status | Round | Última ação | Aguarda |
 |---|---|---|---|---|---|---|
-| #NG-2041 | Tabela Q2 — Higiene & Beleza | 24 | Em tratativa | #3 | hoje, 14:32 | ▶ Varejista |
+| #NG-2041 | Tabela Q2 — Higiene & Beleza | 24 | Em negociação | #3 | hoje, 14:32 | ▶ Varejista |
 | #NG-2038 | Proposta — Linha OMO | 8 | Proposta enviada | #1 | ontem | ▶ Varejista |
 | #NG-2034 | Reajuste trimestral — Knorr | 12 | Acordo | #2 | há 3 dias | ◀ Você |
 | #NG-2029 | Tabela — Sorvetes Kibon | 6 | Fechado | #4 | há 1 semana | — |
@@ -111,7 +111,7 @@ Tabela (4 linhas — espelhar wireframe):
 | Badge de pendência no chip | Mesmo clique do chip | — |
 | "+ Nova tabela" | Navega | `A.7` |
 | Digitar na busca | Filtra in-place (debounce 200ms) | — |
-| Clique em chip Status | Abre popover com checkboxes: Em análise, Proposta enviada, Em tratativa, Acordo, Fechado | (estado A.6.2) |
+| Clique em chip Status | Abre popover com checkboxes: Em análise, Proposta enviada, Em negociação, Acordo, Fechado | (estado A.6.2) |
 | Clique em chip Aguarda | Popover com: Você · Varejista | — |
 | Clique em chip Última ação | Popover com radios: Hoje · Últimos 7d · Últimos 30d · Últimos 90d · Qualquer | — |
 | Aplicar filtro | Fecha popover, atualiza tabela, atualiza contador no chip | (estado A.6.3) |

@@ -193,8 +193,80 @@
     .searchbar.searchbar--filtros .searchbar__clear .material-icons-outlined { font-size: 18px; }
     .searchbar.searchbar--filtros.has-value .searchbar__clear { display: inline-flex; }
 
-    /* Dropdown dos filtros */
-    .filtro-dropdown { width: 220px; }
+    /* Dropdown dos filtros (multi-select com search interna) */
+    .filtro-dropdown { width: 280px; padding: 0; }
+    .filtro-dropdown__search {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+    .filtro-dropdown__search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-md);
+      color: var(--color-gray-900);
+      padding: 4px 0;
+    }
+    .filtro-dropdown__search input::placeholder { color: var(--color-gray-500); }
+    .filtro-dropdown__search .material-icons-outlined {
+      font-size: 18px;
+      color: var(--color-gray-500);
+    }
+    .filtro-dropdown__list {
+      max-height: 260px;
+      overflow-y: auto;
+      padding: 6px 4px;
+    }
+    .filtro-dropdown__item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: var(--font-size-md);
+      color: var(--color-gray-900);
+      line-height: 18px;
+    }
+    .filtro-dropdown__item:hover { background: var(--color-gray-100); }
+    .filtro-dropdown__item input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--color-brand-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .filtro-dropdown__item span {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .filtro-dropdown__footer {
+      border-top: 1px solid var(--color-gray-200);
+      padding: 6px 4px;
+    }
+    .filtro-dropdown__empty {
+      padding: 12px 14px;
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-500);
+      text-align: center;
+    }
+    /* Chip mostra contagem quando 2+ selecionados */
+    .filtro-chip__count {
+      background: var(--color-gray-200);
+      color: var(--color-gray-800);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      padding: 1px 6px;
+      border-radius: 999px;
+      margin-left: 4px;
+    }
 
     /* Texto "mostrando X de Y" à direita dos filtros */
     .filtros__meta {
@@ -256,16 +328,26 @@
       background: var(--color-gray-200);
       color: var(--color-gray-800);
       font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-semibold);
+      font-weight: var(--font-weight-bold);
       text-transform: uppercase;
       letter-spacing: 0.4px;
       white-space: nowrap;
     }
-    .neg-status .material-icons-outlined { font-size: 14px; color: inherit; }
+    .neg-status .material-icons-outlined,
+    .neg-status .material-icons { font-size: 14px; color: inherit; }
+    .neg-status__svg { width: 14px; height: 14px; display: inline-block; flex-shrink: 0; }
     .neg-status--em-negociacao { background: var(--color-gray-200); color: var(--color-gray-800); }
     .neg-status--aguard-fornecedor { background: var(--color-orange-light-20); color: var(--color-orange-700); }
     .neg-status--rascunho { background: var(--color-gray-100); color: var(--color-gray-700); }
-    .neg-status--fechado { background: var(--color-green-light-20); color: var(--color-green-700); }
+    /* "Negocio fechado": verde escuro com detalhes em branco */
+    .neg-status--fechado {
+      background: var(--color-green-600, var(--color-green-700));
+      color: var(--color-white);
+    }
+    .neg-status--fechado .neg-status__svg {
+      /* SVG original e cinza/preto — invertendo pra branco */
+      filter: brightness(0) invert(1);
+    }
 
     /* Indicador "Aguarda" */
     .neg-aguarda {
@@ -372,6 +454,214 @@
       font-family: 'JetBrains Mono', monospace;
       color: var(--color-gray-500);
     }
+
+    /* ═══════════════ Modal "Nova negociação" (reaproveitado de A.6.empty / Figma 2307:56430) ═══════════════ */
+    .nt-modal {
+      width: 100%; max-width: 880px;
+      max-height: calc(100vh - 64px);
+      display: flex; flex-direction: column;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .nt-modal .modal__body { flex: 1; overflow-y: auto; padding: 20px 28px; display: flex; flex-direction: column; gap: 18px; }
+    .nt-modal .modal__header { padding: 18px 28px; border-bottom: none; }
+    .nt-modal .modal__footer { padding: 14px 28px; border-top: none; background: var(--color-white); display: flex; align-items: center; justify-content: space-between; }
+    .nt-modal .modal__body[hidden],
+    .nt-modal .modal__footer[hidden],
+    .nt-modal [hidden] { display: none !important; }
+    .nt-modal__subtitle { font-size: var(--font-size-sm); color: var(--color-gray-600); margin-top: 2px; }
+
+    /* Toggle Upload/Manual (segmented) */
+    .nt-mode {
+      display: inline-flex;
+      border: 1px solid var(--color-gray-400);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      width: fit-content;
+    }
+    .nt-mode__btn {
+      display: inline-flex; align-items: center;
+      padding: 8px 20px;
+      background: var(--color-white);
+      color: var(--color-gray-700);
+      border: none; cursor: pointer;
+      font-family: inherit;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      transition: background 120ms ease, color 120ms ease;
+    }
+    .nt-mode__btn:hover:not(.is-active) { background: var(--color-gray-100); }
+    .nt-mode__btn.is-active { background: var(--color-brand-primary); color: var(--color-white); }
+
+    /* Form grid */
+    .nt-form { display: flex; flex-direction: column; gap: 14px; }
+    .nt-form__row { display: flex; flex-direction: column; gap: 6px; }
+    .nt-form__row--inline { flex-direction: row; gap: 16px; }
+    .nt-form__row--inline > .nt-form__col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .nt-form__group { gap: 10px; }
+    .nt-form__group-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-800);
+    }
+    .nt-form__label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-800);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nt-form__label-toggle {
+      display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer; user-select: none;
+    }
+    .nt-form__label .nt-form__required { color: var(--color-red-600); }
+    .nt-form__input,
+    .nt-form__select {
+      width: 100%; height: 36px;
+      padding: 0 12px;
+      font-family: inherit;
+      font-size: var(--font-size-md);
+      color: var(--color-gray-900);
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-400);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .nt-form__input::placeholder { color: var(--color-gray-500); }
+    .nt-form__input:focus,
+    .nt-form__select:focus { border-color: var(--color-brand-primary); box-shadow: var(--shadow-focus); }
+    .nt-form__input:disabled,
+    .nt-form__select:disabled { background: var(--color-gray-100); color: var(--color-gray-500); cursor: not-allowed; }
+    .nt-form__select { appearance: none; padding-right: 32px; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23747474' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+
+    /* Switch (final de vigencia) */
+    .nt-switch { position: relative; display: inline-block; width: 32px; height: 18px; flex-shrink: 0; }
+    .nt-switch input { opacity: 0; width: 0; height: 0; }
+    .nt-switch__slider { position: absolute; inset: 0; background: var(--color-gray-400); border-radius: 999px; transition: background 120ms ease; }
+    .nt-switch__slider::before { content: ""; position: absolute; width: 14px; height: 14px; left: 2px; top: 2px; background: var(--color-white); border-radius: 50%; transition: transform 120ms ease; }
+    .nt-switch input:checked + .nt-switch__slider { background: var(--color-brand-primary); }
+    .nt-switch input:checked + .nt-switch__slider::before { transform: translateX(14px); }
+
+    /* Busca de produtos */
+    .nt-search-row { display: flex; flex-direction: column; gap: 6px; }
+    .nt-searchbar {
+      position: relative;
+      display: flex; align-items: center; gap: 8px;
+      width: 100%;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-400);
+      border-radius: var(--radius-sm);
+      padding: 0 12px; height: 36px;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .nt-searchbar:focus-within { border-color: var(--color-brand-primary); box-shadow: var(--shadow-focus); }
+    .nt-searchbar .material-icons-outlined { color: var(--color-gray-500); font-size: 18px; }
+    .nt-searchbar__input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: inherit; font-size: var(--font-size-md); color: var(--color-gray-900); }
+    .nt-searchbar__input::placeholder { color: var(--color-gray-500); }
+    .nt-search-hint { font-size: var(--font-size-sm); color: var(--color-gray-600); text-align: right; }
+    .nt-search-hint a { color: var(--color-brand-primary); font-weight: var(--font-weight-semibold); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+
+    /* Autocomplete */
+    .nt-autocomplete { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--color-white); border: 1px solid var(--color-gray-300); border-radius: var(--radius-sm); box-shadow: var(--shadow-elevation); max-height: 240px; overflow-y: auto; z-index: 50; }
+    .nt-autocomplete[hidden] { display: none; }
+    .nt-autocomplete__item { display: flex; align-items: center; gap: 16px; padding: 8px 12px; cursor: pointer; transition: background 100ms ease; }
+    .nt-autocomplete__item:hover,
+    .nt-autocomplete__item.is-focused { background: var(--color-gray-100); }
+    .nt-autocomplete__sku { min-width: 60px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: var(--font-size-sm); color: var(--color-gray-700); }
+    .nt-autocomplete__name { font-size: var(--font-size-md); color: var(--color-gray-900); }
+    .nt-autocomplete__empty { padding: 12px; text-align: center; font-size: var(--font-size-sm); color: var(--color-gray-600); }
+
+    /* Lista populada */
+    .nt-list-wrap { border: 1px solid var(--color-gray-300); border-radius: var(--radius-md); max-height: 280px; overflow-y: auto; background: var(--color-white); }
+
+    /* Dropcard (Figma 2307:56430) */
+    .nt-dropcard {
+      border: 1px dashed var(--color-brand-primary);
+      border-radius: 6px;
+      background: var(--color-blue-light-5, #f5f9fe);
+      padding: 16px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px;
+      width: 100%;
+      transition: background 120ms ease;
+    }
+    .nt-dropcard.is-dragover { background: var(--color-blue-light-10); }
+    .nt-dropcard__icon {
+      width: 30px; height: 30px;
+      border-radius: 999px;
+      background: var(--color-blue-light-15, #e1eefd);
+      color: var(--color-brand-primary);
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nt-dropcard__icon .material-icons-outlined { font-size: 16px; }
+    .nt-dropcard__hero { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; }
+    .nt-dropcard__title { font-family: var(--font-family-base); font-size: 16px; line-height: 20px; font-weight: var(--font-weight-semibold); color: var(--color-gray-900); }
+    .nt-dropcard__sub { font-size: 12px; line-height: 18px; color: var(--color-gray-800); }
+    .nt-dropcard__sub a { color: var(--color-brand-primary); font-weight: var(--font-weight-semibold); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+    .nt-dropcard__btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 10px; padding: 14px 12px;
+      background: var(--color-gray-100); border: none; border-radius: 6px;
+      font-family: inherit; font-size: var(--font-size-md); line-height: 20px;
+      color: var(--color-gray-700); font-weight: var(--font-weight-regular);
+      cursor: pointer; transition: background 120ms ease;
+    }
+    .nt-dropcard__btn:hover { background: var(--color-gray-200); }
+    .nt-dropcard__btn .material-icons-outlined { font-size: 16px; color: var(--color-gray-700); }
+
+    /* Helper download */
+    .nt-download-helper { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; line-height: 18px; padding: 0; }
+    .nt-download-helper a { color: var(--color-brand-primary); font-weight: var(--font-weight-regular); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+    .nt-download-helper a:hover { text-decoration: underline; }
+    .nt-download-helper a .material-icons-outlined { font-size: 12px; }
+
+    /* Lista de produtos */
+    .nt-list { display: grid; grid-template-columns: 90px 1fr 160px 80px; }
+    .nt-list__head { display: contents; }
+    .nt-list__head > span { padding: 10px 14px; background: var(--color-gray-100); border-bottom: 1px solid var(--color-gray-300); font-family: var(--font-family-base); font-size: var(--font-size-sm); font-weight: var(--font-weight-regular); line-height: var(--line-height-sm); color: var(--color-gray-700); text-align: left; }
+    .nt-list__row { display: contents; }
+    .nt-list__row > .nt-list__cell { padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid var(--color-gray-200); min-height: 48px; }
+    .nt-list__row.is-even > .nt-list__cell { background: var(--color-gray-50); }
+    .nt-list__cell--sku { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: var(--font-size-sm); color: var(--color-gray-700); }
+    .nt-list__cell--name { font-size: var(--font-size-md); color: var(--color-gray-900); }
+    .nt-list__cell--remove { justify-content: flex-end; }
+    .nt-list__preco-wrap { display: inline-flex; align-items: center; width: 100%; height: 32px; border: 1px solid var(--color-gray-500); border-radius: var(--radius-sm); background: var(--color-white); overflow: hidden; transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .nt-list__preco-wrap:focus-within { border-color: var(--color-brand-primary); box-shadow: var(--shadow-focus); }
+    .nt-list__preco-prefix { display: inline-flex; align-items: center; justify-content: center; padding: 0 8px; height: 100%; background: var(--color-gray-100); border-right: 1px solid var(--color-gray-300); font-family: var(--font-family-base); font-size: var(--font-size-md); color: var(--color-gray-700); pointer-events: none; }
+    .nt-list__preco-input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; padding: 0 10px; font-family: var(--font-family-base); font-size: var(--font-size-md); font-weight: var(--font-weight-regular); color: var(--color-gray-900); text-align: right; }
+    .nt-list__sku-input,
+    .nt-list__name-input { width: 100%; height: 32px; padding: 0 10px; font-family: var(--font-family-base); font-size: var(--font-size-md); font-weight: var(--font-weight-regular); color: var(--color-gray-900); background: var(--color-white); border: 1px solid var(--color-gray-500); border-radius: var(--radius-sm); outline: none; transition: border-color 120ms ease, box-shadow 120ms ease; }
+    .nt-list__sku-input:focus,
+    .nt-list__name-input:focus { border-color: var(--color-brand-primary); box-shadow: var(--shadow-focus); }
+    .nt-list__remove { background: transparent; border: none; color: var(--color-gray-600); font-family: inherit; font-size: var(--font-size-sm); cursor: pointer; padding: 4px 8px; border-radius: var(--radius-sm); transition: background 100ms ease, color 100ms ease; }
+    .nt-list__remove:hover { background: var(--color-red-light-10); color: var(--color-red-600); }
+
+    /* Etapa 2 (revisao) */
+    .nt-review { display: flex; flex-direction: column; gap: 16px; }
+    .nt-review__meta { display: flex; flex-direction: column; gap: 12px; }
+    .nt-review__field { display: flex; flex-direction: column; gap: 2px; }
+    .nt-review__field-label { font-size: var(--font-size-sm); color: var(--color-gray-600); }
+    .nt-review__field-value { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--color-gray-900); }
+    .nt-review__list { display: grid; grid-template-columns: 90px 1fr 160px; border: 1px solid var(--color-gray-300); border-radius: var(--radius-md); overflow: hidden; }
+    .nt-review__list > .nt-review__th { padding: 10px 14px; background: var(--color-gray-100); border-bottom: 1px solid var(--color-gray-300); font-family: var(--font-family-base); font-size: var(--font-size-sm); font-weight: var(--font-weight-regular); line-height: var(--line-height-sm); color: var(--color-gray-700); text-align: left; }
+    .nt-review__list > .nt-review__cell { padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid var(--color-gray-200); }
+    .nt-review__row.is-even > .nt-review__cell { background: var(--color-gray-50); }
+    .nt-review__row { display: contents; }
+    .nt-review__cell--preco { font-weight: var(--font-weight-semibold); color: var(--color-gray-900); }
+    .nt-review__cell--sku { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: var(--font-size-sm); color: var(--color-gray-800); }
+
+    /* Confirms compactos */
+    .nt-confirm { width: 100%; max-width: 460px; }
+    .nt-confirm .modal__body { padding: 4px 28px 20px; font-size: var(--font-size-md); line-height: 22px; color: var(--color-gray-800); }
+    .nt-confirm .modal__body strong { color: var(--color-gray-900); font-weight: var(--font-weight-semibold); }
+    .nt-confirm .modal__footer { border-top: none; padding-top: 0; padding-bottom: 20px; }
   </style>
 </head>
 <body>
@@ -422,7 +712,7 @@
           <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
         </div>
         <div class="sidebar__subitems">
-          <a class="sidebar__subitem" href="#">Negociação fornecedor</a>
+          <a class="sidebar__subitem" href="A.8.6.html">Triagem</a>
           <a class="sidebar__subitem" href="#">Negociações salvas</a>
           <a class="sidebar__subitem" href="0.1.html">Fornecedores</a>
         </div>
@@ -447,7 +737,7 @@
 
   <!-- Popup flutuante exibido ao clicar em [data-toggle-group] com a sidebar recolhida -->
   <div class="sidebar-popup" id="sidebarPopup" hidden role="menu" aria-label="Negociações fornecedor">
-    <a class="sidebar-popup__item" href="#" role="menuitem">Negociação fornecedor</a>
+    <a class="sidebar-popup__item" href="A.8.6.html" role="menuitem">Triagem</a>
     <a class="sidebar-popup__item" href="A.9.html" role="menuitem">Negociações salvas</a>
     <a class="sidebar-popup__item" href="0.1.html" role="menuitem">Fornecedores</a>
   </div>
@@ -475,52 +765,68 @@
         <div class="filtros__left">
           <div class="filtros__row">
 
-            <div class="filtro-chip-wrapper" data-filter="produto">
+            <div class="filtro-chip-wrapper" data-filter="produto" data-searchable="true" data-search-placeholder="Busque por um produto">
               <button class="filtro-chip" data-trigger>
                 <span data-label>Produto</span>
                 <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
               </button>
               <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="produto" value="todos" checked /><span>Todos</span></label>
+                <div class="filtro-dropdown__search">
+                  <input type="text" placeholder="Busque por um produto" data-search />
+                  <span class="material-icons-outlined">search</span>
                 </div>
+                <div class="filtro-dropdown__list" data-list></div>
               </div>
             </div>
 
-            <div class="filtro-chip-wrapper" data-filter="loja">
+            <div class="filtro-chip-wrapper" data-filter="loja" data-searchable="true" data-search-placeholder="Busque por uma loja" data-select-all="true">
               <button class="filtro-chip" data-trigger>
                 <span data-label>Loja</span>
                 <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
               </button>
               <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="loja" value="todas" checked /><span>Todas</span></label>
+                <div class="filtro-dropdown__search">
+                  <input type="text" placeholder="Busque por uma loja" data-search />
+                  <span class="material-icons-outlined">search</span>
+                </div>
+                <div class="filtro-dropdown__list" data-list></div>
+                <div class="filtro-dropdown__footer">
+                  <label class="filtro-dropdown__item"><input type="checkbox" data-select-all-input /><span>Selecionar todos</span></label>
                 </div>
               </div>
             </div>
 
-            <div class="filtro-chip-wrapper" data-filter="cluster">
+            <div class="filtro-chip-wrapper" data-filter="cluster" data-searchable="true" data-search-placeholder="Busque por um cluster">
               <button class="filtro-chip" data-trigger>
                 <span data-label>Cluster</span>
                 <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
               </button>
               <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="cluster" value="todos" checked /><span>Todos</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="cluster" value="01" /><span>Cluster 01</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="cluster" value="02" /><span>Cluster 02</span></label>
+                <div class="filtro-dropdown__search">
+                  <input type="text" placeholder="Busque por um cluster" data-search />
+                  <span class="material-icons-outlined">search</span>
+                </div>
+                <div class="filtro-dropdown__list" data-list>
+                  <label class="filtro-dropdown__item"><input type="checkbox" name="cluster" value="01" /><span>Cluster 01</span></label>
+                  <label class="filtro-dropdown__item"><input type="checkbox" name="cluster" value="02" /><span>Cluster 02</span></label>
+                  <label class="filtro-dropdown__item"><input type="checkbox" name="cluster" value="todas" /><span>TODAS AS LOJAS</span></label>
                 </div>
               </div>
             </div>
 
-            <div class="filtro-chip-wrapper" data-filter="fornecedor">
+            <div class="filtro-chip-wrapper" data-filter="fornecedor" data-searchable="true" data-search-placeholder="Busque por um fornecedor" data-select-all="true">
               <button class="filtro-chip" data-trigger>
                 <span data-label>Fornecedor</span>
                 <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
               </button>
               <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="fornecedor" value="todos" checked /><span>Todos</span></label>
+                <div class="filtro-dropdown__search">
+                  <input type="text" placeholder="Busque por um fornecedor" data-search />
+                  <span class="material-icons-outlined">search</span>
+                </div>
+                <div class="filtro-dropdown__list" data-list></div>
+                <div class="filtro-dropdown__footer">
+                  <label class="filtro-dropdown__item"><input type="checkbox" data-select-all-input /><span>Selecionar todos</span></label>
                 </div>
               </div>
             </div>
@@ -531,12 +837,10 @@
                 <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
               </button>
               <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="todos" checked /><span>Todos</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="ana.costa@estrela" /><span>ana.costa@estrela</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="joao.mendes@estrela" /><span>joao.mendes@estrela</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="felipe.kanarek@infoprice" /><span>felipe.kanarek@infoprice</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="responsavel" value="warlleyn.bob@infoprice" /><span>warlleyn.bob@infoprice</span></label>
+                <div class="filtro-dropdown__list" data-list>
+                  <label class="filtro-dropdown__item"><input type="checkbox" name="responsavel" value="infoprice.comercial@ext.infoprice.co" /><span>infoprice.comercial@ext.infoprice.co</span></label>
+                  <label class="filtro-dropdown__item"><input type="checkbox" name="responsavel" value="felipe.kanarek@infoprice.co" /><span>felipe.kanarek@infoprice.co</span></label>
+                  <label class="filtro-dropdown__item"><input type="checkbox" name="responsavel" value="warlleyn.bob@infoprice.co" /><span>warlleyn.bob@infoprice.co</span></label>
                 </div>
               </div>
             </div>
@@ -547,12 +851,9 @@
                 <span class="material-icons-outlined filtro-chip__chevron">keyboard_arrow_down</span>
               </button>
               <div class="filtro-dropdown" data-dropdown>
-                <div class="filtro-dropdown__list">
-                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="todos" checked /><span>Todos</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="em-negociacao" /><span>Em negociação</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="aguard-fornecedor" /><span>Aguard. fornecedor</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="rascunho" /><span>Rascunho</span></label>
-                  <label class="filtro-dropdown__item"><input type="radio" name="status" value="fechado" /><span>Fechado</span></label>
+                <div class="filtro-dropdown__list" data-list>
+                  <label class="filtro-dropdown__item"><input type="checkbox" name="status" value="em-negociacao" /><span>Em negociação</span></label>
+                  <label class="filtro-dropdown__item"><input type="checkbox" name="status" value="fechado" /><span>Negócio fechado</span></label>
                 </div>
               </div>
             </div>
@@ -693,6 +994,280 @@
     </div>
   </section>
 
+  <!-- ════════════ Modal de confirmacao generico (acoes destrutivas do menu) ════════════ -->
+  <div class="modal-backdrop" id="confirmModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+      <div class="modal__header">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;">
+          <span class="modal__title" id="confirmModalTitle">Confirmar ação</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal__body">
+        <p id="confirmModalBody" style="font-size:14px;line-height:20px;color:var(--color-gray-800);margin:0;"></p>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Voltar</button>
+        <button type="button" class="btn btn--primary btn--medium" id="confirmModalConfirmBtn">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ Modal: Nova negociação (Etapa 1 + Etapa 2) ════════════════ -->
+  <div class="modal-backdrop" id="novaNegModal" aria-hidden="true">
+    <div class="modal nt-modal" role="dialog" aria-modal="true" aria-labelledby="ntTitle">
+
+      <!-- Header (muda entre Etapa 1 e 2) -->
+      <div class="modal__header">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;width:100%;gap:8px;">
+          <div>
+            <span class="modal__title" id="ntTitle">Nova negociação</span>
+            <div class="nt-modal__subtitle" id="ntSubtitle">Etapa 1 de 2 — Inserção de produtos</div>
+          </div>
+          <button class="modal__close" data-modal-close aria-label="Fechar">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ ETAPA 1 — Inserção ═══ -->
+      <div class="modal__body" id="ntStep1">
+        <!-- Toggle Upload / Manual -->
+        <div class="nt-mode" role="tablist">
+          <button class="nt-mode__btn" id="ntModeUpload" type="button" role="tab" aria-selected="false">Upload CSV/XLSX</button>
+          <button class="nt-mode__btn is-active" id="ntModeManual" type="button" role="tab" aria-selected="true">Inserir manualmente</button>
+        </div>
+
+        <!-- Form -->
+        <div class="nt-form">
+          <div class="nt-form__row">
+            <label class="nt-form__label" for="ntNome">Nome da negociação <span class="nt-form__required">*</span></label>
+            <input class="nt-form__input" id="ntNome" type="text" placeholder="Ex.: Q2 Higiene — Unilever" required />
+          </div>
+          <div class="nt-form__row">
+            <label class="nt-form__label" for="ntFornecedor">Fornecedor <span class="nt-form__required">*</span></label>
+            <select class="nt-form__select" id="ntFornecedor" required>
+              <option value="">Selecione um fornecedor…</option>
+              <option value="unilever">UNILEVER BRASIL</option>
+              <option value="nestle">NESTLÉ BRASIL</option>
+              <option value="biolab">BIOLAB SANUS FARMACEL</option>
+              <option value="codil">CODIL ALIMENTOS LTDA</option>
+              <option value="broto">BROTO LEGAL</option>
+              <option value="camil">CAMIL ALIMENTOS</option>
+              <option value="cafetres">CAFE TRES CORAÇOES SA</option>
+              <option value="belluz">BELLUZ IND COM IMP E EXI</option>
+            </select>
+          </div>
+          <div class="nt-form__row nt-form__row--inline">
+            <div class="nt-form__col">
+              <label class="nt-form__label" for="ntInicio">Início de vigência</label>
+              <input class="nt-form__input" id="ntInicio" type="date" />
+            </div>
+            <div class="nt-form__col">
+              <label class="nt-form__label">
+                <span class="nt-form__label-toggle">
+                  <span class="nt-switch">
+                    <input type="checkbox" id="ntFinalToggle" />
+                    <span class="nt-switch__slider"></span>
+                  </span>
+                  <span>Final de vigência</span>
+                </span>
+              </label>
+              <input class="nt-form__input" id="ntFinal" type="date" disabled />
+            </div>
+          </div>
+
+          <!-- Abrangência -->
+          <div class="nt-form__row nt-form__group">
+            <span class="nt-form__group-label">Abrangência</span>
+            <div class="nt-form__row nt-form__row--inline">
+              <div class="nt-form__col">
+                <select class="nt-form__select" id="ntAbrangNivel" aria-label="Nível de abrangência">
+                  <option value="">Selecione um nível</option>
+                  <option value="lojas">Lojas</option>
+                  <option value="cluster">Cluster</option>
+                </select>
+              </div>
+              <div class="nt-form__col" id="ntAbrangAlvoCol" hidden>
+                <select class="nt-form__select" id="ntAbrangAlvo" aria-label="Selecionar alvo">
+                  <option value="">Selecione…</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Busca de produtos -->
+        <div class="nt-search-row" id="ntSearchRow">
+          <label class="nt-form__label">Produtos</label>
+          <div class="nt-searchbar" id="ntSearchbar">
+            <span class="material-icons-outlined">search</span>
+            <input class="nt-searchbar__input" id="ntSearchInput" type="text" placeholder="Digite nome ou o SKU do produto" autocomplete="off" />
+            <div class="nt-autocomplete" id="ntAutocomplete" hidden></div>
+          </div>
+          <div class="nt-search-hint">
+            Não achou o produto na busca? <a id="ntInsertManualLink">Inserir informações manualmente</a>
+          </div>
+        </div>
+
+        <!-- Lista -->
+        <div id="ntListContainer">
+          <div class="nt-dropcard" id="ntListEmptyManual">
+            <span class="nt-dropcard__icon" aria-hidden="true"><span class="material-icons-outlined">inventory_2</span></span>
+            <div class="nt-dropcard__hero">
+              <div class="nt-dropcard__title">Você ainda não adicionou nenhum produto aqui.</div>
+              <div class="nt-dropcard__sub">Pesquise no campo acima ou <a id="ntInsertManualLink2">insira manualmente</a>.</div>
+            </div>
+          </div>
+
+          <div class="nt-dropcard" id="ntListEmptyUpload" hidden>
+            <span class="nt-dropcard__icon" aria-hidden="true"><span class="material-icons-outlined">attach_file</span></span>
+            <div class="nt-dropcard__hero">
+              <div class="nt-dropcard__title">Novo envio de arquivo</div>
+              <div class="nt-dropcard__sub">
+                Envie seu arquivo em formato .xls ou .csv.<br/>
+                Arraste o arquivo aqui ou clique para selecionar.
+              </div>
+            </div>
+            <button type="button" class="nt-dropcard__btn" id="ntFilePickerBtn">
+              <span class="material-icons-outlined">attach_file</span>
+              Adicionar arquivo
+            </button>
+          </div>
+
+          <div class="nt-list-wrap" id="ntListPopulated" hidden>
+            <div class="nt-list" id="ntList">
+              <div class="nt-list__head">
+                <span>SKU</span>
+                <span>Nome do produto</span>
+                <span>Custo-alvo</span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Helper download -->
+        <div class="nt-download-helper" id="ntDownloadHelper" hidden>
+          <a id="ntDownloadTemplate">
+            <span class="material-icons-outlined">open_in_new</span>
+            Baixe o modelo de arquivo
+          </a>
+        </div>
+      </div>
+
+      <!-- ═══ ETAPA 2 — Revisão ═══ -->
+      <div class="modal__body" id="ntStep2" hidden>
+        <div class="nt-review">
+          <div class="nt-review__meta">
+            <div class="nt-review__field">
+              <span class="nt-review__field-label">Nome da negociação</span>
+              <span class="nt-review__field-value" id="ntReviewNome">—</span>
+            </div>
+            <div class="nt-review__field">
+              <span class="nt-review__field-label">Fornecedor</span>
+              <span class="nt-review__field-value" id="ntReviewFornecedor">—</span>
+            </div>
+            <div class="nt-review__field">
+              <span class="nt-review__field-label">Vigência</span>
+              <span class="nt-review__field-value" id="ntReviewVigencia">—</span>
+            </div>
+          </div>
+
+          <div class="nt-review__list" id="ntReviewList">
+            <span class="nt-review__th">SKU</span>
+            <span class="nt-review__th">Nome do produto</span>
+            <span class="nt-review__th">Custo-alvo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer (muda entre Etapa 1 e 2) -->
+      <div class="modal__footer" id="ntFooter1">
+        <button type="button" class="btn btn--primary btn--ghost btn--medium" id="ntSaveDraftBtn1">Salvar rascunho</button>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Cancelar</button>
+          <button type="button" class="btn btn--primary btn--medium" id="ntNextBtn" disabled>Próximo</button>
+        </div>
+      </div>
+      <div class="modal__footer" id="ntFooter2" hidden>
+        <button type="button" class="btn btn--primary btn--ghost btn--medium" id="ntSaveDraftBtn2">Salvar rascunho</button>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" id="ntBackBtn">Voltar</button>
+          <button type="button" class="btn btn--primary btn--medium" id="ntSendBtn">Enviar ao fornecedor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ Modal: Confirmar descarte ════════════════ -->
+  <div class="modal-backdrop" id="discardModal" aria-hidden="true">
+    <div class="modal nt-confirm" role="dialog" aria-modal="true" aria-labelledby="ntDiscardTitle">
+      <div class="modal__header">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;">
+          <span class="modal__title" id="ntDiscardTitle">Descartar alterações?</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar"><span class="material-icons-outlined">close</span></button>
+        </div>
+      </div>
+      <div class="modal__body">
+        Você fez alterações nesta negociação. Se sair agora, o trabalho não salvo <strong>será perdido</strong>. Para preservar o progresso, escolha <strong>Salvar rascunho</strong> antes de sair.
+      </div>
+      <div class="modal__footer">
+        <div></div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Voltar</button>
+          <button type="button" class="btn btn--secondary btn--red btn--medium" id="discardConfirmBtn">Descartar e sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ Modal: Confirmar salvar rascunho ════════════════ -->
+  <div class="modal-backdrop" id="saveDraftModal" aria-hidden="true">
+    <div class="modal nt-confirm" role="dialog" aria-modal="true" aria-labelledby="ntSaveTitle">
+      <div class="modal__header">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;">
+          <span class="modal__title" id="ntSaveTitle">Salvar como rascunho?</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar"><span class="material-icons-outlined">close</span></button>
+        </div>
+      </div>
+      <div class="modal__body">
+        Esta negociação vai pra <strong>Negociações Salvas</strong> com o badge <strong>"Rascunho"</strong>. Você pode retomar a edição a qualquer momento.
+      </div>
+      <div class="modal__footer">
+        <div></div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Voltar</button>
+          <button type="button" class="btn btn--primary btn--medium" id="saveDraftConfirmBtn">Salvar rascunho</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ Modal: Confirmar envio ao fornecedor ════════════════ -->
+  <div class="modal-backdrop" id="sendNegModal" aria-hidden="true">
+    <div class="modal nt-confirm" role="dialog" aria-modal="true" aria-labelledby="ntSendTitle">
+      <div class="modal__header">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;">
+          <span class="modal__title" id="ntSendTitle">Enviar negociação ao fornecedor?</span>
+          <button class="modal__close" data-modal-close aria-label="Fechar"><span class="material-icons-outlined">close</span></button>
+        </div>
+      </div>
+      <div class="modal__body">
+        A negociação será enviada para <strong id="ntSendFornecedorNome">{fornecedor}</strong>. O representante receberá um e-mail e poderá responder com a contraproposta dele. Após o envio, você acompanha o status pelo painel.
+      </div>
+      <div class="modal__footer">
+        <div></div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn btn--primary btn--ghost btn--medium" data-modal-close>Voltar</button>
+          <button type="button" class="btn btn--primary btn--medium" id="sendNegConfirmBtn">Enviar negociação</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Container de toasts (.toast-container do DS) -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -738,46 +1313,73 @@
   <script>
     // ─── Dados de exemplo (do wireframe A.9) ─────────────────
     const NEGOCIACOES = [
-      { id: 1, fornec: true,  titulo: 'Unilever · Tabela Q2 - Higiene & Beleza', produtos: 9,  loja: 'Cluster 01',     fornecedor: 'UNILEVER BRASIL',         inicio: '20/04/2026', final: null,         ultEd: '21/05/2026', responsavel: 'ana.costa@estrela',       round: 'R3', status: 'em-negociacao',     aguarda: 'voce' },
-      { id: 2, fornec: true,  titulo: 'Nestlé · Linha Nescafé - reajuste',       produtos: 12, loja: null,             fornecedor: 'NESTLÉ BRASIL',           inicio: '19/04/2026', final: null,         ultEd: '19/04/2026', responsavel: 'joao.mendes@estrela',     round: 'R2', status: 'aguard-fornecedor', aguarda: 'fornec' },
-      { id: 3, fornec: false, titulo: '0000 Tste PMZ Felipe 08/04',              produtos: 3,  loja: 'Cluster 01',     fornecedor: 'BIOLAB SANUS FARMACEL',   inicio: '08/04/2026', final: null,         ultEd: '08/04/2026', responsavel: 'felipe.kanarek@infoprice', round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
-      { id: 4, fornec: false, titulo: '000 Teste Cluster 02 Felipe 07/04',       produtos: 6,  loja: 'Cluster 01, 02', fornecedor: 'CODIL ALIMENTOS LTDA',    inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice', round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
-      { id: 5, fornec: false, titulo: '000 Teste Cluster I Felipe 07/04',        produtos: 3,  loja: 'Cluster 01',     fornecedor: 'BROTO LEGAL',             inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice', round: 'R3', status: 'em-negociacao',     aguarda: 'voce' },
-      { id: 6, fornec: false, titulo: '000 Teste Felipe 07/04',                  produtos: 0,  loja: null,             fornecedor: 'BROTO LEGAL',             inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice', round: null, status: 'rascunho',          aguarda: null },
-      { id: 7, fornec: false, titulo: 'A PMZ',                                   produtos: 4,  loja: '1, 2, 3, 4',     fornecedor: 'CAMIL ALIMENTOS',         inicio: '08/04/2026', final: '08/04/2026', ultEd: '08/04/2026', responsavel: 'warlleyn.bob@infoprice',   round: 'R2', status: 'fechado',           aguarda: null },
-      { id: 8, fornec: false, titulo: 'bob',                                     produtos: 4,  loja: null,             fornecedor: 'CAFE TRES CORAÇOES SA',   inicio: '02/04/2026', final: null,         ultEd: '02/04/2026', responsavel: 'warlleyn.bob@infoprice',   round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
-      { id: 9, fornec: false, titulo: 'Bob clean',                               produtos: 4,  loja: 'Cluster 01, 02', fornecedor: 'BELLUZ IND COM IMP E EXI',inicio: '01/04/2026', final: null,         ultEd: '01/04/2026', responsavel: 'warlleyn.bob@infoprice',   round: 'R1', status: 'em-negociacao',     aguarda: 'voce' },
+      { id: 1, fornec: true,  titulo: 'Unilever · Tabela Q2 - Higiene & Beleza', produtos: 9,  loja: 'Cluster 01',     fornecedor: 'UNILEVER BRASIL',         inicio: '20/04/2026', final: null,         ultEd: '21/05/2026', responsavel: 'infoprice.comercial@ext.infoprice.co', round: 'R3', status: 'em-negociacao',     aguarda: 'voce' },
+      { id: 2, fornec: true,  titulo: 'Nestlé · Linha Nescafé - reajuste',       produtos: 12, loja: null,             fornecedor: 'NESTLÉ BRASIL',           inicio: '19/04/2026', final: null,         ultEd: '19/04/2026', responsavel: 'infoprice.comercial@ext.infoprice.co', round: 'R2', status: 'aguard-fornecedor', aguarda: 'fornec' },
+      { id: 3, fornec: false, titulo: '0000 Tste PMZ Felipe 08/04',              produtos: 3,  loja: 'Cluster 01',     fornecedor: 'BIOLAB SANUS FARMACEL',   inicio: '08/04/2026', final: null,         ultEd: '08/04/2026', responsavel: 'felipe.kanarek@infoprice.co',          round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
+      { id: 4, fornec: false, titulo: '000 Teste Cluster 02 Felipe 07/04',       produtos: 6,  loja: 'Cluster 01, 02', fornecedor: 'CODIL ALIMENTOS LTDA',    inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice.co',          round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
+      { id: 5, fornec: false, titulo: '000 Teste Cluster I Felipe 07/04',        produtos: 3,  loja: 'Cluster 01',     fornecedor: 'BROTO LEGAL',             inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice.co',          round: 'R3', status: 'em-negociacao',     aguarda: 'voce' },
+      { id: 6, fornec: false, titulo: '000 Teste Felipe 07/04',                  produtos: 0,  loja: null,             fornecedor: 'BROTO LEGAL',             inicio: '07/04/2026', final: null,         ultEd: '07/04/2026', responsavel: 'felipe.kanarek@infoprice.co',          round: null, status: 'rascunho',          aguarda: null },
+      { id: 7, fornec: false, titulo: 'A PMZ',                                   produtos: 4,  loja: '1, 2, 3, 4',     fornecedor: 'CAMIL ALIMENTOS',         inicio: '08/04/2026', final: '08/04/2026', ultEd: '08/04/2026', responsavel: 'warlleyn.bob@infoprice.co',            round: 'R2', status: 'fechado',           aguarda: null },
+      { id: 8, fornec: false, titulo: 'bob',                                     produtos: 4,  loja: null,             fornecedor: 'CAFE TRES CORAÇOES SA',   inicio: '02/04/2026', final: null,         ultEd: '02/04/2026', responsavel: 'warlleyn.bob@infoprice.co',            round: 'R1', status: 'em-negociacao',     aguarda: 'fornec' },
+      { id: 9, fornec: false, titulo: 'Bob clean',                               produtos: 4,  loja: 'Cluster 01, 02', fornecedor: 'BELLUZ IND COM IMP E EXI',inicio: '01/04/2026', final: null,         ultEd: '01/04/2026', responsavel: 'warlleyn.bob@infoprice.co',            round: 'R1', status: 'em-negociacao',     aguarda: 'voce' },
     ];
 
     const STATUS_LABEL = {
       'em-negociacao':     'Em negociação',
       'aguard-fornecedor': 'Aguard. fornecedor',
       'rascunho':          'Rascunho',
-      'fechado':           'Fechado',
+      'fechado':           'Negócio fechado',
     };
+    // HTML do icone que cada badge renderiza. Material icon p/ todos exceto 'fechado',
+    // que reusa o SVG do modulo Negociacoes na sidebar.
     const STATUS_ICON = {
-      'em-negociacao':     'hourglass_empty',
-      'aguard-fornecedor': 'schedule',
-      'rascunho':          'edit',
-      'fechado':           'check_circle',
+      'em-negociacao':     '<span class="material-icons-outlined">compare_arrows</span>',
+      'aguard-fornecedor': '<span class="material-icons-outlined">schedule</span>',
+      'rascunho':          '<span class="material-icons-outlined">edit</span>',
+      'fechado':           '<img class="neg-status__svg" src="https://marcoskip.github.io/infoprice-prototipos/assets/negociacoes-symbol.svg" alt="" />',
     };
 
     // Acoes contextuais por status (menu hover na coluna Acoes)
     const ROW_MENUS_POR_STATUS = {
-      'em-negociacao':     [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Cancelar', action: 'cancelar', danger: true }],
-      'aguard-fornecedor': [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Lembrar fornecedor', action: 'lembrar' }, { label: 'Cancelar', action: 'cancelar', danger: true }],
-      'rascunho':          [{ label: 'Continuar edição', action: 'continuar' }, { label: 'Excluir', action: 'excluir', danger: true }],
-      'fechado':           [{ label: 'Ver detalhes', action: 'abrir' }, { label: 'Duplicar', action: 'duplicar' }],
+      'em-negociacao':     [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Cancelar negociação', action: 'cancelar', danger: true }],
+      'aguard-fornecedor': [{ label: 'Abrir negociação', action: 'abrir' }, { label: 'Lembrar fornecedor', action: 'lembrar' }, { label: 'Cancelar negociação', action: 'cancelar', danger: true }],
+      'rascunho':          [{ label: 'Continuar edição', action: 'continuar' }, { label: 'Excluir negociação', action: 'excluir', danger: true }],
+      'fechado':           [],
     };
 
+    // Filtros agora sao multi-select (Set de valores). Set vazio = filtro inativo.
     const state = {
-      filterCluster: 'todos',
-      filterFornecedor: 'todos',
-      filterResponsavel: 'todos',
-      filterStatus: 'todos',
+      filterProduto:     new Set(),
+      filterLoja:        new Set(),
+      filterCluster:     new Set(),
+      filterFornecedor:  new Set(),
+      filterResponsavel: new Set(),
+      filterStatus:      new Set(),
       search: '',
       sort: { key: 'ultEd', dir: 'desc' },
     };
+
+    // Listas de opções das lojas (1..6) e produtos sintéticos do protótipo.
+    const LOJAS_OPTS = [
+      { value: '1', label: '1 - Supermercados Nova União' },
+      { value: '2', label: '2 - Rede BomLar' },
+      { value: '3', label: '3 - Super Vale Verde' },
+      { value: '4', label: '4 - Atacadão Econômico' },
+      { value: '5', label: '5 - CompreMais Supermercados' },
+      { value: '6', label: '6 - InfoFarma' },
+    ];
+    const PRODUTOS_OPTS = [
+      { value: '1026313', label: '1026313 - LINGUICA SEARA 215G FININHA' },
+      { value: '134811',  label: '134811 - CERVEJA SKOL PILSEN 473ML' },
+      { value: '22715',   label: '22715 - NESINA MET 12,5/850MG 60CPR' },
+      { value: '44501',   label: '44501 - DRAMIN B6 30CPR' },
+      { value: '19453',   label: '19453 - DET LIQ BRILHANTE 900ML LIMP TOTAL' },
+      { value: '55094',   label: '55094 - ADACNE CLIN GEL DERM 45G' },
+      { value: '111705',  label: '111705 - CETOCON+DIP BETA+NEOMIC 20+0,64+2,5MG/G POM C/30G' },
+      { value: '681',     label: '681 - ACNASE CR DERM 25G' },
+      { value: '205455',  label: '205455 - CONTRA FILE FRIBOI RES S/NOIX KG(V) .' },
+      { value: '4521',    label: '4521 - SHAMPOO SEDA COCRIACOES CACHOS 325ML' },
+    ];
 
     const tbody       = document.getElementById('negTbody');
     const table       = document.getElementById('negTable');
@@ -787,11 +1389,46 @@
     // ─── Render ──────────────────────────────────────────────
     function applyFilters() {
       let rows = NEGOCIACOES.slice();
-      if (state.filterStatus !== 'todos')      rows = rows.filter(r => r.status === state.filterStatus);
-      if (state.filterResponsavel !== 'todos') rows = rows.filter(r => r.responsavel === state.filterResponsavel);
-      if (state.filterFornecedor !== 'todos')  rows = rows.filter(r => r.fornecedor === state.filterFornecedor);
-      if (state.filterCluster !== 'todos') {
-        rows = rows.filter(r => (r.loja || '').includes(`Cluster ${state.filterCluster}`));
+      // Status: o filtro agrupa em 2 buckets. "em-negociacao" cobre os 3 status
+      // de negociacao ativa (em-negociacao, aguard-fornecedor, rascunho); "fechado" cobre o fechado.
+      if (state.filterStatus.size > 0) {
+        rows = rows.filter(r => {
+          if (state.filterStatus.has('em-negociacao') && r.status !== 'fechado') return true;
+          if (state.filterStatus.has('fechado')      && r.status === 'fechado') return true;
+          return false;
+        });
+      }
+      if (state.filterResponsavel.size > 0) rows = rows.filter(r => state.filterResponsavel.has(r.responsavel));
+      if (state.filterFornecedor.size > 0)  rows = rows.filter(r => state.filterFornecedor.has(r.fornecedor));
+      if (state.filterCluster.size > 0) {
+        rows = rows.filter(r => {
+          // "todas" matches negociacoes sem cluster especifico (loja null/sem "Cluster")
+          if (state.filterCluster.has('todas') && (!r.loja || !r.loja.includes('Cluster'))) return true;
+          if (state.filterCluster.has('01')    && (r.loja || '').includes('Cluster 01')) return true;
+          if (state.filterCluster.has('02')    && (r.loja || '').includes('Cluster 02')) return true;
+          return false;
+        });
+      }
+      if (state.filterLoja.size > 0) {
+        // r.loja pode ser "1, 2, 3, 4" — match por presenca do numero como token isolado.
+        rows = rows.filter(r => {
+          if (!r.loja) return false;
+          const tokens = r.loja.split(/[,\s]+/).filter(Boolean);
+          return tokens.some(t => state.filterLoja.has(t));
+        });
+      }
+      if (state.filterProduto.size > 0) {
+        // No prototipo, NEGOCIACOES nao tem detalhes de produtos por linha — match best-effort
+        // por palavra-chave do nome do produto no titulo da negociacao.
+        rows = rows.filter(r => {
+          const tit = (r.titulo || '').toLowerCase();
+          return [...state.filterProduto].some(prodVal => {
+            const opt = PRODUTOS_OPTS.find(p => p.value === prodVal);
+            if (!opt) return false;
+            const keywords = opt.label.split('-')[1]?.toLowerCase().split(/\s+/) || [];
+            return keywords.some(k => k.length > 3 && tit.includes(k));
+          });
+        });
       }
       if (state.search.trim()) {
         const q = state.search.trim().toLowerCase();
@@ -852,7 +1489,7 @@
             <td>${r.responsavel}</td>
             <td>${round}</td>
             <td>
-              <span class="neg-status neg-status--${r.status}">${statusLabel}</span>
+              <span class="neg-status neg-status--${r.status}">${STATUS_ICON[r.status] || ''}${statusLabel}</span>
             </td>
             <td>${aguarda}</td>
             <td class="col-acoes">
@@ -881,38 +1518,55 @@
       searchTimer = setTimeout(() => { state.search = v; renderRows(); }, 200);
     });
 
-    // ─── Popular dropdown de Fornecedor com os valores unicos do mock ───
-    (function populaFornecedorDropdown() {
-      const list = document.querySelector('[data-filter="fornecedor"] .filtro-dropdown__list');
-      if (!list) return;
-      const unique = [...new Set(NEGOCIACOES.map(n => n.fornecedor))].sort();
-      unique.forEach(f => {
-        const id = `forn-${f.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
-        list.insertAdjacentHTML('beforeend',
-          `<label class="filtro-dropdown__item"><input type="radio" name="fornecedor" value="${f}" /><span>${f}</span></label>`
-        );
-      });
-    })();
-
-    // ─── Filtros chips ──────────────────────────────────────
-    // Default (sem filtro aplicado): mostra so o nome. Apos selecionar, "Nome: valor".
+    // ─── Filtros chips (multi-select com search interna) ────────
     const FILTRO_DEFAULTS = { produto: 'Produto', loja: 'Loja', cluster: 'Cluster', fornecedor: 'Fornecedor', responsavel: 'Responsável', status: 'Status' };
-    const FILTRO_LABELS = {
-      status:  { 'em-negociacao': 'Status: em negociação', 'aguard-fornecedor': 'Status: aguard. fornecedor', rascunho: 'Status: rascunho', fechado: 'Status: fechado' },
-      cluster: { '01': 'Cluster 01', '02': 'Cluster 02' },
+    // Mapa fixo de label compacto (1 item selecionado) para alguns filtros.
+    const SHORT_LABEL = {
+      cluster: { '01': 'Cluster 01', '02': 'Cluster 02', 'todas': 'Todas as lojas' },
+      status:  { 'em-negociacao': 'Em negociação', 'fechado': 'Negócio fechado' },
     };
+
     function closeAllFiltros() {
       document.querySelectorAll('.filtro-chip-wrapper').forEach(w => {
         w.querySelector('[data-trigger]').classList.remove('is-open');
         w.querySelector('[data-dropdown]').classList.remove('is-open');
       });
     }
+
+    // Popular dropdowns dinamicos (Fornecedor / Loja / Produto)
+    (function populaDropdowns() {
+      const fornList = document.querySelector('[data-filter="fornecedor"] [data-list]');
+      if (fornList) {
+        const unique = [...new Set(NEGOCIACOES.map(n => n.fornecedor))].sort();
+        fornList.innerHTML = unique.map(f =>
+          `<label class="filtro-dropdown__item"><input type="checkbox" name="fornecedor" value="${f}" /><span>${f}</span></label>`
+        ).join('');
+      }
+      const lojaList = document.querySelector('[data-filter="loja"] [data-list]');
+      if (lojaList) {
+        lojaList.innerHTML = LOJAS_OPTS.map(o =>
+          `<label class="filtro-dropdown__item"><input type="checkbox" name="loja" value="${o.value}" /><span>${o.label}</span></label>`
+        ).join('');
+      }
+      const produtoList = document.querySelector('[data-filter="produto"] [data-list]');
+      if (produtoList) {
+        produtoList.innerHTML = PRODUTOS_OPTS.map(o =>
+          `<label class="filtro-dropdown__item"><input type="checkbox" name="produto" value="${o.value}" /><span>${o.label}</span></label>`
+        ).join('');
+      }
+    })();
+
+    // Configura cada chip wrapper: toggle, busca interna, checkbox change, select-all
     document.querySelectorAll('.filtro-chip-wrapper').forEach(wrapper => {
       const trigger  = wrapper.querySelector('[data-trigger]');
       const dropdown = wrapper.querySelector('[data-dropdown]');
       const labelEl  = trigger.querySelector('[data-label]');
       const filterKey = wrapper.dataset.filter;
+      const searchInputEl = dropdown.querySelector('[data-search]');
+      const selectAllInput = dropdown.querySelector('[data-select-all-input]');
+      const stateKey = `filter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}`;
 
+      // Toggle do dropdown
       trigger.addEventListener('click', (e) => {
         e.stopPropagation();
         const willOpen = !dropdown.classList.contains('is-open');
@@ -920,30 +1574,116 @@
         if (willOpen) {
           trigger.classList.add('is-open');
           dropdown.classList.add('is-open');
+          if (searchInputEl) { searchInputEl.value = ''; applySearchFilter(); searchInputEl.focus(); }
         }
       });
+      // Clique dentro do dropdown nao fecha
+      dropdown.addEventListener('click', (e) => e.stopPropagation());
 
-      dropdown.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-          const val = radio.value;
-          const isDefault = val === 'todos' || val === 'todas';
-          if (isDefault) {
-            labelEl.textContent = FILTRO_DEFAULTS[filterKey];
-          } else if (filterKey === 'responsavel') {
-            labelEl.textContent = `Resp.: ${val.split('@')[0]}`;
-          } else if (filterKey === 'fornecedor') {
-            const curto = val.split(/\s+/)[0];
-            labelEl.textContent = `Fornec.: ${curto}`;
-          } else {
-            const labelMap = FILTRO_LABELS[filterKey] || {};
-            labelEl.textContent = labelMap[val] || val;
-          }
-          const stateKey = `filter${filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}`;
-          if (stateKey in state) { state[stateKey] = val; renderRows(); }
-          trigger.classList.remove('is-open');
-          dropdown.classList.remove('is-open');
+      // Filtragem dos labels pelo input de busca interna
+      function applySearchFilter() {
+        if (!searchInputEl) return;
+        const q = (searchInputEl.value || '').trim().toLowerCase();
+        let anyVisible = false;
+        dropdown.querySelectorAll('[data-list] .filtro-dropdown__item').forEach(item => {
+          const txt = item.querySelector('span').textContent.toLowerCase();
+          const show = !q || txt.includes(q);
+          item.style.display = show ? '' : 'none';
+          if (show) anyVisible = true;
         });
+        // Estado "nenhum resultado"
+        let emptyEl = dropdown.querySelector('.filtro-dropdown__empty');
+        if (!anyVisible) {
+          if (!emptyEl) {
+            emptyEl = document.createElement('div');
+            emptyEl.className = 'filtro-dropdown__empty';
+            emptyEl.textContent = 'Nenhum resultado.';
+            dropdown.querySelector('[data-list]').appendChild(emptyEl);
+          }
+          emptyEl.style.display = '';
+        } else if (emptyEl) {
+          emptyEl.style.display = 'none';
+        }
+        // Sincroniza "Selecionar todos" com checkboxes visiveis
+        if (selectAllInput) syncSelectAll();
+      }
+      if (searchInputEl) {
+        searchInputEl.addEventListener('input', applySearchFilter);
+      }
+
+      function syncSelectAll() {
+        if (!selectAllInput) return;
+        const visibleBoxes = [...dropdown.querySelectorAll('[data-list] .filtro-dropdown__item')]
+          .filter(i => i.style.display !== 'none')
+          .map(i => i.querySelector('input[type="checkbox"]'));
+        const total = visibleBoxes.length;
+        const checked = visibleBoxes.filter(b => b.checked).length;
+        selectAllInput.checked = total > 0 && checked === total;
+        selectAllInput.indeterminate = checked > 0 && checked < total;
+      }
+      if (selectAllInput) {
+        selectAllInput.addEventListener('change', () => {
+          const visibleBoxes = [...dropdown.querySelectorAll('[data-list] .filtro-dropdown__item')]
+            .filter(i => i.style.display !== 'none')
+            .map(i => i.querySelector('input[type="checkbox"]'));
+          visibleBoxes.forEach(b => {
+            b.checked = selectAllInput.checked;
+            const v = b.value;
+            if (selectAllInput.checked) state[stateKey].add(v);
+            else                        state[stateKey].delete(v);
+          });
+          updateChipLabel();
+          renderRows();
+        });
+      }
+
+      // Change em qualquer checkbox da lista
+      dropdown.addEventListener('change', (e) => {
+        const box = e.target.closest('[data-list] input[type="checkbox"]');
+        if (!box) return;
+        if (box.checked) state[stateKey].add(box.value);
+        else             state[stateKey].delete(box.value);
+        if (selectAllInput) syncSelectAll();
+        updateChipLabel();
+        renderRows();
       });
+
+      function updateChipLabel() {
+        const set = state[stateKey];
+        // Remove chip de contagem anterior
+        labelEl.parentElement.querySelectorAll('.filtro-chip__count').forEach(c => c.remove());
+        if (set.size === 0) {
+          labelEl.textContent = FILTRO_DEFAULTS[filterKey];
+          return;
+        }
+        if (set.size === 1) {
+          const [v] = [...set];
+          let txt;
+          const short = SHORT_LABEL[filterKey] && SHORT_LABEL[filterKey][v];
+          if (short) {
+            txt = short;
+          } else if (filterKey === 'responsavel') {
+            txt = v.split('@')[0];
+          } else if (filterKey === 'fornecedor') {
+            txt = v.split(/\s+/)[0];
+          } else if (filterKey === 'produto') {
+            const opt = PRODUTOS_OPTS.find(p => p.value === v);
+            txt = opt ? `Cod. ${v}` : v;
+          } else if (filterKey === 'loja') {
+            txt = `Loja ${v}`;
+          } else {
+            txt = v;
+          }
+          labelEl.textContent = `${FILTRO_DEFAULTS[filterKey]}: ${txt}`;
+          return;
+        }
+        // 2+ selecionados → nome + chip de contagem
+        labelEl.textContent = FILTRO_DEFAULTS[filterKey];
+        const count = document.createElement('span');
+        count.className = 'filtro-chip__count';
+        count.textContent = set.size;
+        labelEl.insertAdjacentElement('afterend', count);
+      }
     });
 
     // ─── Sort cycle ─────────────────────────────────────────
@@ -981,10 +1721,8 @@
 
     // ─── Limpar filtros ─────────────────────────────────────
     function clearAllFilters() {
-      state.filterCluster = 'todos';
-      state.filterFornecedor = 'todos';
-      state.filterResponsavel = 'todos';
-      state.filterStatus = 'todos';
+      ['filterProduto', 'filterLoja', 'filterCluster', 'filterFornecedor', 'filterResponsavel', 'filterStatus']
+        .forEach(k => state[k].clear());
       state.search = '';
       searchInput.value = '';
       // resetar UI dos chips
@@ -992,7 +1730,14 @@
         const labelEl = w.querySelector('[data-label]');
         const key = w.dataset.filter;
         labelEl.textContent = FILTRO_DEFAULTS[key];
-        w.querySelectorAll('input[type="radio"]').forEach(r => r.checked = (r.value === 'todos' || r.value === 'todas'));
+        w.querySelectorAll('.filtro-chip__count').forEach(c => c.remove());
+        w.querySelectorAll('input[type="checkbox"]').forEach(c => { c.checked = false; c.indeterminate = false; });
+        const searchEl = w.querySelector('[data-search]');
+        if (searchEl) searchEl.value = '';
+        // Re-mostrar todos os itens (caso busca tenha sido aplicada antes)
+        w.querySelectorAll('[data-list] .filtro-dropdown__item').forEach(i => i.style.display = '');
+        const emptyEl = w.querySelector('.filtro-dropdown__empty');
+        if (emptyEl) emptyEl.style.display = 'none';
       });
       renderRows();
     }
@@ -1042,9 +1787,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarPopup(); });
 
     // ─── CTA Nova negociação ────────────────────────────────
-    document.getElementById('novaNegBtn').addEventListener('click', () => {
-      showToast('Fluxo de nova negociação ainda nao implementado.', 'info');
-    });
+    document.getElementById('novaNegBtn').addEventListener('click', () => ntOpenModal());
 
     // ─── Toast helper (igual ao da 0.1) ─────────────────────
     const toastContainer = document.getElementById('toastContainer');
@@ -1080,10 +1823,9 @@
 
     function renderRowMenu(status) {
       const items = ROW_MENUS_POR_STATUS[status] || [];
-      rowMenu.innerHTML = items.map((it, i) => {
-        const divider = i > 0 ? '<div class="context-menu__divider"></div>' : '';
-        const danger  = it.danger ? ' context-menu__item--danger' : '';
-        return `${divider}<button class="context-menu__item${danger}" type="button" data-action="${it.action}">${it.label}</button>`;
+      rowMenu.innerHTML = items.map((it) => {
+        const danger = it.danger ? ' context-menu__item--danger' : '';
+        return `<button class="context-menu__item${danger}" type="button" data-action="${it.action}">${it.label}</button>`;
       }).join('');
     }
     function positionRowMenu(trigger) {
@@ -1105,6 +1847,9 @@
       const id = parseInt(wrapper.dataset.id, 10);
       const neg = NEGOCIACOES.find(n => n.id === id);
       if (!neg) return;
+      // Status sem acoes (ex.: fechado) — nao abre menu vazio.
+      const items = ROW_MENUS_POR_STATUS[neg.status] || [];
+      if (items.length === 0) { rowMenuTrigger = null; return; }
       renderRowMenu(neg.status);
       positionRowMenu(trigger);
     }
@@ -1145,29 +1890,101 @@
       if (!neg) return;
       const titulo = neg.titulo;
 
+      // Fecha o menu hover antes de qualquer fluxo (modal ou execucao direta)
+      rowMenu.classList.remove('is-open');
+      rowMenuTrigger = null;
+
       if (action === 'abrir') {
         // Toda negociacao abre em A.8.7 (Round 2). "Enviar contraproposta" leva ao Round 3 (A.18).
         window.location.href = 'A.8.7.html';
         return;
       } else if (action === 'continuar') {
         showToast(`Continuando edição de "${titulo}".`, 'info');
-      } else if (action === 'cancelar') {
+        renderRows();
+      } else if (action === 'cancelar' || action === 'excluir' || action === 'lembrar') {
+        // Acoes que pedem confirmacao
+        openConfirmModal(action, neg);
+        return;
+      }
+    });
+
+    // ─── Modal de confirmacao (acoes destrutivas) ───
+    const confirmModal      = document.getElementById('confirmModal');
+    const confirmModalTitle = document.getElementById('confirmModalTitle');
+    const confirmModalBody  = document.getElementById('confirmModalBody');
+    const confirmModalBtn   = document.getElementById('confirmModalConfirmBtn');
+    let pendingConfirm = null; // { action, negId }
+
+    function CONFIRM_CONFIG(action, titulo) {
+      switch (action) {
+        case 'cancelar':
+          return {
+            title: 'Cancelar negociação?',
+            body: `A negociação <strong>"${titulo}"</strong> será cancelada e o fornecedor será notificado. As propostas e mensagens trocadas serão preservadas para histórico, mas o processo não poderá ser retomado. Esta ação não pode ser desfeita.`,
+            cta: 'Cancelar negociação',
+            variant: 'danger',
+          };
+        case 'excluir':
+          return {
+            title: 'Excluir negociação?',
+            body: `O rascunho <strong>"${titulo}"</strong> será excluído permanentemente. Esta ação não pode ser desfeita.`,
+            cta: 'Excluir negociação',
+            variant: 'danger',
+          };
+        case 'lembrar':
+          return {
+            title: 'Enviar lembrete ao fornecedor?',
+            body: `Um e-mail de lembrete será enviado ao fornecedor da negociação <strong>"${titulo}"</strong>, sinalizando que a proposta está aguardando resposta.`,
+            cta: 'Enviar lembrete',
+            variant: 'primary',
+          };
+        default: return null;
+      }
+    }
+
+    function openConfirmModal(action, neg) {
+      const cfg = CONFIRM_CONFIG(action, neg.titulo);
+      if (!cfg) return;
+      pendingConfirm = { action, negId: neg.id };
+      confirmModalTitle.textContent = cfg.title;
+      confirmModalBody.innerHTML = cfg.body;
+      confirmModalBtn.textContent = cfg.cta;
+      confirmModalBtn.className = cfg.variant === 'danger'
+        ? 'btn btn--secondary btn--red btn--medium'
+        : 'btn btn--primary btn--medium';
+      confirmModal.classList.add('is-open');
+      confirmModal.setAttribute('aria-hidden', 'false');
+    }
+    function closeConfirmModal() {
+      confirmModal.classList.remove('is-open');
+      confirmModal.setAttribute('aria-hidden', 'true');
+      pendingConfirm = null;
+    }
+    confirmModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', closeConfirmModal));
+    confirmModal.addEventListener('click', (e) => { if (e.target === confirmModal) closeConfirmModal(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && confirmModal.classList.contains('is-open')) closeConfirmModal();
+    });
+
+    confirmModalBtn.addEventListener('click', () => {
+      if (!pendingConfirm) return;
+      const { action, negId } = pendingConfirm;
+      const neg = NEGOCIACOES.find(n => n.id === negId);
+      if (!neg) { closeConfirmModal(); return; }
+      const titulo = neg.titulo;
+
+      if (action === 'cancelar') {
         const idx = NEGOCIACOES.indexOf(neg);
         if (idx >= 0) NEGOCIACOES.splice(idx, 1);
         showToast(`Negociação "${titulo}" cancelada.`, 'success');
       } else if (action === 'excluir') {
         const idx = NEGOCIACOES.indexOf(neg);
         if (idx >= 0) NEGOCIACOES.splice(idx, 1);
-        showToast(`Rascunho "${titulo}" excluído.`, 'success');
+        showToast(`Negociação "${titulo}" excluída.`, 'success');
       } else if (action === 'lembrar') {
         showToast(`Lembrete enviado ao fornecedor de "${titulo}".`, 'success');
-      } else if (action === 'duplicar') {
-        const nextId = Math.max(...NEGOCIACOES.map(n => n.id)) + 1;
-        NEGOCIACOES.unshift({ ...neg, id: nextId, titulo: `${titulo} (cópia)`, status: 'rascunho', round: null, aguarda: null, ultEd: new Date().toLocaleDateString('pt-BR') });
-        showToast(`"${titulo}" duplicado como rascunho.`, 'success');
       }
-      rowMenu.classList.remove('is-open');
-      rowMenuTrigger = null;
+      closeConfirmModal();
       renderRows();
     });
 
@@ -1181,7 +1998,7 @@
         NEGOCIACOES.unshift({
           id: nextId, fornec: false, titulo: 'Nova negociação demo', produtos: 8,
           loja: 'Cluster 03', fornecedor: 'MONDELEZ BRASIL', inicio: '20/05/2026',
-          final: null, ultEd: '20/05/2026', responsavel: 'marcos.keller@infoprice',
+          final: null, ultEd: '20/05/2026', responsavel: 'felipe.kanarek@infoprice.co',
           round: null, status: 'rascunho', aguarda: null,
         });
         renderRows();
@@ -1209,8 +2026,444 @@
       devMenu.classList.toggle('is-hidden');
     });
 
+    // ════════════════════════════════════════════════════════════════════
+    // ─── Modal "Nova negociação" (mesma estrutura do A.6.empty, contexto varejista)
+    // ════════════════════════════════════════════════════════════════════
+
+    // Catalogo mock — busca/autocomplete (mesmo conjunto do A.6.empty)
+    const NT_CATALOG = [
+      { sku: '1024', nome: 'OMO Lavagem Perfeita 2l' },
+      { sku: '1045', nome: 'OMO Lavagem Perfeita 5l' },
+      { sku: '2056', nome: 'OMO Puro Cuidado Líquido' },
+      { sku: '4122', nome: 'OMO Proteção Antiodor em Pó' },
+      { sku: '7891', nome: 'OMO Lavagem Perfeita 1.6kg' },
+      { sku: '7893', nome: 'Brilhante Puro Cuidado 1kg' },
+      { sku: '7896', nome: 'Brilhante Puro Cuidado 500g' },
+      { sku: '7897', nome: 'Brilhante Pura Lavagem 2kg' },
+      { sku: '4521', nome: 'Shampoo Seda Cocriações Cachos 325ml' },
+      { sku: '4498', nome: 'Condicionador Dove Nutrição Completa 200ml' },
+      { sku: '3877', nome: 'Sabonete Dove Original 90g' },
+      { sku: '5142', nome: 'Desodorante Rexona Women Powder 150ml' },
+      { sku: '6021', nome: 'Sabonete Líquido Lux Botanicals 250ml' },
+      { sku: '5887', nome: 'Desodorante Aerosol Axe Black 152ml' },
+      { sku: '6234', nome: 'Creme Dental Close-Up Red Hot 90g' },
+      { sku: '4763', nome: 'Shampoo Clear Men Anticaspa 200ml' },
+      { sku: '5419', nome: 'Desodorante Dove Invisible Dry 150ml' },
+    ];
+
+    let ntLineIdCounter = 1;
+    let ntLines = [];
+
+    const ntModal       = document.getElementById('novaNegModal');
+    const ntStep1       = document.getElementById('ntStep1');
+    const ntStep2       = document.getElementById('ntStep2');
+    const ntFooter1     = document.getElementById('ntFooter1');
+    const ntFooter2     = document.getElementById('ntFooter2');
+    const ntSubtitle    = document.getElementById('ntSubtitle');
+    const ntTitle       = document.getElementById('ntTitle');
+    const ntNome        = document.getElementById('ntNome');
+    const ntFornecedor  = document.getElementById('ntFornecedor');
+    const ntInicio      = document.getElementById('ntInicio');
+    const ntFinal       = document.getElementById('ntFinal');
+    const ntFinalToggle = document.getElementById('ntFinalToggle');
+    const ntSearchRow      = document.getElementById('ntSearchRow');
+    const ntSearchInput    = document.getElementById('ntSearchInput');
+    const ntAutocomplete   = document.getElementById('ntAutocomplete');
+    const ntListEmptyManual= document.getElementById('ntListEmptyManual');
+    const ntListEmptyUpload= document.getElementById('ntListEmptyUpload');
+    const ntDownloadHelper = document.getElementById('ntDownloadHelper');
+    const ntListPop        = document.getElementById('ntListPopulated');
+    const ntList           = document.getElementById('ntList');
+    const ntNextBtn        = document.getElementById('ntNextBtn');
+
+    let ntMode = 'manual';
+
+    function ntOpenModal() {
+      ntResetState();
+      ntModal.classList.add('is-open');
+      ntModal.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => ntNome.focus());
+    }
+    function ntCloseModalDirect() {
+      ntModal.classList.remove('is-open');
+      ntModal.setAttribute('aria-hidden', 'true');
+      ntAutocomplete.hidden = true;
+    }
+    function ntHasDirtyContent() {
+      return !!(ntNome.value.trim() || ntFornecedor.value || ntInicio.value || ntLines.length > 0);
+    }
+    function ntTryCloseModal() {
+      if (ntHasDirtyContent()) ntOpenDiscardConfirm();
+      else ntCloseModalDirect();
+    }
+    function ntCloseModal() { ntCloseModalDirect(); }
+    function ntResetState() {
+      ntLines = [];
+      ntLineIdCounter = 1;
+      ntMode = 'manual';
+      ntNome.value = '';
+      ntFornecedor.value = '';
+      ntInicio.value = '';
+      ntFinal.value = '';
+      ntFinalToggle.checked = false;
+      ntFinal.disabled = true;
+      ntSearchInput.value = '';
+      ntAutocomplete.hidden = true;
+      ntAbrangNivel.value = '';
+      ntAbrangAlvo.value = '';
+      ntAbrangAlvoCol.hidden = true;
+      ntGoToStep(1);
+      ntSetMode('manual');
+    }
+
+    // ─── Abrangência ───
+    const ntAbrangNivel   = document.getElementById('ntAbrangNivel');
+    const ntAbrangAlvo    = document.getElementById('ntAbrangAlvo');
+    const ntAbrangAlvoCol = document.getElementById('ntAbrangAlvoCol');
+    const ABRANG_OPTS = {
+      lojas: [
+        { value: '1', label: '1 - Supermercados Nova União' },
+        { value: '2', label: '2 - Rede BomLar' },
+        { value: '3', label: '3 - Super Vale Verde' },
+        { value: '4', label: '4 - Atacadão Econômico' },
+        { value: '5', label: '5 - CompreMais Supermercados' },
+        { value: '6', label: '6 - InfoFarma' },
+        { value: 'todas', label: 'Todas as lojas' },
+      ],
+      cluster: [
+        { value: '01', label: 'Cluster 01' },
+        { value: '02', label: 'Cluster 02' },
+        { value: 'todas', label: 'Todos os clusters' },
+      ],
+    };
+    ntAbrangNivel.addEventListener('change', () => {
+      const nivel = ntAbrangNivel.value;
+      if (!nivel) {
+        ntAbrangAlvoCol.hidden = true;
+        ntAbrangAlvo.innerHTML = '<option value="">Selecione…</option>';
+        return;
+      }
+      const opts = ABRANG_OPTS[nivel] || [];
+      const placeholder = nivel === 'lojas' ? 'Selecione as lojas…' : 'Selecione o cluster…';
+      ntAbrangAlvo.innerHTML = `<option value="">${placeholder}</option>` +
+        opts.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+      ntAbrangAlvoCol.hidden = false;
+    });
+
+    // ─── Toggle Upload ↔ Manual ───
+    function ntSetMode(mode) {
+      ntMode = mode;
+      const isUpload = mode === 'upload';
+      ntSearchRow.hidden = isUpload;
+      document.getElementById('ntModeUpload').classList.toggle('is-active', isUpload);
+      document.getElementById('ntModeUpload').setAttribute('aria-selected', isUpload);
+      document.getElementById('ntModeManual').classList.toggle('is-active', !isUpload);
+      document.getElementById('ntModeManual').setAttribute('aria-selected', !isUpload);
+      ntRenderList();
+    }
+    document.getElementById('ntModeUpload').addEventListener('click', () => ntSetMode('upload'));
+    document.getElementById('ntModeManual').addEventListener('click', () => ntSetMode('manual'));
+
+    // ─── Dropzone ───
+    function ntMockUploadCSV() {
+      const sample = [
+        { sku: '7891', nome: 'OMO Lavagem Perfeita 1.6kg',  preco: '24,98' },
+        { sku: '7892', nome: 'OMO Progress 2kg',            preco: '32,50' },
+        { sku: '7893', nome: 'Brilhante Puro Cuidado 1kg',  preco: '18,90' },
+        { sku: '4521', nome: 'Shampoo Seda Cocriações 325ml', preco: '12,50' },
+        { sku: '3877', nome: 'Sabonete Dove Original 90g',  preco: '4,80' },
+      ];
+      sample.forEach(p => ntLines.push({ id: ntLineIdCounter++, sku: p.sku, nome: p.nome, preco: p.preco, isManual: false }));
+      ntRenderList();
+      showToast(`${sample.length} produtos importados da planilha.`, 'success');
+    }
+    document.getElementById('ntFilePickerBtn').addEventListener('click', ntMockUploadCSV);
+    const ntDropzone = document.getElementById('ntListEmptyUpload');
+    ntDropzone.addEventListener('dragover', (e) => { e.preventDefault(); ntDropzone.classList.add('is-dragover'); });
+    ntDropzone.addEventListener('dragleave', () => ntDropzone.classList.remove('is-dragover'));
+    ntDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      ntDropzone.classList.remove('is-dragover');
+      ntMockUploadCSV();
+    });
+
+    document.getElementById('ntDownloadTemplate').addEventListener('click', () => {
+      const csv = 'SKU,descricao,custo_alvo\n7891,OMO Lavagem Perfeita 1.6kg,24.98\n';
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'modelo-negociacao.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Modelo CSV baixado.', 'success');
+    });
+
+    ntFinalToggle.addEventListener('change', () => {
+      ntFinal.disabled = !ntFinalToggle.checked;
+      if (!ntFinalToggle.checked) ntFinal.value = '';
+    });
+
+    // ─── Autocomplete ───
+    let ntAcResults = [];
+    let ntAcFocusedIdx = 0;
+    function ntRenderAutocomplete() {
+      if (ntAcResults.length === 0) {
+        ntAutocomplete.innerHTML = `<div class="nt-autocomplete__empty">Nenhum produto encontrado. <a id="ntInsertManualLink3" style="color:var(--color-brand-primary);font-weight:600;cursor:pointer;text-decoration:underline;">Inserir manualmente</a></div>`;
+        const link = document.getElementById('ntInsertManualLink3');
+        if (link) link.addEventListener('mousedown', (e) => { e.preventDefault(); ntAddManualLine(); ntAutocomplete.hidden = true; });
+        return;
+      }
+      ntAutocomplete.innerHTML = ntAcResults.map((p, i) => `
+        <div class="nt-autocomplete__item ${i === ntAcFocusedIdx ? 'is-focused' : ''}" data-sku="${p.sku}" data-nome="${p.nome.replace(/"/g, '&quot;')}">
+          <span class="nt-autocomplete__sku">${p.sku}</span>
+          <span class="nt-autocomplete__name">${p.nome}</span>
+        </div>
+      `).join('');
+      ntAutocomplete.querySelectorAll('[data-sku]').forEach(item => {
+        item.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          ntAddProductFromCatalog(item.dataset.sku, item.dataset.nome);
+        });
+      });
+    }
+
+    ntSearchInput.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      if (q.length < 1) { ntAutocomplete.hidden = true; return; }
+      ntAcResults = NT_CATALOG
+        .filter(p => p.nome.toLowerCase().includes(q) || p.sku.includes(q))
+        .filter(p => !ntLines.some(l => l.sku === p.sku && !l.isManual));
+      ntAcFocusedIdx = 0;
+      ntAutocomplete.hidden = false;
+      ntRenderAutocomplete();
+    });
+    ntSearchInput.addEventListener('focus', () => {
+      if (ntSearchInput.value.trim().length >= 1 && ntAcResults.length) ntAutocomplete.hidden = false;
+    });
+    ntSearchInput.addEventListener('keydown', (e) => {
+      if (ntAutocomplete.hidden) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); ntAcFocusedIdx = Math.min(ntAcFocusedIdx + 1, ntAcResults.length - 1); ntRenderAutocomplete(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); ntAcFocusedIdx = Math.max(ntAcFocusedIdx - 1, 0); ntRenderAutocomplete(); }
+      else if (e.key === 'Enter') {
+        if (ntAcResults[ntAcFocusedIdx]) {
+          e.preventDefault();
+          const p = ntAcResults[ntAcFocusedIdx];
+          ntAddProductFromCatalog(p.sku, p.nome);
+        }
+      } else if (e.key === 'Escape') {
+        ntAutocomplete.hidden = true;
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#ntSearchbar')) ntAutocomplete.hidden = true;
+    });
+
+    function ntAddProductFromCatalog(sku, nome) {
+      ntLines.push({ id: ntLineIdCounter++, sku, nome, preco: '', isManual: false });
+      ntSearchInput.value = '';
+      ntAutocomplete.hidden = true;
+      ntRenderList();
+      ntSearchInput.focus();
+    }
+    function ntAddManualLine() {
+      ntLines.push({ id: ntLineIdCounter++, sku: '', nome: '', preco: '', isManual: true });
+      ntRenderList();
+      requestAnimationFrame(() => {
+        const last = ntLines[ntLines.length - 1];
+        const row = ntList.querySelector(`[data-line-id="${last.id}"]`);
+        if (row) row.querySelector('.nt-list__sku-input').focus();
+      });
+    }
+    document.getElementById('ntInsertManualLink').addEventListener('click', ntAddManualLine);
+    document.getElementById('ntInsertManualLink2').addEventListener('click', ntAddManualLine);
+
+    function ntRenderList() {
+      const isEmpty = ntLines.length === 0;
+      ntListPop.hidden = isEmpty;
+      if (isEmpty) {
+        ntListEmptyManual.hidden = (ntMode !== 'manual');
+        ntListEmptyUpload.hidden = (ntMode !== 'upload');
+        ntDownloadHelper.hidden  = (ntMode !== 'upload');
+      } else {
+        ntListEmptyManual.hidden = true;
+        ntListEmptyUpload.hidden = true;
+        ntDownloadHelper.hidden  = (ntMode !== 'upload');
+      }
+      if (isEmpty) { ntUpdateNextEnabled(); return; }
+      const head = ntList.querySelector('.nt-list__head');
+      ntList.innerHTML = '';
+      ntList.appendChild(head);
+      ntLines.forEach((line, i) => {
+        const row = document.createElement('div');
+        row.className = 'nt-list__row ' + (i % 2 === 1 ? 'is-even' : '');
+        row.dataset.lineId = line.id;
+        row.innerHTML = `
+          <span class="nt-list__cell nt-list__cell--sku">${
+            line.isManual
+              ? `<input class="nt-list__sku-input" type="text" value="${line.sku}" data-field="sku" placeholder="SKU" aria-label="SKU" />`
+              : line.sku
+          }</span>
+          <span class="nt-list__cell nt-list__cell--name">${
+            line.isManual
+              ? `<input class="nt-list__name-input" type="text" value="${(line.nome||'').replace(/"/g,'&quot;')}" data-field="nome" placeholder="Nome do produto" aria-label="Nome do produto" />`
+              : line.nome
+          }</span>
+          <span class="nt-list__cell">
+            <span class="nt-list__preco-wrap">
+              <span class="nt-list__preco-prefix">R$</span>
+              <input class="nt-list__preco-input" type="text" inputmode="decimal" value="${line.preco}" data-field="preco" placeholder="0,00" aria-label="Custo-alvo" />
+            </span>
+          </span>
+          <span class="nt-list__cell nt-list__cell--remove">
+            <button class="nt-list__remove" type="button" data-remove>Remover</button>
+          </span>
+        `;
+        ntList.appendChild(row);
+      });
+      ntUpdateNextEnabled();
+    }
+
+    function ntUpdateNextEnabled() {
+      const hasLines = ntLines.length > 0;
+      const allValid = ntLines.every(l => l.sku && l.nome && l.preco);
+      const hasName = ntNome.value.trim().length > 0;
+      const hasFornec = !!ntFornecedor.value;
+      ntNextBtn.disabled = !(hasLines && allValid && hasName && hasFornec);
+    }
+    ntNome.addEventListener('input', ntUpdateNextEnabled);
+    ntFornecedor.addEventListener('change', ntUpdateNextEnabled);
+
+    ntList.addEventListener('input', (e) => {
+      const input = e.target.closest('input');
+      if (!input) return;
+      const row = input.closest('[data-line-id]');
+      const lineId = parseInt(row.dataset.lineId, 10);
+      const line = ntLines.find(l => l.id === lineId);
+      if (!line) return;
+      const field = input.dataset.field;
+      if (field === 'preco') {
+        const digits = input.value.replace(/\D/g, '');
+        if (!digits) { line.preco = ''; input.value = ''; ntUpdateNextEnabled(); return; }
+        const padded = digits.padStart(3, '0');
+        const inteiros = padded.slice(0, -2).replace(/^0+(?=\d)/, '');
+        const cents = padded.slice(-2);
+        line.preco = `${inteiros},${cents}`;
+        input.value = line.preco;
+      } else if (field === 'sku') {
+        line.sku = input.value;
+      } else if (field === 'nome') {
+        line.nome = input.value;
+      }
+      ntUpdateNextEnabled();
+    });
+    ntList.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-remove]');
+      if (!btn) return;
+      const row = btn.closest('[data-line-id]');
+      const lineId = parseInt(row.dataset.lineId, 10);
+      ntLines = ntLines.filter(l => l.id !== lineId);
+      ntRenderList();
+    });
+
+    function ntGoToStep(step) {
+      if (step === 1) {
+        ntTitle.textContent = 'Nova negociação';
+        ntSubtitle.textContent = 'Etapa 1 de 2 — Inserção de produtos';
+        ntStep1.hidden = false;
+        ntStep2.hidden = true;
+        ntFooter1.hidden = false;
+        ntFooter2.hidden = true;
+      } else {
+        ntTitle.textContent = 'Revise sua negociação';
+        ntSubtitle.textContent = 'Etapa 2 de 2 — Revisão';
+        ntStep1.hidden = true;
+        ntStep2.hidden = false;
+        ntFooter1.hidden = true;
+        ntFooter2.hidden = false;
+        ntRenderReview();
+      }
+    }
+    function ntRenderReview() {
+      document.getElementById('ntReviewNome').textContent = ntNome.value || '—';
+      const fornecLabel = ntFornecedor.options[ntFornecedor.selectedIndex]?.text || '—';
+      document.getElementById('ntReviewFornecedor').textContent = fornecLabel;
+      const ini = ntInicio.value ? new Date(ntInicio.value).toLocaleDateString('pt-BR') : '—';
+      const fim = ntFinalToggle.checked && ntFinal.value
+        ? new Date(ntFinal.value).toLocaleDateString('pt-BR') : null;
+      document.getElementById('ntReviewVigencia').textContent = fim ? `De ${ini} a ${fim}` : `A partir de ${ini}`;
+      const list = document.getElementById('ntReviewList');
+      const heads = list.querySelectorAll('.nt-review__th');
+      list.innerHTML = '';
+      heads.forEach(h => list.appendChild(h));
+      ntLines.forEach((line, i) => {
+        const row = document.createElement('div');
+        row.className = 'nt-review__row ' + (i % 2 === 1 ? 'is-even' : '');
+        row.innerHTML = `
+          <span class="nt-review__cell nt-review__cell--sku">${line.sku}</span>
+          <span class="nt-review__cell">${line.nome}</span>
+          <span class="nt-review__cell nt-review__cell--preco">R$ ${line.preco || '0,00'}</span>
+        `;
+        list.appendChild(row);
+      });
+    }
+    ntNextBtn.addEventListener('click', () => ntGoToStep(2));
+    document.getElementById('ntBackBtn').addEventListener('click', () => ntGoToStep(1));
+
+    // ─── Confirms aninhados ───
+    const saveDraftModal = document.getElementById('saveDraftModal');
+    function ntOpenSaveDraft() { saveDraftModal.classList.add('is-open'); saveDraftModal.setAttribute('aria-hidden', 'false'); }
+    function ntCloseSaveDraft() { saveDraftModal.classList.remove('is-open'); saveDraftModal.setAttribute('aria-hidden', 'true'); }
+    document.getElementById('ntSaveDraftBtn1').addEventListener('click', ntOpenSaveDraft);
+    document.getElementById('ntSaveDraftBtn2').addEventListener('click', ntOpenSaveDraft);
+    saveDraftModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', ntCloseSaveDraft));
+    saveDraftModal.addEventListener('click', (e) => { if (e.target === saveDraftModal) ntCloseSaveDraft(); });
+    document.getElementById('saveDraftConfirmBtn').addEventListener('click', () => {
+      ntCloseSaveDraft();
+      ntCloseModal();
+      showToast(`Negociação "${ntNome.value || 'sem nome'}" salva como rascunho em Negociações Salvas.`, 'success');
+    });
+
+    const sendNegModal = document.getElementById('sendNegModal');
+    function ntOpenSendNeg() {
+      const fornecLabel = ntFornecedor.options[ntFornecedor.selectedIndex]?.text || 'o fornecedor';
+      document.getElementById('ntSendFornecedorNome').textContent = fornecLabel;
+      sendNegModal.classList.add('is-open');
+      sendNegModal.setAttribute('aria-hidden', 'false');
+    }
+    function ntCloseSendNeg() { sendNegModal.classList.remove('is-open'); sendNegModal.setAttribute('aria-hidden', 'true'); }
+    document.getElementById('ntSendBtn').addEventListener('click', ntOpenSendNeg);
+    sendNegModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', ntCloseSendNeg));
+    sendNegModal.addEventListener('click', (e) => { if (e.target === sendNegModal) ntCloseSendNeg(); });
+    document.getElementById('sendNegConfirmBtn').addEventListener('click', () => {
+      ntCloseSendNeg();
+      ntCloseModal();
+      const fornecLabel = ntFornecedor.options[ntFornecedor.selectedIndex]?.text || 'o fornecedor';
+      showToast(`Negociação enviada para ${fornecLabel}.`, 'success', 6000);
+    });
+
+    const discardModal = document.getElementById('discardModal');
+    function ntOpenDiscardConfirm() { discardModal.classList.add('is-open'); discardModal.setAttribute('aria-hidden', 'false'); }
+    function ntCloseDiscardConfirm() { discardModal.classList.remove('is-open'); discardModal.setAttribute('aria-hidden', 'true'); }
+    discardModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', ntCloseDiscardConfirm));
+    discardModal.addEventListener('click', (e) => { if (e.target === discardModal) ntCloseDiscardConfirm(); });
+    document.getElementById('discardConfirmBtn').addEventListener('click', () => {
+      ntCloseDiscardConfirm();
+      ntCloseModalDirect();
+    });
+
+    ntModal.querySelectorAll('[data-modal-close]').forEach(b => b.addEventListener('click', ntTryCloseModal));
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (discardModal.classList.contains('is-open')) { ntCloseDiscardConfirm(); return; }
+      if (saveDraftModal.classList.contains('is-open')) { ntCloseSaveDraft(); return; }
+      if (sendNegModal.classList.contains('is-open')) { ntCloseSendNeg(); return; }
+      if (!ntAutocomplete.hidden) { ntAutocomplete.hidden = true; return; }
+      if (ntModal.classList.contains('is-open')) ntTryCloseModal();
+    });
+
     // ─── Inicializa ────────────────────────────────────────
     renderRows();
   </script>
+  <script src="tutorial.js"></script>
 </body>
 </html>

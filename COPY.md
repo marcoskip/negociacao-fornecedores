@@ -41,7 +41,7 @@ Textos finais de todas as telas. **Use exatamente como está aqui** — não ree
 
 - "Em análise"
 - "Proposta enviada"
-- "Em tratativa"
+- "Em negociação"
 - "Acordo"
 - "Fechado"
 - "Recusado"
