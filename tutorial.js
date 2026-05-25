@@ -94,6 +94,12 @@
       title: 'Rounds posteriores (R3+)',
       body: 'A partir do Round 3, aparecem mais colunas: <b>Sua proposta</b> e <b>Preço Concorrente</b>. O comportamento de timeline + status é o mesmo da A.8.7.',
     },
+    // ── E2. Negociação vigente — VISÃO FORNECEDOR ────────
+    {
+      screen: 'A.11.html',
+      title: 'Negociação vigente — visão fornecedor',
+      body: 'Quando o varejista envia a contraproposta, o fornecedor vê esta tela espelho. <b>Schema enxuto</b>: oculta colunas sensíveis ao varejista (PMC, Preço Concor., Ideal compra, Margem obj., Indicador, Estoque). O fornecedor vê só o que faz sentido pro lado dele: <b>Meu custo</b> e <b>Minha margem</b> (privados dele), <b>Preço que enviei</b>, <b>Contraproposta varejista</b> (destacada em azul) e <b>Meu novo preço</b> pra responder.',
+    },
     // ── F. Negociações salvas (varejista) ────────────────
     {
       screen: 'A.9.html',

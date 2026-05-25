@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IPA — Negociação vigente</title>
+  <title>IPA — Negociação vigente (fornecedor)</title>
   <link rel="icon" type="image/x-icon" href="https://marcoskip.github.io/infoprice-prototipos/assets/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -377,286 +377,75 @@
     .a87-grid-wrapper .grid__table tbody tr.a87-product-row--zebra td {
       background: var(--color-gray-50);
     }
-    /* Zebra azul da coluna Proposta fornecedor (col 7) — preserva o padrão alternado:
-       células brancas viram blue-light-5 (mais claro); cinzas viram blue-light-10 (mais escuro). */
-    .a87-grid-wrapper .grid__table tbody tr td:nth-child(7) {
+    /* Zebra azul da coluna Contraproposta varejista (col 6, visão fornecedor).
+       Células brancas viram blue-light-5; cinzas viram blue-light-10. */
+    .a87-grid-wrapper .grid__table tbody tr td:nth-child(6) {
       background: var(--color-blue-light-5);
     }
-    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--zebra td:nth-child(7) {
+    .a87-grid-wrapper .grid__table tbody tr.a87-product-row--zebra td:nth-child(6) {
       background: var(--color-blue-light-10);
     }
 
-    /* Destaque visual da coluna Proposta fornecedor (col 7) — contorno azul claro
-       em volta de toda a coluna (header + cells) + texto principal maior/bold.
-       Borders aplicadas via box-shadow inset pra funcionar mesmo com border-collapse:collapse.
-       Radius 4px nas pontas externas (topo do header, fundo da ultima linha). */
-    .a87-grid-wrapper .grid__table thead th:nth-child(7) {
+    /* Contorno azul claro em volta da coluna Contraproposta varejista — é o número
+       crítico que o fornecedor recebeu e precisa responder. */
+    .a87-grid-wrapper .grid__table thead th:nth-child(6) {
       box-shadow:
         inset 2px 0 0 var(--color-blue-light-45),
         inset -2px 0 0 var(--color-blue-light-45),
         inset 0 2px 0 var(--color-blue-light-45);
       border-radius: 4px 4px 0 0;
     }
-    .a87-grid-wrapper .grid__table tbody td:nth-child(7) {
+    .a87-grid-wrapper .grid__table tbody td:nth-child(6) {
       box-shadow:
         inset 2px 0 0 var(--color-blue-light-45),
         inset -2px 0 0 var(--color-blue-light-45);
     }
-    /* Última linha de produto: cada product-row é seguida por 2 sub-rows hidden
-       (concorrente-row + comment-row), então a última product-row é a antepenúltima <tr>. */
-    .a87-grid-wrapper .grid__table tbody tr:nth-last-child(3) td:nth-child(7) {
+    /* Última product-row é seguida só por 1 comment-row, então é a penúltima <tr>. */
+    .a87-grid-wrapper .grid__table tbody tr:nth-last-child(2) td:nth-child(6) {
       box-shadow:
         inset 2px 0 0 var(--color-blue-light-45),
         inset -2px 0 0 var(--color-blue-light-45),
         inset 0 -2px 0 var(--color-blue-light-45);
       border-radius: 0 0 4px 4px;
     }
-    .a87-grid-wrapper .grid__table tbody td:nth-child(7) .grid__val-main {
+    .a87-grid-wrapper .grid__table tbody td:nth-child(6) .grid__val-main {
       font-size: var(--font-size-lg);
       font-weight: var(--font-weight-bold);
       color: var(--color-gray-900);
     }
 
-    /* Inputs editaveis (Novo custo / Novo preco) usam .grid__form-field do DS direto.
-       Ordem atual das colunas (1-indexed): 7 = Proposta fornecedor · 8 = Novo custo ·
-       9 = Novo preço · 10 = Ideal compra. Apenas 8 e 9 sao inputs editaveis. */
-    /* Padding extra nas colunas Proposta fornecedor (7) + Novo custo (8) + Novo preco (9) — gap visual */
-    .a87-grid-wrapper .grid__table tbody td:nth-child(7),
-    .a87-grid-wrapper .grid__table tbody td:nth-child(8),
-    .a87-grid-wrapper .grid__table tbody td:nth-child(9) {
+    /* Ordem (1-indexed): 5 = Preço que enviei · 6 = Contraproposta varejista ·
+       7 = Meu novo preço (input). Padding extra pra gap visual. */
+    .a87-grid-wrapper .grid__table tbody td:nth-child(6),
+    .a87-grid-wrapper .grid__table tbody td:nth-child(7) {
       padding-left: 12px;
       padding-right: 12px;
     }
-    /* Inputs (Novo custo + Novo preco) — mesma largura nos dois pra ficar consistente.
-       100px = ~32px do prefix "R$" + ~68px pro numero (cabe ate "9.999,99"). */
-    .a87-grid-wrapper .grid__table tbody td:nth-child(8) .grid__form-field,
-    .a87-grid-wrapper .grid__table tbody td:nth-child(9) .grid__form-field {
+    /* Input "Meu novo preço" — largura fixa pra caber valor com prefix R$. */
+    .a87-grid-wrapper .grid__table tbody td:nth-child(7) .grid__form-field {
       width: 100px;
     }
+    /* Status pill da col 8 */
+    .a11-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      line-height: 16px;
+      height: 16px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .a11-status--pendente { background: var(--color-orange-400); color: var(--color-white); }
+    .a11-status--aceito   { background: var(--color-green-400);  color: var(--color-white); }
+    .a11-status--recusado { background: var(--color-red-400);    color: var(--color-white); }
     /* .grid__var dentro do .grid__cell (flex column) estica por default — forca tamanho natural */
     .a87-grid-wrapper .grid__cell .grid__var { align-self: flex-start; }
 
-    /* ═══════════════ Sub-row de concorrentes (Figma 1:9746) ═══════════════
-       Aparece embaixo de uma product-row quando o usuário clica em "Abrir" na
-       coluna Preço Concor. Mostra resumo da concorrência direta + cards por loja. */
-    .a87-concorrente-row[hidden] { display: none !important; }
-    .a87-concorrente-row > td { padding: 0; background: var(--color-white) !important; }
-    .a87-concorrente {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 16px 4px;
-      border-bottom: 1px solid var(--color-gray-200);
-    }
-    .a87-concorrente__nav {
-      flex-shrink: 0;
-      width: 28px; height: 28px;
-      display: inline-flex; align-items: center; justify-content: center;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: var(--color-gray-700);
-      border-radius: 4px;
-    }
-    .a87-concorrente__nav:hover { background: var(--color-gray-100); color: var(--color-gray-900); }
-    .a87-concorrente__nav .material-icons-outlined { font-size: 24px; }
-    .a87-concorrente__scroll {
-      flex: 1;
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      overflow-x: auto;
-      padding: 4px 0;
-    }
-
-    /* Cabecalho de seção (icone + título + chip + botao) */
-    .a87-concorrente-section { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-    .a87-concorrente-section__header {
-      display: flex; align-items: center; gap: 8px;
-    }
-    .a87-concorrente-section__header .material-icons-outlined { font-size: 20px; color: var(--color-gray-700); }
-    .a87-concorrente-section__title {
-      font-size: var(--font-size-md);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-gray-900);
-      line-height: 20px;
-    }
-    .a87-concorrente-section__chip {
-      background: var(--color-blue-light-5, #f5f9fe);
-      padding: 0 4px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-gray-800);
-      text-transform: uppercase;
-      letter-spacing: 0.2px;
-      line-height: 14px;
-    }
-    .a87-concorrente-section__btn {
-      display: inline-flex; align-items: center; gap: 2px;
-      padding: 4px 8px 4px 6px;
-      background: var(--color-gray-100);
-      border: none; border-radius: 4px;
-      font-family: inherit; font-size: 10px;
-      color: var(--color-gray-800);
-      opacity: 0.4; cursor: not-allowed;
-    }
-    .a87-concorrente-section__btn .material-icons-outlined { font-size: 12px; color: var(--color-gray-800); }
-
-    /* Card "Concorrência direta" (resumo) */
-    .a87-concorrente-card {
-      background: var(--color-blue-light-5, #f5f9fe);
-      padding: 12px;
-      border-radius: 6px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .a87-concorrente-card__head {
-      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-    }
-    .a87-concorrente-card__title {
-      font-size: var(--font-size-md);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-gray-900);
-      line-height: 20px;
-    }
-    .a87-concorrente-card__badge {
-      border: 1px solid var(--color-gray-700);
-      padding: 0 6px;
-      border-radius: 10px;
-      font-size: 10px;
-      font-weight: var(--font-weight-bold);
-      color: var(--color-gray-700);
-      text-transform: uppercase;
-      letter-spacing: 0.2px;
-      line-height: 14px;
-    }
-    .a87-concorrente-card__text {
-      font-size: 12px;
-      color: var(--color-gray-800);
-      line-height: 18px;
-    }
-    .a87-concorrente-card__text b { font-weight: var(--font-weight-semibold); }
-    .a87-concorrente-card__prices {
-      display: flex; gap: 8px;
-    }
-    .a87-price-tile {
-      background: var(--color-white);
-      border: 1px solid var(--color-gray-300);
-      border-radius: 4px;
-      padding: 8px 14px;
-      display: flex; flex-direction: column; align-items: center; gap: 2px;
-      min-width: 110px;
-    }
-    .a87-price-tile.is-selected { border: 1.5px solid var(--color-brand-primary); }
-    .a87-price-tile__val {
-      font-size: var(--font-size-md);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-gray-900);
-      line-height: 20px;
-    }
-    .a87-price-tile__label {
-      font-size: 10px;
-      font-weight: var(--font-weight-bold);
-      color: var(--color-gray-600);
-      text-transform: uppercase;
-      text-align: center;
-      line-height: 12px;
-      letter-spacing: 0.2px;
-    }
-
-    /* Divider vertical entre Concorrentes e Lojas */
-    .a87-concorrente-divider {
-      width: 1px;
-      background: var(--color-gray-200);
-      align-self: stretch;
-      min-height: 154px;
-      flex-shrink: 0;
-    }
-
-    /* Cards de Loja */
-    .a87-concorrente-stores { display: flex; gap: 16px; }
-    .a87-store-card {
-      background: var(--color-blue-light-5, #f5f9fe);
-      padding: 12px;
-      border-radius: 6px;
-      display: flex; flex-direction: column; gap: 8px;
-      min-width: 410px;
-    }
-    .a87-store-card__head {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      gap: 8px; width: 394px;
-    }
-    .a87-store-card__name {
-      font-size: var(--font-size-md);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-gray-900);
-      line-height: 20px;
-    }
-    .a87-store-card__toggle {
-      flex-shrink: 0;
-      width: 28px; height: 16px;
-      border-radius: 18px;
-      background: var(--color-brand-primary);
-      border: none;
-      cursor: pointer;
-      position: relative;
-      transition: background 120ms ease;
-    }
-    .a87-store-card__toggle::after {
-      content: ""; position: absolute; top: 2px;
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      background: var(--color-white);
-      transition: left 120ms ease, right 120ms ease;
-      right: 2px;
-    }
-    .a87-store-card__toggle.is-off { background: var(--color-gray-400); }
-    .a87-store-card__toggle.is-off::after { right: auto; left: 2px; }
-    .a87-store-card__meta { display: flex; gap: 4px; align-items: center; }
-    .a87-store-card__type {
-      font-size: 10px;
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-gray-700);
-      text-transform: uppercase;
-      letter-spacing: 0.2px;
-      line-height: 12px;
-    }
-    .a87-store-card__icon-btn {
-      background: var(--color-blue-light-15, #e1eefd);
-      border: none; padding: 2px;
-      border-radius: 4px;
-      display: inline-flex; align-items: center; justify-content: center;
-      cursor: pointer;
-    }
-    .a87-store-card__icon-btn .material-icons-outlined {
-      font-size: 12px;
-      color: var(--color-brand-primary);
-    }
-    .a87-store-card__metrics { display: flex; gap: 8px; }
-    .a87-metric-tile {
-      background: var(--color-white);
-      border: 1px solid var(--color-gray-300);
-      border-radius: 6px;
-      padding: 8px;
-      display: flex; flex-direction: column; gap: 2px;
-      min-width: 126px;
-    }
-    .a87-metric-tile__label {
-      font-size: 10px;
-      font-weight: var(--font-weight-bold);
-      color: var(--color-gray-600);
-      text-transform: uppercase;
-      letter-spacing: 0.2px;
-      line-height: 12px;
-    }
-    .a87-metric-tile__value {
-      font-size: var(--font-size-md);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-gray-900);
-      display: inline-flex; align-items: center; gap: 4px;
-      line-height: 20px;
-    }
-    .a87-metric-tile__value .material-icons-outlined { font-size: 16px; color: var(--color-gray-700); }
 
     /* Botoes de aprovar/rejeitar item — fundo colorido claro, empilhados vertical */
     .a87-approve-cell {
@@ -716,25 +505,6 @@
     /* Linhas com status decidido (Aceitou/Cancelado) permanecem editaveis —
        apenas o BG colorido sinaliza visualmente o status; sem lock de pointer-events. */
 
-    /* Link "Abrir" abaixo do valor na coluna Preço Concorrente — link button azul
-       com chevron `expand_more` a esquerda. */
-    .a87-link-abrir {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      font-size: var(--font-size-sm);
-      line-height: 18px;
-      color: var(--color-brand-primary);
-      font-weight: var(--font-weight-regular);
-      text-decoration: none;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      padding: 0;
-      margin-top: 2px;
-    }
-    .a87-link-abrir:hover { text-decoration: underline; }
-    .a87-link-abrir .material-icons-outlined { font-size: 14px; }
 
     /* Coluna Estoque — markup canonico do index.html (.grid__estoque-line1,
        .grid__estoque-line2, .grid__estoque-days, .grid__estoque-date) ja vem do
@@ -981,48 +751,25 @@
     <div class="header__right">
       <button class="header__help-btn" aria-label="Ajuda"><span class="material-icons-outlined">help_outline</span></button>
       <div class="header__user">
-        <span class="header__user-name">Olá, Supermercado Estrela</span>
+        <span class="header__user-name">Olá, Unilever</span>
         <span class="material-icons-outlined">keyboard_arrow_down</span>
       </div>
     </div>
   </header>
 
-  <!-- ── Sidebar ─────────────────────────────────────────── -->
+  <!-- ── Sidebar do fornecedor: 1 grupo "Negociações" com 2 sub-items ────── -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar__top">
-      <div class="sidebar__item">
-        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/gerenciador-symbol.svg" alt="" class="sidebar__icon" />
-        <span class="sidebar__label">Gerenciador de preços</span>
-      </div>
-      <div class="sidebar__item">
-        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/estrategia-symbol.svg" alt="" class="sidebar__icon" />
-        <span class="sidebar__label">Estratégia</span>
-        <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
-      </div>
-      <div class="sidebar__item">
-        <span class="material-icons sidebar__icon-mi">local_offer</span>
-        <span class="sidebar__label">Campanhas</span>
-      </div>
       <div class="sidebar__group is-open" id="negGroup">
         <div class="sidebar__item" data-toggle-group="negGroup">
           <img src="https://marcoskip.github.io/infoprice-prototipos/assets/negociacoes-symbol.svg" alt="" class="sidebar__icon" />
-          <span class="sidebar__label">Negociações fornecedor</span>
+          <span class="sidebar__label">Negociações</span>
           <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
         </div>
         <div class="sidebar__subitems">
-          <a class="sidebar__subitem" href="A.8.6.html">Triagem</a>
-          <a class="sidebar__subitem" href="A.9.html">Negociações salvas</a>
-          <a class="sidebar__subitem" href="0.1.html">Fornecedores</a>
+          <a class="sidebar__subitem" href="A.6.1.html">Negociações salvas</a>
+          <a class="sidebar__subitem" href="#">Tabelas</a>
         </div>
-      </div>
-      <div class="sidebar__item">
-        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/extracao-symbol.svg" alt="" class="sidebar__icon" />
-        <span class="sidebar__label">Extração de preços</span>
-      </div>
-      <div class="sidebar__item">
-        <img src="https://marcoskip.github.io/infoprice-prototipos/assets/IA-symbol.svg" alt="" class="sidebar__icon" />
-        <span class="sidebar__label">Precifique com IA</span>
-        <span class="material-icons-outlined sidebar__item-chevron">keyboard_arrow_down</span>
       </div>
     </div>
     <div class="sidebar__bottom">
@@ -1031,10 +778,9 @@
   </aside>
 
   <!-- Popup flutuante exibido ao clicar em [data-toggle-group] com a sidebar recolhida -->
-  <div class="sidebar-popup" id="sidebarPopup" hidden role="menu" aria-label="Negociações fornecedor">
-    <a class="sidebar-popup__item" href="A.8.6.html" role="menuitem">Triagem</a>
-    <a class="sidebar-popup__item" href="A.9.html" role="menuitem">Negociações salvas</a>
-    <a class="sidebar-popup__item" href="0.1.html" role="menuitem">Fornecedores</a>
+  <div class="sidebar-popup" id="sidebarPopup" hidden role="menu" aria-label="Negociações">
+    <a class="sidebar-popup__item" href="A.6.1.html" role="menuitem">Negociações salvas</a>
+    <a class="sidebar-popup__item" href="#" role="menuitem">Tabelas</a>
   </div>
 
   <div class="a87-shell" id="shell">
@@ -1042,21 +788,21 @@
 
     <!-- ── Breadcrumb (link button do DS) ─────────── -->
     <div class="a87-breadcrumb">
-      <a class="btn btn--link btn--medium" href="A.9.html">
+      <a class="btn btn--link btn--medium" href="A.6.1.html">
         <span class="material-icons-outlined">arrow_back</span>
-        <span>Voltar para Negociações salvas</span>
+        <span>Voltar para Minhas tabelas</span>
       </a>
     </div>
 
-    <!-- ── Header da negociacao ───────────────────── -->
+    <!-- ── Header da negociacao (visão fornecedor) ─── -->
     <div class="a87-header">
       <div>
         <div class="a87-header__title-row">
-          <span class="a87-header__title">Unilever · Tabela Q2 - Higiene &amp; Beleza</span>
+          <span class="a87-header__title">Tabela Q2 — Higiene &amp; Beleza · Supermercado Estrela</span>
         </div>
         <div class="a87-header__meta">
           <span class="badge badge--filled badge--orange">Em negociação</span>
-          <span class="badge badge--ghost badge--orange">Iniciada pelo fornecedor</span>
+          <span class="badge badge--ghost badge--orange">Contraproposta recebida</span>
           <button class="btn btn--link btn--medium" type="button">
             <span class="material-icons-outlined">file_download</span>
             <span>Exportar negociação</span>
@@ -1065,9 +811,9 @@
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
         <button class="btn btn--primary btn--ghost btn--medium" type="button" id="excluirBtn">
-          <span>Excluir negociação</span>
+          <span>Recusar negociação</span>
         </button>
-        <button class="btn btn--primary btn--medium" type="button" id="fecharBtn">Fechar negócio</button>
+        <button class="btn btn--primary btn--medium" type="button" id="fecharBtn">Enviar contraproposta</button>
       </div>
     </div>
 
@@ -1137,18 +883,15 @@
       <table class="grid__table">
         <colgroup>
           <col style="width:32px">   <!-- checkbox -->
-          <col style="width:20%">    <!-- Produto (com SKU + família + nome + chips) -->
-          <col style="width:7%">     <!-- Estoque -->
-          <col style="width:7%">     <!-- Margem obj -->
-          <col style="width:8%">     <!-- Custo atual -->
-          <col style="width:8%">     <!-- Preco Concorrente -->
-          <col style="width:108px">  <!-- Proposta fornecedor -->
-          <col style="width:108px">  <!-- Novo custo (input) -->
-          <col style="width:108px">  <!-- Novo preco (input) -->
-          <col style="width:8%">     <!-- Ideal compra (movida pra depois de Novo preço) -->
-          <col style="width:96px">   <!-- Indicador de custos -->
-          <col style="width:72px">   <!-- Aprovar / Rejeitar item -->
-          <col style="width:40px">   <!-- Comentar (icone) — agora ultima -->
+          <col style="width:28%">    <!-- Produto (com SKU + nome + chips) -->
+          <col style="width:10%">    <!-- Meu custo -->
+          <col style="width:9%">     <!-- Minha margem -->
+          <col style="width:11%">    <!-- Preço que enviei -->
+          <col style="width:13%">    <!-- Contraproposta varejista -->
+          <col style="width:108px">  <!-- Meu novo preço (input) -->
+          <col style="width:96px">   <!-- Status (badge) -->
+          <col style="width:72px">   <!-- Aprovar / Rejeitar -->
+          <col style="width:40px">   <!-- Comentar (icone) -->
         </colgroup>
         <thead>
           <tr>
@@ -1159,77 +902,51 @@
                 <button class="grid__sort-btn"><span class="material-icons-outlined">unfold_more</span></button>
               </div>
             </th>
-            <th><div class="grid__th-content"><span>Estoque</span></div></th>
-            <th><div class="grid__th-content"><span>Margem obj.</span></div></th>
             <th><div class="grid__th-content"><span>Custo atual</span></div></th>
-            <th><div class="grid__th-content"><span>Preço Concor.</span></div></th>
+            <th><div class="grid__th-content"><span>Margem obj.</span></div></th>
             <th>
               <div class="grid__th-content">
-                <span>Proposta fornecedor</span>
-                <button class="grid__sort-btn"><span class="material-icons-outlined">unfold_more</span></button>
-              </div>
-            </th>
-            <th><div class="grid__th-content"><span>Novo custo</span></div></th>
-            <th><div class="grid__th-content"><span>Novo preço</span></div></th>
-            <th>
-              <div class="grid__th-content">
-                <span>Ideal compra</span>
+                <span>Proposta</span>
                 <button class="grid__sort-btn"><span class="material-icons-outlined">unfold_more</span></button>
               </div>
             </th>
             <th>
               <div class="grid__th-content">
-                <span>Indicador de custos</span>
+                <span>Contraproposta varejista</span>
                 <button class="grid__sort-btn"><span class="material-icons-outlined">unfold_more</span></button>
               </div>
             </th>
+            <th><div class="grid__th-content"><span>Nova proposta</span></div></th>
+            <th><div class="grid__th-content"><span>Status</span></div></th>
             <th></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
 
-          <!-- Linha 1: SHAMPOO SEDA -->
           <tr class="a87-product-row">
             <td><input type="checkbox" class="grid__check" /></td>
             <td>
               <div class="grid__cell">
                 <div class="grid__produto-codes"><span class="grid__produto-code">4521</span></div>
                 <div class="grid__produto-name">SHAMPOO SEDA COCRIACOES CACHOS 325ML</div>
-                <div class="grid__produto-chips">
-                  <span class="grid__chip grid__chip--gray">4 lojas</span>
-                </div>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <div class="grid__estoque-line1"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span class="grid__val-main">142</span></div>
-                <div class="grid__estoque-line2"><span class="grid__estoque-days">8d</span><span class="grid__estoque-date">20/04/2026</span></div>
+                <span class="grid__val-main">R$ 9,80</span>
               </div>
             </td>
-            <td><div class="grid__cell"><span class="grid__val-main">24,0 %</span></div></td>
-            <td>
-              <div class="grid__cell">
-                <span class="grid__val-main">R$ 12,90</span>
-                <span class="grid__val-sub">PMZ R$ 16,98</span>
-              </div>
-            </td>
+            <td><div class="grid__cell"><span class="grid__val-main">34,2 %</span></div></td>
             <td>
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 14,90</span>
-                <button class="a87-link-abrir" type="button"><span class="material-icons-outlined">expand_more</span>Abrir</button>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 13,50</span>
-                <span class="grid__var grid__var--down">+4,7%</span>
-              </div>
-            </td>
-            <td>
-              <div class="grid__form-field">
-                <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
+                <span class="grid__val-main">R$ 11,50</span>
+                <span class="grid__var grid__var--down">-22,8%</span>
               </div>
             </td>
             <td>
@@ -1240,21 +957,15 @@
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 11,50</span>
-                <span class="grid__val-sub">PMZ R$ 15,13</span>
-              </div>
-            </td>
-            <td>
-              <div class="indicador indicador--regular">
-                <div class="indicador__inner">Regular</div>
+                <span class="a11-status a11-status--pendente">Pendente</span>
               </div>
             </td>
             <td>
               <div class="a87-approve-cell">
-                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aprovar item">
+                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aceitar contraproposta">
                   <span class="material-icons-outlined">check</span>
                 </button>
-                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar item">
+                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar contraproposta">
                   <span class="material-icons-outlined">close</span>
                 </button>
               </div>
@@ -1263,12 +974,9 @@
               <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
           </tr>
-          <tr class="a87-concorrente-row" data-sku="4521" hidden>
-            <td colspan="13"></td>
-          </tr>
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
-            <td colspan="12">
+            <td colspan="9">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1284,47 +992,29 @@
             </td>
           </tr>
 
-          <!-- Linha 2: CONDICIONADOR DOVE -->
           <tr class="a87-product-row">
             <td><input type="checkbox" class="grid__check" /></td>
             <td>
               <div class="grid__cell">
                 <div class="grid__produto-codes"><span class="grid__produto-code">4498</span></div>
                 <div class="grid__produto-name">CONDICIONADOR DOVE NUTRICAO COMPLETA 200ML</div>
-                <div class="grid__produto-chips">
-                  <span class="grid__chip grid__chip--gray">4 lojas</span>
-                </div>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <div class="grid__estoque-line1"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span class="grid__val-main">87</span></div>
-                <div class="grid__estoque-line2"><span class="grid__estoque-days">3d</span><span class="grid__estoque-date">25/04/2026</span></div>
+                <span class="grid__val-main">R$ 10,90</span>
               </div>
             </td>
-            <td><div class="grid__cell"><span class="grid__val-main">22,0 %</span></div></td>
-            <td>
-              <div class="grid__cell">
-                <span class="grid__val-main">R$ 14,50</span>
-                <span class="grid__val-sub">PMZ R$ 18,59</span>
-              </div>
-            </td>
+            <td><div class="grid__cell"><span class="grid__val-main">33,5 %</span></div></td>
             <td>
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 16,40</span>
-                <button class="a87-link-abrir" type="button"><span class="material-icons-outlined">expand_more</span>Abrir</button>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 15,20</span>
-                <span class="grid__var grid__var--down">+4,8%</span>
-              </div>
-            </td>
-            <td>
-              <div class="grid__form-field">
-                <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
+                <span class="grid__val-main">R$ 13,40</span>
+                <span class="grid__var grid__var--down">-18,3%</span>
               </div>
             </td>
             <td>
@@ -1335,21 +1025,15 @@
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 13,20</span>
-                <span class="grid__val-sub">PMZ R$ 16,92</span>
-              </div>
-            </td>
-            <td>
-              <div class="indicador indicador--regular">
-                <div class="indicador__inner">Regular</div>
+                <span class="a11-status a11-status--pendente">Pendente</span>
               </div>
             </td>
             <td>
               <div class="a87-approve-cell">
-                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aprovar item">
+                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aceitar contraproposta">
                   <span class="material-icons-outlined">check</span>
                 </button>
-                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar item">
+                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar contraproposta">
                   <span class="material-icons-outlined">close</span>
                 </button>
               </div>
@@ -1358,12 +1042,9 @@
               <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
           </tr>
-          <tr class="a87-concorrente-row" data-sku="4498" hidden>
-            <td colspan="13"></td>
-          </tr>
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
-            <td colspan="12">
+            <td colspan="9">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1379,47 +1060,29 @@
             </td>
           </tr>
 
-          <!-- Linha 3: SABONETE DOVE ORIGINAL -->
           <tr class="a87-product-row">
             <td><input type="checkbox" class="grid__check" /></td>
             <td>
               <div class="grid__cell">
                 <div class="grid__produto-codes"><span class="grid__produto-code">3877</span></div>
                 <div class="grid__produto-name">SABONETE DOVE ORIGINAL 90G</div>
-                <div class="grid__produto-chips">
-                  <span class="grid__chip grid__chip--gray">4 lojas</span>
-                </div>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <div class="grid__estoque-line1"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span class="grid__val-main">320</span></div>
-                <div class="grid__estoque-line2"><span class="grid__estoque-days">12d</span><span class="grid__estoque-date">16/04/2026</span></div>
+                <span class="grid__val-main">R$ 3,40</span>
               </div>
             </td>
-            <td><div class="grid__cell"><span class="grid__val-main">28,0 %</span></div></td>
-            <td>
-              <div class="grid__cell">
-                <span class="grid__val-main">R$ 4,90</span>
-                <span class="grid__val-sub">PMZ R$ 6,81</span>
-              </div>
-            </td>
+            <td><div class="grid__cell"><span class="grid__val-main">38,2 %</span></div></td>
             <td>
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 5,50</span>
-                <button class="a87-link-abrir" type="button"><span class="material-icons-outlined">expand_more</span>Abrir</button>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 5,20</span>
-                <span class="grid__var grid__var--down">+6,1%</span>
-              </div>
-            </td>
-            <td>
-              <div class="grid__form-field">
-                <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
+                <span class="grid__val-main">R$ 4,40</span>
+                <span class="grid__var grid__var--down">-20,0%</span>
               </div>
             </td>
             <td>
@@ -1430,21 +1093,15 @@
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 4,30</span>
-                <span class="grid__val-sub">PMZ R$ 5,97</span>
-              </div>
-            </td>
-            <td>
-              <div class="indicador indicador--ruim">
-                <div class="indicador__inner">Ruim</div>
+                <span class="a11-status a11-status--pendente">Pendente</span>
               </div>
             </td>
             <td>
               <div class="a87-approve-cell">
-                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aprovar item">
+                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aceitar contraproposta">
                   <span class="material-icons-outlined">check</span>
                 </button>
-                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar item">
+                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar contraproposta">
                   <span class="material-icons-outlined">close</span>
                 </button>
               </div>
@@ -1453,12 +1110,9 @@
               <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
           </tr>
-          <tr class="a87-concorrente-row" data-sku="3877" hidden>
-            <td colspan="13"></td>
-          </tr>
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
-            <td colspan="12">
+            <td colspan="9">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1474,47 +1128,29 @@
             </td>
           </tr>
 
-          <!-- Linha 4: DESODORANTE REXONA WOMEN -->
           <tr class="a87-product-row">
             <td><input type="checkbox" class="grid__check" /></td>
             <td>
               <div class="grid__cell">
                 <div class="grid__produto-codes"><span class="grid__produto-code">5142</span></div>
                 <div class="grid__produto-name">DESODORANTE REXONA WOMEN POWDER 150ML</div>
-                <div class="grid__produto-chips">
-                  <span class="grid__chip grid__chip--gray">3 lojas</span>
-                </div>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <div class="grid__estoque-line1"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span class="grid__val-main">56</span></div>
-                <div class="grid__estoque-line2"><span class="grid__estoque-days">5d</span><span class="grid__estoque-date">23/04/2026</span></div>
+                <span class="grid__val-main">R$ 13,30</span>
               </div>
             </td>
-            <td><div class="grid__cell"><span class="grid__val-main">18,0 %</span></div></td>
-            <td>
-              <div class="grid__cell">
-                <span class="grid__val-main">R$ 18,90</span>
-                <span class="grid__val-sub">PMZ R$ 23,05</span>
-              </div>
-            </td>
+            <td><div class="grid__cell"><span class="grid__val-main">32,8 %</span></div></td>
             <td>
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 19,80</span>
-                <button class="a87-link-abrir" type="button"><span class="material-icons-outlined">expand_more</span>Abrir</button>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 21,50</span>
-                <span class="grid__var grid__var--down">+13,8%</span>
-              </div>
-            </td>
-            <td>
-              <div class="grid__form-field">
-                <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
+                <span class="grid__val-main">R$ 17,20</span>
+                <span class="grid__var grid__var--down">-13,1%</span>
               </div>
             </td>
             <td>
@@ -1525,21 +1161,15 @@
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 16,80</span>
-                <span class="grid__val-sub">PMZ R$ 20,49</span>
-              </div>
-            </td>
-            <td>
-              <div class="indicador indicador--muito-ruim">
-                <div class="indicador__inner">Muito<br>ruim</div>
+                <span class="a11-status a11-status--pendente">Pendente</span>
               </div>
             </td>
             <td>
               <div class="a87-approve-cell">
-                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aprovar item">
+                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aceitar contraproposta">
                   <span class="material-icons-outlined">check</span>
                 </button>
-                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar item">
+                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar contraproposta">
                   <span class="material-icons-outlined">close</span>
                 </button>
               </div>
@@ -1548,12 +1178,9 @@
               <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
           </tr>
-          <tr class="a87-concorrente-row" data-sku="5142" hidden>
-            <td colspan="13"></td>
-          </tr>
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
-            <td colspan="12">
+            <td colspan="9">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1569,47 +1196,29 @@
             </td>
           </tr>
 
-          <!-- Linha 5: SABONETE LIQUIDO LUX BOTANICALS -->
           <tr class="a87-product-row">
             <td><input type="checkbox" class="grid__check" /></td>
             <td>
               <div class="grid__cell">
                 <div class="grid__produto-codes"><span class="grid__produto-code">6021</span></div>
                 <div class="grid__produto-name">SABONETE LIQUIDO LUX BOTANICALS 250ML</div>
-                <div class="grid__produto-chips">
-                  <span class="grid__chip grid__chip--gray">2 lojas</span>
-                </div>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <div class="grid__estoque-line1"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span class="grid__val-main">24</span></div>
-                <div class="grid__estoque-line2"><span class="grid__estoque-days">18d</span><span class="grid__estoque-date">10/04/2026</span></div>
+                <span class="grid__val-main">R$ 7,90</span>
               </div>
             </td>
-            <td><div class="grid__cell"><span class="grid__val-main">26,0 %</span></div></td>
-            <td>
-              <div class="grid__cell">
-                <span class="grid__val-main">R$ 11,20</span>
-                <span class="grid__val-sub">PMZ R$ 15,14</span>
-              </div>
-            </td>
+            <td><div class="grid__cell"><span class="grid__val-main">35,8 %</span></div></td>
             <td>
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 12,30</span>
-                <button class="a87-link-abrir" type="button"><span class="material-icons-outlined">expand_more</span>Abrir</button>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 11,80</span>
-                <span class="grid__var grid__var--down">+5,4%</span>
-              </div>
-            </td>
-            <td>
-              <div class="grid__form-field">
-                <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
+                <span class="grid__val-main">R$ 10,60</span>
+                <span class="grid__var grid__var--down">-13,8%</span>
               </div>
             </td>
             <td>
@@ -1620,21 +1229,15 @@
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 10,50</span>
-                <span class="grid__val-sub">PMZ R$ 14,19</span>
-              </div>
-            </td>
-            <td>
-              <div class="indicador indicador--regular">
-                <div class="indicador__inner">Regular</div>
+                <span class="a11-status a11-status--pendente">Pendente</span>
               </div>
             </td>
             <td>
               <div class="a87-approve-cell">
-                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aprovar item">
+                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aceitar contraproposta">
                   <span class="material-icons-outlined">check</span>
                 </button>
-                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar item">
+                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar contraproposta">
                   <span class="material-icons-outlined">close</span>
                 </button>
               </div>
@@ -1643,12 +1246,9 @@
               <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
           </tr>
-          <tr class="a87-concorrente-row" data-sku="6021" hidden>
-            <td colspan="13"></td>
-          </tr>
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
-            <td colspan="12">
+            <td colspan="9">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1664,47 +1264,29 @@
             </td>
           </tr>
 
-          <!-- Linha 6: DESODORANTE AXE BLACK -->
           <tr class="a87-product-row">
             <td><input type="checkbox" class="grid__check" /></td>
             <td>
               <div class="grid__cell">
                 <div class="grid__produto-codes"><span class="grid__produto-code">5887</span></div>
                 <div class="grid__produto-name">DESODORANTE AEROSOL AXE BLACK 152ML</div>
-                <div class="grid__produto-chips">
-                  <span class="grid__chip grid__chip--gray">3 lojas</span>
-                </div>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <div class="grid__estoque-line1"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span class="grid__val-main">78</span></div>
-                <div class="grid__estoque-line2"><span class="grid__estoque-days">9d</span><span class="grid__estoque-date">19/04/2026</span></div>
+                <span class="grid__val-main">R$ 15,80</span>
               </div>
             </td>
-            <td><div class="grid__cell"><span class="grid__val-main">20,0 %</span></div></td>
-            <td>
-              <div class="grid__cell">
-                <span class="grid__val-main">R$ 22,40</span>
-                <span class="grid__val-sub">PMZ R$ 28,00</span>
-              </div>
-            </td>
+            <td><div class="grid__cell"><span class="grid__val-main">33,9 %</span></div></td>
             <td>
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 23,90</span>
-                <button class="a87-link-abrir" type="button"><span class="material-icons-outlined">expand_more</span>Abrir</button>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 24,80</span>
-                <span class="grid__var grid__var--down">+10,7%</span>
-              </div>
-            </td>
-            <td>
-              <div class="grid__form-field">
-                <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
+                <span class="grid__val-main">R$ 21,80</span>
+                <span class="grid__var grid__var--down">-8,8%</span>
               </div>
             </td>
             <td>
@@ -1715,21 +1297,15 @@
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 20,10</span>
-                <span class="grid__val-sub">PMZ R$ 25,13</span>
-              </div>
-            </td>
-            <td>
-              <div class="indicador indicador--ruim">
-                <div class="indicador__inner">Ruim</div>
+                <span class="a11-status a11-status--pendente">Pendente</span>
               </div>
             </td>
             <td>
               <div class="a87-approve-cell">
-                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aprovar item">
+                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aceitar contraproposta">
                   <span class="material-icons-outlined">check</span>
                 </button>
-                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar item">
+                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar contraproposta">
                   <span class="material-icons-outlined">close</span>
                 </button>
               </div>
@@ -1738,12 +1314,9 @@
               <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
           </tr>
-          <tr class="a87-concorrente-row" data-sku="5887" hidden>
-            <td colspan="13"></td>
-          </tr>
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
-            <td colspan="12">
+            <td colspan="9">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1759,47 +1332,29 @@
             </td>
           </tr>
 
-          <!-- Linha 7: CREME DENTAL CLOSE-UP -->
           <tr class="a87-product-row">
             <td><input type="checkbox" class="grid__check" /></td>
             <td>
               <div class="grid__cell">
                 <div class="grid__produto-codes"><span class="grid__produto-code">6234</span></div>
                 <div class="grid__produto-name">CREME DENTAL CLOSE-UP RED HOT 90G</div>
-                <div class="grid__produto-chips">
-                  <span class="grid__chip grid__chip--gray">4 lojas</span>
-                </div>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <div class="grid__estoque-line1"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span class="grid__val-main">415</span></div>
-                <div class="grid__estoque-line2"><span class="grid__estoque-days">2d</span><span class="grid__estoque-date">26/04/2026</span></div>
+                <span class="grid__val-main">R$ 3,60</span>
               </div>
             </td>
-            <td><div class="grid__cell"><span class="grid__val-main">30,0 %</span></div></td>
-            <td>
-              <div class="grid__cell">
-                <span class="grid__val-main">R$ 5,30</span>
-                <span class="grid__val-sub">PMZ R$ 7,57</span>
-              </div>
-            </td>
+            <td><div class="grid__cell"><span class="grid__val-main">37,9 %</span></div></td>
             <td>
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 5,80</span>
-                <button class="a87-link-abrir" type="button"><span class="material-icons-outlined">expand_more</span>Abrir</button>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 5,90</span>
-                <span class="grid__var grid__var--down">+11,3%</span>
-              </div>
-            </td>
-            <td>
-              <div class="grid__form-field">
-                <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
+                <span class="grid__val-main">R$ 4,90</span>
+                <span class="grid__var grid__var--down">-15,5%</span>
               </div>
             </td>
             <td>
@@ -1810,21 +1365,15 @@
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 4,80</span>
-                <span class="grid__val-sub">PMZ R$ 6,86</span>
-              </div>
-            </td>
-            <td>
-              <div class="indicador indicador--ruim">
-                <div class="indicador__inner">Ruim</div>
+                <span class="a11-status a11-status--pendente">Pendente</span>
               </div>
             </td>
             <td>
               <div class="a87-approve-cell">
-                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aprovar item">
+                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aceitar contraproposta">
                   <span class="material-icons-outlined">check</span>
                 </button>
-                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar item">
+                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar contraproposta">
                   <span class="material-icons-outlined">close</span>
                 </button>
               </div>
@@ -1833,12 +1382,9 @@
               <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
           </tr>
-          <tr class="a87-concorrente-row" data-sku="6234" hidden>
-            <td colspan="13"></td>
-          </tr>
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
-            <td colspan="12">
+            <td colspan="9">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1854,47 +1400,29 @@
             </td>
           </tr>
 
-          <!-- Linha 8: SHAMPOO CLEAR MEN -->
           <tr class="a87-product-row">
             <td><input type="checkbox" class="grid__check" /></td>
             <td>
               <div class="grid__cell">
                 <div class="grid__produto-codes"><span class="grid__produto-code">4763</span></div>
                 <div class="grid__produto-name">SHAMPOO CLEAR MEN ANTICASPA 200ML</div>
-                <div class="grid__produto-chips">
-                  <span class="grid__chip grid__chip--gray">4 lojas</span>
-                </div>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <div class="grid__estoque-line1"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span class="grid__val-main">91</span></div>
-                <div class="grid__estoque-line2"><span class="grid__estoque-days">7d</span><span class="grid__estoque-date">21/04/2026</span></div>
+                <span class="grid__val-main">R$ 11,90</span>
               </div>
             </td>
-            <td><div class="grid__cell"><span class="grid__val-main">22,0 %</span></div></td>
-            <td>
-              <div class="grid__cell">
-                <span class="grid__val-main">R$ 16,80</span>
-                <span class="grid__val-sub">PMZ R$ 21,54</span>
-              </div>
-            </td>
+            <td><div class="grid__cell"><span class="grid__val-main">34,6 %</span></div></td>
             <td>
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 18,20</span>
-                <button class="a87-link-abrir" type="button"><span class="material-icons-outlined">expand_more</span>Abrir</button>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 17,20</span>
-                <span class="grid__var grid__var--down">+2,4%</span>
-              </div>
-            </td>
-            <td>
-              <div class="grid__form-field">
-                <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
+                <span class="grid__val-main">R$ 15,90</span>
+                <span class="grid__var grid__var--down">-12,6%</span>
               </div>
             </td>
             <td>
@@ -1905,21 +1433,15 @@
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 15,30</span>
-                <span class="grid__val-sub">PMZ R$ 19,62</span>
-              </div>
-            </td>
-            <td>
-              <div class="indicador indicador--bom">
-                <div class="indicador__inner">Bom</div>
+                <span class="a11-status a11-status--pendente">Pendente</span>
               </div>
             </td>
             <td>
               <div class="a87-approve-cell">
-                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aprovar item">
+                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aceitar contraproposta">
                   <span class="material-icons-outlined">check</span>
                 </button>
-                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar item">
+                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar contraproposta">
                   <span class="material-icons-outlined">close</span>
                 </button>
               </div>
@@ -1928,12 +1450,9 @@
               <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
           </tr>
-          <tr class="a87-concorrente-row" data-sku="4763" hidden>
-            <td colspan="13"></td>
-          </tr>
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
-            <td colspan="12">
+            <td colspan="9">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -1949,47 +1468,29 @@
             </td>
           </tr>
 
-          <!-- Linha 9: DESODORANTE DOVE INVISIBLE DRY -->
           <tr class="a87-product-row">
             <td><input type="checkbox" class="grid__check" /></td>
             <td>
               <div class="grid__cell">
                 <div class="grid__produto-codes"><span class="grid__produto-code">5419</span></div>
                 <div class="grid__produto-name">DESODORANTE DOVE INVISIBLE DRY 150ML</div>
-                <div class="grid__produto-chips">
-                  <span class="grid__chip grid__chip--gray">3 lojas</span>
-                </div>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <div class="grid__estoque-line1"><img src="https://marcoskip.github.io/infoprice-prototipos/assets/grid/unidades.svg" alt="" /><span class="grid__val-main">68</span></div>
-                <div class="grid__estoque-line2"><span class="grid__estoque-days">15d</span><span class="grid__estoque-date">13/04/2026</span></div>
+                <span class="grid__val-main">R$ 13,10</span>
               </div>
             </td>
-            <td><div class="grid__cell"><span class="grid__val-main">25,0 %</span></div></td>
-            <td>
-              <div class="grid__cell">
-                <span class="grid__val-main">R$ 18,90</span>
-                <span class="grid__val-sub">PMZ R$ 25,20</span>
-              </div>
-            </td>
+            <td><div class="grid__cell"><span class="grid__val-main">34,8 %</span></div></td>
             <td>
               <div class="grid__cell">
                 <span class="grid__val-main">R$ 20,10</span>
-                <button class="a87-link-abrir" type="button"><span class="material-icons-outlined">expand_more</span>Abrir</button>
               </div>
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 19,50</span>
-                <span class="grid__var grid__var--down">+3,2%</span>
-              </div>
-            </td>
-            <td>
-              <div class="grid__form-field">
-                <span class="grid__form-prefix">R$</span>
-                <input type="text" class="grid__form-input" placeholder="—" data-input="custo" />
+                <span class="grid__val-main">R$ 17,60</span>
+                <span class="grid__var grid__var--down">-12,4%</span>
               </div>
             </td>
             <td>
@@ -2000,21 +1501,15 @@
             </td>
             <td>
               <div class="grid__cell">
-                <span class="grid__val-main">R$ 17,40</span>
-                <span class="grid__val-sub">PMZ R$ 23,20</span>
-              </div>
-            </td>
-            <td>
-              <div class="indicador indicador--bom">
-                <div class="indicador__inner">Bom</div>
+                <span class="a11-status a11-status--pendente">Pendente</span>
               </div>
             </td>
             <td>
               <div class="a87-approve-cell">
-                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aprovar item">
+                <button class="a87-approve-btn a87-approve-btn--positive" type="button" data-approve="yes" aria-label="Aceitar contraproposta">
                   <span class="material-icons-outlined">check</span>
                 </button>
-                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar item">
+                <button class="a87-approve-btn a87-approve-btn--negative" type="button" data-approve="no" aria-label="Rejeitar contraproposta">
                   <span class="material-icons-outlined">close</span>
                 </button>
               </div>
@@ -2023,12 +1518,9 @@
               <button class="a87-comment-icon-btn" type="button" data-comment-trigger aria-label="Comentar"><span class="material-icons" aria-hidden="true">chat_bubble</span></button>
             </td>
           </tr>
-          <tr class="a87-concorrente-row" data-sku="5419" hidden>
-            <td colspan="13"></td>
-          </tr>
           <tr class="a87-comment-row" hidden data-saved="false">
             <td></td>
-            <td colspan="12">
+            <td colspan="9">
               <div class="a87-comment-form" data-comment-form>
                 <span class="material-icons-outlined a87-comment-form__icon">subdirectory_arrow_right</span>
                 <input type="text" class="a87-comment-form__input" data-comment-input placeholder="Deixe um comentário sobre este item..." />
@@ -2043,6 +1535,7 @@
               </div>
             </td>
           </tr>
+
 
         </tbody>
       </table>
@@ -2411,54 +1904,14 @@
         const state = getStateFor(round, sku);
         const cells = tr.querySelectorAll('td');
 
-        // Ordem nova das colunas (0-indexed, SKU agora vive dentro do Produto):
-        // 0 checkbox · 1 Produto (com SKU) · 2 Estoque · 3 Margem obj · 4 Custo atual ·
-        // 5 Preço Concor · 6 Proposta fornecedor · 7 Novo custo · 8 Novo preço ·
-        // 9 Ideal compra · 10 Indicador · 11 Aprovar/Rejeitar · 12 Comentário
-        const propostaCell = cells[6] && cells[6].querySelector('.grid__cell');
-        if (propostaCell) {
-          const valMain = propostaCell.querySelector('.grid__val-main');
-          let varEl    = propostaCell.querySelector('.grid__var');
-          if (state.propostaFornec) {
-            if (valMain) valMain.textContent = 'R$ ' + state.propostaFornec.val;
-            if (!varEl) {
-              varEl = document.createElement('span');
-              varEl.className = 'grid__var';
-              propostaCell.appendChild(varEl);
-            }
-            varEl.textContent = state.propostaFornec.delta;
-            const isNegative = state.propostaFornec.delta.startsWith('-');
-            varEl.classList.toggle('grid__var--up',   isNegative);
-            varEl.classList.toggle('grid__var--down', !isNegative);
-          } else {
-            if (valMain) valMain.textContent = '—';
-            if (varEl) varEl.textContent = '';
-          }
-        }
-
-        const inputCusto = tr.querySelector('[data-input="custo"]');
+        // Visão fornecedor (A.11): schema bem diferente da A.8.7 do varejista.
+        // Mantemos a estrutura do applyRoundState mas com no-op pra evitar erros —
+        // os valores ficam estáticos (HTML hardcoded). Quando precisarmos de
+        // snapshots por round na visão fornecedor, mapeamos cells[5] = Preço que
+        // enviei e cells[6] = Contraproposta varejista.
+        // Por ora, só ajustamos o input do "Meu novo preço" via state se houver.
         const inputPreco = tr.querySelector('[data-input="preco"]');
-        if (inputCusto) inputCusto.value = state.novoCusto;
-        if (inputPreco) inputPreco.value = state.novoPreco;
-
-        // Badge de status no chip do produto. Estoque agora vive em coluna propria,
-        // entao basta append no produto-chips (sem insertBefore).
-        const chips = tr.querySelector('.grid__produto-chips');
-        if (chips) {
-          const oldBadge = chips.querySelector('.badge');
-          if (oldBadge) oldBadge.remove();
-          if (state.status && STATUS_BADGE_MAP[state.status]) {
-            const cfg = STATUS_BADGE_MAP[state.status];
-            const badge = document.createElement('span');
-            badge.className = cfg.cls;
-            badge.textContent = cfg.label;
-            chips.appendChild(badge);
-          }
-        }
-
-        tr.classList.remove('a87-product-row--fornecedor-aceitou', 'a87-product-row--cancelado');
-        if (state.status === 'aceitou')   tr.classList.add('a87-product-row--fornecedor-aceitou');
-        if (state.status === 'cancelado') tr.classList.add('a87-product-row--cancelado');
+        if (inputPreco && state.novoPreco) inputPreco.value = state.novoPreco;
       });
     }
 
@@ -3131,181 +2584,6 @@
       devMenu.classList.toggle('is-hidden');
     });
 
-    // ════════════════════════════════════════════════════════════════════
-    // ─── Sub-row "Concorrentes" (Figma 1:9746) ─────────────────────────
-    // Aparece embaixo da product-row quando o usuario clica em "Abrir" na
-    // coluna Preço Concor. Mock data por SKU.
-    // ════════════════════════════════════════════════════════════════════
-    const CONCORRENTE_DATA = {
-      // base: preço concor da product-row + 3 lojas com prices em volta dele
-      '4521': { preco: 14.90, dias: 21, lojas: [
-        { nome: '[ABC] LOJA 21 - Central - HiperMinas', source: 'mPDV',     tipo: 'Hipermercado', mapa: true,  preco: 14.50, comp: 86.5,   data: '20/04/2026', on: true  },
-        { nome: '[ABC] LOJA 01 - S.JOSE - Mart Minas',  source: 'INFOPANEL', tipo: 'Hipermercado', mapa: false, preco: 15.30, comp: 102.7, data: '20/04/2026', on: true  },
-        { nome: '[ABC] LOJA 03 - Central - Carrefour',  source: null,        tipo: 'Hipermercado', mapa: true,  preco: 14.90, comp: 100.0, data: '20/04/2026', on: true  },
-      ]},
-      '4498': { preco: 16.40, dias: 18, lojas: [
-        { nome: '[ABC] LOJA 12 - Pampulha - Epa',        source: 'mPDV',     tipo: 'Supermercado', mapa: true,  preco: 15.90, comp: 97.0,  data: '25/04/2026', on: true  },
-        { nome: '[ABC] LOJA 07 - Centro - DPSP',         source: 'INFOPANEL', tipo: 'Farmácia',     mapa: false, preco: 17.20, comp: 104.9, data: '24/04/2026', on: true  },
-      ]},
-      '3877': { preco:  5.50, dias: 14, lojas: [
-        { nome: '[ABC] LOJA 18 - Savassi - Verdemar',    source: 'mPDV',     tipo: 'Supermercado', mapa: true,  preco:  5.20, comp: 94.5,  data: '14/04/2026', on: true  },
-        { nome: '[ABC] LOJA 05 - Buritis - Mart Minas',  source: 'INFOPANEL', tipo: 'Supermercado', mapa: false, preco:  5.80, comp: 105.5, data: '15/04/2026', on: true  },
-        { nome: '[ABC] LOJA 22 - Lourdes - Carrefour',   source: null,        tipo: 'Hipermercado', mapa: true,  preco:  5.50, comp: 100.0, data: '13/04/2026', on: false },
-      ]},
-      '5142': { preco: 19.80, dias: 25, lojas: [
-        { nome: '[ABC] LOJA 21 - Central - HiperMinas',  source: 'mPDV',     tipo: 'Hipermercado', mapa: true,  preco: 19.30, comp: 97.5,  data: '21/04/2026', on: true  },
-        { nome: '[ABC] LOJA 09 - Funcionários - Epa',    source: 'INFOPANEL', tipo: 'Supermercado', mapa: false, preco: 20.10, comp: 101.5, data: '22/04/2026', on: true  },
-      ]},
-      '6021': { preco: 12.30, dias: 30, lojas: [
-        { nome: '[ABC] LOJA 14 - Anchieta - Verdemar',   source: 'mPDV',     tipo: 'Supermercado', mapa: true,  preco: 11.90, comp: 96.7,  data: '08/04/2026', on: true  },
-        { nome: '[ABC] LOJA 02 - Mangabeiras - DPSP',    source: 'INFOPANEL', tipo: 'Farmácia',     mapa: false, preco: 12.70, comp: 103.3, data: '09/04/2026', on: true  },
-      ]},
-      '5887': { preco: 23.90, dias: 12, lojas: [
-        { nome: '[ABC] LOJA 18 - Savassi - Verdemar',    source: 'mPDV',     tipo: 'Supermercado', mapa: true,  preco: 23.50, comp: 98.3,  data: '18/04/2026', on: true  },
-        { nome: '[ABC] LOJA 11 - Cidade Nova - Epa',     source: 'INFOPANEL', tipo: 'Supermercado', mapa: false, preco: 24.30, comp: 101.7, data: '19/04/2026', on: true  },
-        { nome: '[ABC] LOJA 06 - Sion - Carrefour',      source: null,        tipo: 'Hipermercado', mapa: true,  preco: 23.90, comp: 100.0, data: '17/04/2026', on: false },
-      ]},
-      '6234': { preco:  5.80, dias: 8,  lojas: [
-        { nome: '[ABC] LOJA 03 - Central - Carrefour',   source: 'mPDV',     tipo: 'Hipermercado', mapa: true,  preco:  5.50, comp: 94.8,  data: '25/04/2026', on: true  },
-        { nome: '[ABC] LOJA 19 - Floresta - Mart Minas', source: 'INFOPANEL', tipo: 'Supermercado', mapa: false, preco:  6.10, comp: 105.2, data: '26/04/2026', on: true  },
-      ]},
-      '4763': { preco: 18.20, dias: 22, lojas: [
-        { nome: '[ABC] LOJA 21 - Central - HiperMinas',  source: 'mPDV',     tipo: 'Hipermercado', mapa: true,  preco: 17.80, comp: 97.8,  data: '20/04/2026', on: true  },
-        { nome: '[ABC] LOJA 04 - Belvedere - DPSP',      source: 'INFOPANEL', tipo: 'Farmácia',     mapa: false, preco: 18.60, comp: 102.2, data: '21/04/2026', on: true  },
-      ]},
-      '5419': { preco: 20.10, dias: 16, lojas: [
-        { nome: '[ABC] LOJA 18 - Savassi - Verdemar',    source: 'mPDV',     tipo: 'Supermercado', mapa: true,  preco: 19.70, comp: 98.0,  data: '12/04/2026', on: true  },
-        { nome: '[ABC] LOJA 15 - Sagrada Família - Epa', source: 'INFOPANEL', tipo: 'Supermercado', mapa: false, preco: 20.50, comp: 102.0, data: '13/04/2026', on: true  },
-        { nome: '[ABC] LOJA 08 - Castelo - Carrefour',   source: null,        tipo: 'Hipermercado', mapa: true,  preco: 20.10, comp: 100.0, data: '11/04/2026', on: false },
-      ]},
-    };
-
-    function brl(v) {
-      return 'R$ ' + v.toFixed(2).replace('.', ',');
-    }
-
-    function renderConcorrente(row) {
-      const sku = row.dataset.sku;
-      const data = CONCORRENTE_DATA[sku];
-      if (!data) return;
-      const precos = data.lojas.map(l => l.preco);
-      const medio = precos.reduce((a, b) => a + b, 0) / precos.length;
-      const min = Math.min(...precos);
-      const max = Math.max(...precos);
-
-      const storeCards = data.lojas.map(loja => `
-        <div class="a87-store-card">
-          <div class="a87-store-card__head">
-            <span class="a87-store-card__name">${loja.nome}</span>
-            <button class="a87-store-card__toggle ${loja.on ? '' : 'is-off'}" type="button" aria-label="Habilitar loja"></button>
-          </div>
-          <div class="a87-store-card__meta">
-            ${loja.source ? `<span class="a87-concorrente-card__badge">${loja.source}</span>` : ''}
-            <span class="a87-store-card__type">${loja.tipo}</span>
-            ${loja.mapa ? `<button class="a87-store-card__icon-btn" type="button" aria-label="Ver no mapa"><span class="material-icons-outlined">place</span></button>` : ''}
-          </div>
-          <div class="a87-store-card__metrics">
-            <div class="a87-metric-tile">
-              <span class="a87-metric-tile__label">Preço</span>
-              <span class="a87-metric-tile__value"><span class="material-icons-outlined">local_offer</span>${brl(loja.preco)}</span>
-            </div>
-            <div class="a87-metric-tile">
-              <span class="a87-metric-tile__label">Competitividade</span>
-              <span class="a87-metric-tile__value">${loja.comp.toFixed(1).replace('.', ',')}%</span>
-            </div>
-            <div class="a87-metric-tile">
-              <span class="a87-metric-tile__label">Data</span>
-              <span class="a87-metric-tile__value">${loja.data}</span>
-            </div>
-          </div>
-        </div>
-      `).join('');
-
-      const td = row.querySelector('td');
-      td.innerHTML = `
-        <div class="a87-concorrente">
-          <button class="a87-concorrente__nav" type="button" aria-label="Anterior">
-            <span class="material-icons-outlined">chevron_left</span>
-          </button>
-          <div class="a87-concorrente__scroll">
-            <div class="a87-concorrente-section">
-              <div class="a87-concorrente-section__header">
-                <span class="material-icons-outlined">insights</span>
-                <span class="a87-concorrente-section__title">Concorrentes</span>
-                <span class="a87-concorrente-section__chip">PREÇO REGULAR</span>
-                <button class="a87-concorrente-section__btn" type="button" disabled>
-                  <span class="material-icons-outlined">open_in_new</span>
-                  Acessar InfoPanel
-                </button>
-              </div>
-              <div class="a87-concorrente-card">
-                <div class="a87-concorrente-card__head">
-                  <span class="a87-concorrente-card__title">Concorrência direta</span>
-                  <span class="a87-concorrente-card__badge">${data.dias} dias</span>
-                  <span class="a87-concorrente-card__text">Produto encontrado em <b>${data.lojas.length} ${data.lojas.length === 1 ? 'loja' : 'lojas'}</b></span>
-                </div>
-                <div class="a87-concorrente-card__prices">
-                  <div class="a87-price-tile is-selected">
-                    <span class="a87-price-tile__val">${brl(medio)}</span>
-                    <span class="a87-price-tile__label">x̄ Preço<br>Médio</span>
-                  </div>
-                  <div class="a87-price-tile">
-                    <span class="a87-price-tile__val">${brl(min)}</span>
-                    <span class="a87-price-tile__label">&lt; Preço<br>Mais Baixo</span>
-                  </div>
-                  <div class="a87-price-tile">
-                    <span class="a87-price-tile__val">${brl(max)}</span>
-                    <span class="a87-price-tile__label">&gt; Preço<br>Mais Alto</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="a87-concorrente-divider"></div>
-            <div class="a87-concorrente-section">
-              <div class="a87-concorrente-section__header">
-                <span class="material-icons-outlined">arrow_forward</span>
-                <span class="a87-concorrente-section__title" style="font-weight:var(--font-weight-regular)">Lojas</span>
-              </div>
-              <div class="a87-concorrente-stores">${storeCards}</div>
-            </div>
-          </div>
-          <button class="a87-concorrente__nav" type="button" aria-label="Próximo">
-            <span class="material-icons-outlined">chevron_right</span>
-          </button>
-        </div>
-      `;
-
-      // Toggle interno do switch da loja (local — não persiste)
-      td.querySelectorAll('.a87-store-card__toggle').forEach(btn => {
-        btn.addEventListener('click', () => btn.classList.toggle('is-off'));
-      });
-    }
-
-    // Click no link "Abrir" alterna a concorrente-row correspondente
-    document.querySelectorAll('.a87-link-abrir').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const productRow = btn.closest('tr.a87-product-row');
-        if (!productRow) return;
-        // procura a concorrente-row irmã (próximo <tr> com a classe certa)
-        let sibling = productRow.nextElementSibling;
-        while (sibling && !sibling.classList.contains('a87-concorrente-row')) {
-          sibling = sibling.nextElementSibling;
-        }
-        if (!sibling) return;
-        const isOpen = !sibling.hidden;
-        if (isOpen) {
-          sibling.hidden = true;
-          return;
-        }
-        // Render lazy (so primeira vez)
-        if (!sibling.dataset.rendered) {
-          renderConcorrente(sibling);
-          sibling.dataset.rendered = '1';
-        }
-        sibling.hidden = false;
-      });
-    });
   </script>
   <script src="tutorial.js"></script>
 </body>
